@@ -1,6 +1,9 @@
 #ifndef classfile_h
 #define classfile_h
+
 #include "types.h"
+#include "info.h"
+
 typedef struct {
   u1 tag;
   info_t *info;
@@ -46,5 +49,6 @@ typedef struct {
   u2 attributes_count;
   attribute_info *attributes;
 } ClassFile;
+
 #endif
 
