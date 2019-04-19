@@ -30,27 +30,27 @@ void bread_constant_pool_info(ClassFile *class, FILE *classfile){
     cp->info = (info_t *) malloc(sizeof(info_t));
     switch(bread_constant_pool_tag(cp, classfile)){
       case CONSTANT_Class:
-        bread_class_info(&(cp->info->Class), classfile); break;
+        bread_class_info((&(cp->info->Class)), classfile); break;
       case CONSTANT_Fieldref:
-        bread_fieldref_info(&(cp->info->Fieldref), classfile); break;
+        bread_fieldref_info((&(cp->info->Fieldref)), classfile); break;
       case CONSTANT_Methodref:
-        bread_methodref_info(&(cp->info->Methodref), classfile); break;
+        bread_methodref_info((&(cp->info->Methodref)), classfile); break;
       case CONSTANT_InterfaceMethodref:
-        bread_interfacemethodref_info(&(cp->info->InterfaceMethodref), classfile); break;
+        bread_interfacemethodref_info((&(cp->info->InterfaceMethodref)), classfile); break;
       case CONSTANT_String:
-        bread_string_info(&(cp->info->String), classfile); break;
+        bread_string_info((&(cp->info->String)), classfile); break;
       case CONSTANT_Integer:
-        bread_integer_info(&(cp->info->Integer), classfile); break;
+        bread_integer_info((&(cp->info->Integer)), classfile); break;
       case CONSTANT_Float:
-        bread_float_info(&(cp->info->Float), classfile); break;
+        bread_float_info((&(cp->info->Float)), classfile); break;
       case CONSTANT_Long:
-        bread_long_info(&(cp->info->Long), classfile); break;
+        bread_long_info((&(cp->info->Long)), classfile); break;
       case CONSTANT_Double:
-        bread_double_info(&(cp->info->Double), classfile); break;
+        bread_double_info((&(cp->info->Double)), classfile); break;
       case CONSTANT_NameAndType:
-        bread_nameandtype_info(&(cp->info->NameAndType), classfile); break;
+        bread_nameandtype_info((&(cp->info->NameAndType)), classfile); break;
       case CONSTANT_Utf8:
-        bread_utf8_info(&(cp->info->Utf8), classfile); break;
+        bread_utf8_info((&(cp->info->Utf8)), classfile); break;
       default:
         fprintf(stderr, "Unknown constant pool tag: %d\n", cp->tag);
         exit(ERR_UNKTAG);

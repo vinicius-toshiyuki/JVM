@@ -66,7 +66,7 @@ int bread_constant_pool_tag(cp_info *cp, FILE *classfile);
   u2_read(__NameAndType->descriptor_index, __classfile); \
 }
 
-#define bread_utf8_info(Utf8_info *Utf8, FILE *classfile) \
+#define bread_utf8_info(__Utf8, __classfile) \
 { \
   u2_read(__Utf8->length, __classfile); \
   __Utf8->bytes = (u1 *) malloc(sizeof(u1) * __Utf8->length); \
