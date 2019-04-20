@@ -1,9 +1,8 @@
 #ifndef bread_constant_pool_h
 #define bread_constant_pool_h
 
-#include "classfile.h"
-#include "types.h"
-#include "info.h"
+#include <stdlib.h>
+#include "breads.h"
 
 void bread_constant_pool(ClassFile *class, FILE *classfile);
 void bread_constant_pool_count(ClassFile *class, FILE *classfile);

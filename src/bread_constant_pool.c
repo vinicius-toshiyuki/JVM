@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include "../include/bread_constant_pool.h"
-#include "../include/errcodes.h"
 
 /* Constant pool count */
 int cpc;

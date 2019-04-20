@@ -147,4 +147,23 @@
         break;
       }
   }*/
-
+/*
+printf(
+      "Access flags: 0x%x\n"
+      "This class: %d\n"
+      "Super class: %d\n"
+      "Interfaces count: %d\n",
+      class->access_flags,
+      class->this_class,
+      class->super_class,
+      class->interfaces_count
+  );*/
+/*
+  for(i = 0; i < class->interfaces_count; i++){
+    u2_read(class->interfaces[i], classfile);
+    printf(
+        "\e[48;5;189mInterface %d:\n"
+        "\tClass index: %d\n",
+        i, class->interfaces[i]
+    );
+  }*/

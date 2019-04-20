@@ -1,15 +1,19 @@
 SRC= ../src
-OBJ2= *.o
+
+CFILES= $(SRC)/bread_constant_pool.c $(SRC)/bread_magic.c $(SRC)/bread_versions.c $(SRC)/bread_interfaces.c $(SRC)/main.c $(SRC)/bread_fields.c $(SRC)/bread_attributes.c $(SRC)/bread_methods.c $(SRC)/bread_classfile.c $(SRC)/bprint_classfile.c
+
+OFILES= $(SRC)/main.o $(SRC)/bread_constant_pool.o $(SRC)/bread_magic.o $(SRC)/bread_versions.o $(SRC)/bread_interfaces.o $(SRC)/bread_fields.o $(SRC)/bread_attributes.o $(SRC)/bread_methods.o $(SRC)/bread_classfile.o $(SRC)/bprint_classfile.o
+
 NAME= breader
 
 all: objects main clean
 
-objects: $(SRC)/bread_constant_pool.c $(SRC)/bread_magic.c $(SRC)/bread_versions.c $(SRC)/main.c
-	gcc -c $(SRC)/bread_constant_pool.c $(SRC)/bread_magic.c $(SRC)/bread_versions.c $(SRC)/main.c
+objects: $(CFILES)
+	gcc -c $(CFILES)
 
-main: $(SRC)/bread_constant_pool.o $(SRC)/bread_magic.o $(SRC)/bread_versions.o $(SRC)/main.o
-	gcc -o ./$(NAME) $(SRC)/main.o $(SRC)/bread_constant_pool.o $(SRC)/bread_magic.o $(SRC)/bread_versions.o
+main: $(OFILES)
+	gcc -o ./$(NAME) $(OFILES)
 
 clean:
-	rm $(SRC)/bread_constant_pool.o $(SRC)/bread_magic.o $(SRC)/bread_versions.o $(SRC)/main.o
-	rm bread_constant_pool.o bread_magic.o bread_versions.o main.o
+	rm $(OFILES)
+	rm *.o
