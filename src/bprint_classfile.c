@@ -58,8 +58,10 @@ void bprint_info(cp_info *cp, const char *prefix){
     case CONSTANT_Utf8:
       printf("%sLength: %d\n%sBytes: \"", prefix, cp->info->Utf8.length, prefix);
       for(int i = 0; i < cp->info->Utf8.length; i++)
-        printf("%02x ", cp->info->Utf8.bytes[i]);
-      printf("\b\"\n");
+        printf("%c", cp->info->Utf8.bytes[i]);
+      printf("\"\n");
+      /*  printf("%02x ", cp->info->Utf8.bytes[i]);
+      printf("\b\"\n");*/
       break;
   }
   return;
