@@ -3,6 +3,7 @@
 
 #include "../include/breads.h"
 #include "../include/bprint_classfile.h"
+#include "../include/bfree_classfile.h"
 
 int main(int argc, char **argv){
   if(argc < 2){
@@ -16,6 +17,10 @@ int main(int argc, char **argv){
   ClassFile *class = bread_classfile(classfile);
 
   bprint_classfile(class);
+
+  bfree_classfile(class);
+
+  fclose(classfile);
 
   return 0;
 }
