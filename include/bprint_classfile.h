@@ -2,6 +2,7 @@
 #define bprint_classfile_h
 
 #include "breads.h"
+#include "colors.h"
 
 void bprint_classfile(ClassFile *class);
 void bprint_info(cp_info *cp, const char *prefix);
@@ -10,13 +11,13 @@ void bprint_info(cp_info *cp, const char *prefix);
 
 #define bprint_versions(__class) printf("Minor version: 0x%02x\nMajor version: 0x%02x\n", __class->minor_version, __class->major_version)
 
-#define bprint_const_pool_count(__class) printf("Constant pool count: %d\n", __class->const_pool_count)
+#define bprint_const_pool_count(__class) printf(BGC(182) "Constant pool count: %d" CLEARN, __class->const_pool_count)
 
 #define bprint_constant_pool(__class) \
 { \
-  printf("Constant pool:\n"); \
+  printf(BGC(183) "Constant pool:" CLEARN); \
   for(int i = 0; i < __class->const_pool_count - 1; i++){ \
-    printf("\tTag %d: %d\n", i + 1, __class->constant_pool[i].tag); \
+    printf("\t" BGC(189) "Tag %d: %d" CLEARN, i + 1, __class->constant_pool[i].tag); \
     bprint_info(&__class->constant_pool[i], "\t"); \
   } \
 }
