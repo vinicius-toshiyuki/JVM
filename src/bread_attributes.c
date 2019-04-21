@@ -1,4 +1,7 @@
 #include "../include/bread_attributes.h"
+#include "../include/bprint_classfile.h"
+
+extern int verbose;
 
 void bread_attributes(attribute_info *atts, int atts_count, FILE *classfile){
 

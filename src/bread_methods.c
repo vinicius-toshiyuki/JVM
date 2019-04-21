@@ -1,4 +1,7 @@
 #include "../include/bread_methods.h"
+#include "../include/colors.h"
+
+extern int verbose;
 
 void bread_methods(ClassFile *class, FILE *classfile){
 
@@ -21,5 +24,6 @@ void bread_methods(ClassFile *class, FILE *classfile){
           classfile
       );
   }
+
   return;
 }
