@@ -1,7 +1,7 @@
 # Bytecode reader and printer
 ## breader
 
-![Java 8 Logo](https://images.app.goo.gl/L698G6ecc2xYEQsS7 "Java Logo")
+![Java 8 Logo](./.javasrc/javalogo.jpg "Java Logo")
 
 ### Description:
 Reads a .class file and prints it's structure as described in Oracle's official [Java Virtual Machine Specification](https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html "Documentation")
