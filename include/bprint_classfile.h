@@ -104,7 +104,7 @@ void bprint_info(cp_info *cp, const char *prefix);
 //bprint_attribute_info((&attibutes[i])) \
 
 
-
+/*
 #define bprint_attribute_info(__attribute) \
 { 
   #ifndef ATT_C
@@ -156,5 +156,5 @@ void bprint_info(cp_info *cp, const char *prefix);
   free(att_name);
 }
 
-
+*/
 #endif
