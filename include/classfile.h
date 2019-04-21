@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "info.h"
+#include "attributes.h"
 
 typedef struct {
   u1 tag;
@@ -13,6 +14,7 @@ typedef struct {
   u2 attribute_name_index;
   u4 attribute_length;
   u1 *info;
+  Attributes *att_info;
 } attribute_info;
 
 typedef struct {
