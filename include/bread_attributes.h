@@ -2,6 +2,7 @@
 #define bread_attributes_h
 
 #include "breads.h"
+#include <string.h>
 
 void bread_attributes(attribute_info *atts, int atts_count, FILE *classfile);
 
