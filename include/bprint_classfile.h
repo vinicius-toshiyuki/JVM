@@ -123,16 +123,39 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
 
 #define u1_to_Code(__code, __u1_stream) \
 { \
+  u1 *__stream = __u1_stream; \
   /* u2 max_stack, u2 max_locals, u4 code_length */ \
-  memcpy(&__code, __u1_stream, 8); \
+  memcpy(&__code, __stream, 8), __stream += 8; \
   u2_flip(__code.max_stack); \
   u2_flip(__code.max_locals); \
   u4_flip(__code.code_length); \
-  /* code[code_length] */ \
+  /* u1 code[code_length] */ \
   __code.code = (u1 *) malloc(sizeof(u1) * __code.code_length); \
-  memcpy(__code.code, __u1_stream + 8, __code.code_length); \
+  memcpy(__code.code, __stream, __code.code_length), __stream += __code.code_length; \
   /* u2 exception_table_length */ \
-  memcpy(&__code.exception_table_length, __u1_stream + 8 + __code.code_length, 2); \
+  memcpy(&__code.exception_table_length, __stream, 2), __stream += 2; \
+  u2_flip(__code.exception_table_length); \
+  /* exceptions_info exception_table[exception_table_length] */ \
+  /* TODO: flip exception_table fields */ \
+  __code.exception_table = (exceptions_info *) malloc(sizeof(exceptions_info) * __code.exception_table_length); \
+  for(int i = 0; i < __code.exception_table_length; i++) \
+    memcpy(&__code.exception_table[i], __stream, 8), __stream += 8; \
+  /* u2 attributes_count */ \
+  memcpy(&__code.attributes_count, __stream, 2), __stream += 2; \
+  u2_flip(__code.attributes_count); \
+  /* attribute_info attributes[attributes_count] */ \
+  __code.attributes = (attribute_info *) malloc(sizeof(attribute_info) * __code.attributes_count); \
+  for(int i = 0; i < __code.attributes_count; i++){ \
+    memcpy(&__code.attributes[i].attribute_name_index, __stream, 2), __stream += 2; \
+    memcpy(&__code.attributes[i].attribute_length, __stream, 4), __stream += 4; \
+    u2_flip(__code.attributes[i].attribute_name_index); \
+    u4_flip(__code.attributes[i].attribute_length); \
+    /* TODO: flip attribute info bytes (ou talvez não) */ \
+    __code.attributes[i].info = (u1 *) malloc(sizeof(u1) * __code.attributes[i].attribute_length); \
+    memcpy(__code.attributes[i].info, __stream, __code.attributes[i].attribute_length), __stream += __code.attributes[i].attribute_length; \
+  } \
 }
+
+#define u1_to_ConstantValue(__constantvalue, __u1_stream) memcpy(&__constantvalue, __u1_stream, 2), u2_flip(__constantvalue.constantvalue_index)
 
 #endif

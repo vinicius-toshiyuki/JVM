@@ -78,13 +78,15 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
   #endif
   // Busca nome do atributo com o name_index na constant_pool
   
-  char str_name[ATT_M_S];
-  memcpy(str_name, class->constant_pool[name_index - 1].info->Utf8.bytes  /*Bytes do nome do atributo*/, class->constant_pool[name_index].info->Utf8.length);
+  char str_name[ATT_M_S] = {[0 ... ATT_M_S - 1] = '\0'};
+  memcpy(str_name, class->constant_pool[name_index - 1].info->Utf8.bytes  /*Bytes do nome do atributo*/, class->constant_pool[name_index - 1].info->Utf8.length);
   int number_code = ((char *) (bsearch(str_name, attributes_types, ATT_C, ATT_M_S, (int (*)(const void *, const void *)) strcmp)))[ATT_M_S - 1];
+
   printf(BGC(27) "%s%s attribute:" CLEARN, prefix, str_name);
+
+  Attributes att_info;
   switch(number_code){ // Vou para o código correto para imprimir o atributo
-    case NUMBER_Code:;
-      Attributes att_info;
+    case NUMBER_Code:
       u1_to_Code(att_info.Code, u1_stream);
       printf(
           "%s\tMax stack: %d\n"
@@ -98,8 +100,37 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
       for(int i = 0; i < att_info.Code.code_length; i++)
         printf("%02x ", att_info.Code.code[i]);
       printf("\b\"\n");
+      printf(
+          "%s\tException table length: %d\n"
+          "%s\tException table:\n",
+          prefix, att_info.Code.exception_table_length, prefix
+      );
+      for(int i = 0; i < att_info.Code.exception_table_length; i++)
+          printf(
+              "%s\t\tException %d:\n"
+              "%s\t\tStart PC: 0x%08x\n"
+              "%s\t\tEnd PC: 0x%08x\n"
+              "%s\t\tHandler PC: 0x%08x\n"
+              "%s\t\tCatch type: %d\n",
+              prefix, i,
+              prefix, att_info.Code.exception_table[i].start_pc,
+              prefix, att_info.Code.exception_table[i].end_pc,
+              prefix, att_info.Code.exception_table[i].handler_pc,
+              prefix, att_info.Code.exception_table[i].catch_type
+          );
+      printf(
+          "%s\tAttributes count: %d\n",
+          prefix, att_info.Code.attributes_count
+      );
+      char *att_prefix = (char *) calloc(strlen(prefix) + 3, sizeof(char));
+      att_prefix[0] = '\t', att_prefix[1] = '\t';
+      strcat(att_prefix, prefix);
+      for(int i = 0; i < att_info.Code.attributes_count; i++)
+        bprint_att_info(att_info.Code.attributes[i].info, att_info.Code.attributes[i].attribute_name_index, class, att_prefix);
       break;
     case NUMBER_ConstantValue:
+      u1_to_ConstantValue(att_info.ConstantValue, u1_stream);
+      printf("%s\tConstant value index: %d\n", prefix, att_info.ConstantValue.constantvalue_index);
       break;
     case NUMBER_Deprecated:
       break;
