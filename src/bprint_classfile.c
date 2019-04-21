@@ -66,3 +66,54 @@ void bprint_info(cp_info *cp, const char *prefix){
   }
   return;
 }
+
+
+void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char prefix[]){
+  static char attributes_types[ATT_C][ATT_M_S] = {"Code", "ConstantValue", "Deprecated", "Exceptions", "LineNumberTable", "LocalVariableTable", "SourceFile"};
+  #ifndef att_type_value_assign
+  #define att_type_value_assign
+    // A enum NUMBERS tem que estar de acordo com essa numeração
+    for(int i = 0; i < ATT_C; i++)
+      attributes_types[i][ATT_M_S - 1] = i;
+  #endif
+  // Busca nome do atributo com o name_index na constant_pool
+  
+  char str_name[ATT_M_S];
+  memcpy(str_name, class->constant_pool[name_index - 1].info->Utf8.bytes  /*Bytes do nome do atributo*/, class->constant_pool[name_index].info->Utf8.length);
+  int number_code = ((char *) (bsearch(str_name, attributes_types, ATT_C, ATT_M_S, (int (*)(const void *, const void *)) strcmp)))[ATT_M_S - 1];
+  printf(BGC(27) "%s%s attribute:" CLEARN, prefix, str_name);
+  switch(number_code){ // Vou para o código correto para imprimir o atributo
+    case NUMBER_Code:;
+      Attributes att_info;
+      u1_to_Code(att_info.Code, u1_stream);
+      printf(
+          "%s\tMax stack: %d\n"
+          "%s\tMax locals: %d\n"
+          "%s\tCode length: %d\n"
+          "%s\tCode: \"",
+          prefix, att_info.Code.max_stack,
+          prefix, att_info.Code.max_locals,
+          prefix, att_info.Code.code_length, prefix
+      );
+      for(int i = 0; i < att_info.Code.code_length; i++)
+        printf("%02x ", att_info.Code.code[i]);
+      printf("\b\"\n");
+      break;
+    case NUMBER_ConstantValue:
+      break;
+    case NUMBER_Deprecated:
+      break;
+    case NUMBER_Exceptions:
+      break;
+    case NUMBER_LineNumberTable:
+      break;
+    case NUMBER_LocalVariableTable:
+      break;
+    case NUMBER_SourceFile:
+      break;
+    default:
+      break;
+  }
+
+  return;
+}

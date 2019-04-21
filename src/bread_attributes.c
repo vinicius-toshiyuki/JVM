@@ -7,11 +7,8 @@ void bread_attributes(attribute_info *atts, int atts_count, FILE *classfile){
       u4_read(atts[i].attribute_length, classfile);
 
       atts[i].info = (u1 *) malloc(sizeof(u1) * atts[i].attribute_length);
-      atts[i].att_info = (u1 *) malloc(sizeof(u1) * atts[i].attribute_length);
-      for(int j = 0; j < atts[i].attribute_length; j++){
+      for(int j = 0; j < atts[i].attribute_length; j++)
         u1_read(atts[i].info[j], classfile);
-        memcpy(atts->att_info, atts[i].info, atts[i].attribute_length);
-      }
   }
 
   return;

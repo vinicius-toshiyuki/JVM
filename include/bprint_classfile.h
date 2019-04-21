@@ -3,10 +3,25 @@
 
 #include "breads.h"
 #include "colors.h"
+#include "attributes.h"
 #include <string.h>
 
 void bprint_classfile(ClassFile *class);
 void bprint_info(cp_info *cp, const char *prefix);
+void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char prefix[]);
+
+#define ATT_C 7
+#define ATT_M_S 20
+
+#define u2_flip(__bytes) __bytes = (__bytes << 8) | (__bytes >> 8)
+
+#define u4_flip(__bytes) \
+{ \
+  u2 __a = __bytes; u2_flip(__a); \
+  u2 __b = __bytes >> 16; u2_flip(__b); \
+  __bytes = (__a << 16) | __b; \
+}
+
 
 #define bprint_magic(__class) printf("Magic number: 0x%x\n", __class->magic)
 
@@ -94,10 +109,30 @@ void bprint_info(cp_info *cp, const char *prefix);
         i, __attributes[i].attribute_name_index, \
         __attributes[i].attribute_length \
     ); \
-    for(int j = 0; j < __attributes[i].attribute_length; j++){ \
+    /* Procurar o tipo do atributo com o name_index na constant_pool */ \
+    /* Escolher o elemento certo da union Attributes */ \
+    /* Imprimir os elementos */ \
+    /* E quando o elemento for um attribute_info? */ \
+    /* {"Code", "ConstantValue", "Deprecated", "Exceptions", "LineNumberTable", "LocalVariableTable", "SourceFile"}; */ \
+    for(int j = 0; j < __attributes[i].attribute_length; j++) \
       printf("%02x ", __attributes[i].info[j]); \
-    } \
     printf("\b\"\n"); \
+    bprint_att_info(__attributes[i].info, __attributes[i].attribute_name_index, class, __prefix "\t"); \
   } \
 }
+
+#define u1_to_Code(__code, __u1_stream) \
+{ \
+  /* u2 max_stack, u2 max_locals, u4 code_length */ \
+  memcpy(&__code, __u1_stream, 8); \
+  u2_flip(__code.max_stack); \
+  u2_flip(__code.max_locals); \
+  u4_flip(__code.code_length); \
+  /* code[code_length] */ \
+  __code.code = (u1 *) malloc(sizeof(u1) * __code.code_length); \
+  memcpy(__code.code, __u1_stream + 8, __code.code_length); \
+  /* u2 exception_table_length */ \
+  memcpy(&__code.exception_table_length, __u1_stream + 8 + __code.code_length, 2); \
+}
+
 #endif
