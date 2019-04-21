@@ -37,14 +37,14 @@ void bprint_info(cp_info *cp, const char *prefix);
     printf("\tInterface %d: %d\n", i, __class->interfaces[i]); \
 }
 
-#define bprint_fields_count(__class) printf("Fields count: %d\n", __class->fields_count)
+#define bprint_fields_count(__class) printf(BGC(211) "Fields count: %d" CLEARN, __class->fields_count)
   
 #define bprint_fields(__class) \
 { \
-  printf("Fields:\n"); \
+  printf(BGC(210) "Fields:" CLEARN); \
   for(int i = 0; i < __class->fields_count; i++){ \
     printf( \
-        "\tField %d:\n" \
+        "\t" BGC(218) "Field %d:" CLEARN \
         "\tAccess flags: 0x%04x\n" \
         "\tName index: %d\n" \
         "\tDescriptor index: %d\n" \
@@ -58,14 +58,14 @@ void bprint_info(cp_info *cp, const char *prefix);
   } \
 }
 
-#define bprint_methods_count(__class) printf("Methods count: %d\n", __class->methods_count)
+#define bprint_methods_count(__class) printf(BGC(148) "Methods count: %d" CLEARN, __class->methods_count)
 
 #define bprint_methods(__class) \
 { \
-  printf("Methods:\n"); \
+  printf(BGC(156) "Methods:" CLEARN); \
   for(int i = 0; i < __class->methods_count; i++){ \
     printf( \
-        "\tMethod %d:\n" \
+        "\t" BGC(157) "Method %d:" CLEARN \
         "\tAccess flags: 0x%04x\n" \
         "\tName index: %d\n" \
         "\tDescriptor index: %d\n" \
@@ -79,14 +79,14 @@ void bprint_info(cp_info *cp, const char *prefix);
   } \
 }
 
-#define bprint_attributes_count(__class) printf("Attributes count: %d\n", __class->attributes_count)
+#define bprint_attributes_count(__class) printf(BGC(30) "Attributes count: %d" CLEARN, __class->attributes_count)
 
 #define bprint_attributes(__attributes, __attributes_count, __prefix) \
 { \
-  printf(__prefix "Attributes:\n"); \
+  printf(__prefix BGC(38) "Attributes:" CLEARN); \
   for(int i = 0; i < __attributes_count; i++){ \
     printf( \
-        __prefix "\tAttribute %d:\n" \
+        __prefix "\t" BGC(45) "Attribute %d:" CLEARN \
         __prefix "\tAttribute name index: %d\n" \
         __prefix "\tAttribute length: %d\n" \
         __prefix "\tInfo: \"", \
@@ -98,6 +98,4 @@ void bprint_info(cp_info *cp, const char *prefix);
     printf("\b\"\n"); \
   } \
 }
-
-
 #endif
