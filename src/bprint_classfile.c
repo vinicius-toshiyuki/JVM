@@ -132,15 +132,64 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
       u1_to_ConstantValue(att_info.ConstantValue, u1_stream);
       printf("%s\tConstant value index: %d\n", prefix, att_info.ConstantValue.constantvalue_index);
       break;
-    case NUMBER_Deprecated:
+    case NUMBER_Deprecated: /* Tem nada */
       break;
     case NUMBER_Exceptions:
+      u1_to_Exceptions(att_info.Exceptions, u1_stream);
+      printf(
+          "%s\tNumber of exceptions: %d\n"
+          "%s\tException index table:\n",
+          prefix, att_info.Exceptions.number_of_exceptions, prefix
+      );
+      for(int i = 0; i < att_info.Exceptions.number_of_exceptions; i++)
+        printf(
+            "%s\t\tException %d: %d\n",
+            prefix, i, att_info.Exceptions.exception_index_table[i]
+        );
       break;
     case NUMBER_LineNumberTable:
+      u1_to_LineNumberTable(att_info.LineNumberTable, u1_stream);
+      printf(
+          "%s\tLine number table length: %d\n"
+          "%s\tLine number table:\n",
+          prefix, att_info.LineNumberTable.line_number_table_length, prefix
+      );
+      for(int i = 0; i < att_info.LineNumberTable.line_number_table_length; i++)
+        printf(
+            "%s\t\tLine number %d:\n"
+            "%s\t\tStart PC: 0x%04x\n"
+            "%s\t\tLine number: %d\n",
+            prefix, i,
+            prefix, att_info.LineNumberTable.line_number_table[i].start_pc,
+            prefix, att_info.LineNumberTable.line_number_table[i].line_number
+        );
       break;
     case NUMBER_LocalVariableTable:
+      u1_to_LocalVariableTable(att_info.LocalVariableTable, u1_stream);
+      printf(
+          "%s\tLocal variable table length: %d\n"
+          "%s\tLocal variable table:\n",
+          prefix, att_info.LocalVariableTable.local_variable_table_length, prefix
+      );
+      for(int i = 0; i < att_info.LocalVariableTable.local_variable_table_length; i++)
+        printf(
+            "%s\t\tLocal variable %d:\n"
+            "%s\t\tStart PC: 0x%04x\n"
+            "%s\t\tLength: %d\n"
+            "%s\t\tName index: %d\n"
+            "%s\t\tDescriptor index: %d\n"
+            "%s\t\tIndex: %d\n",
+            prefix, i,
+            prefix, att_info.LocalVariableTable.local_variable_table[i].start_pc,
+            prefix, att_info.LocalVariableTable.local_variable_table[i].length,
+            prefix, att_info.LocalVariableTable.local_variable_table[i].name_index,
+            prefix, att_info.LocalVariableTable.local_variable_table[i].descriptor_index,
+            prefix, att_info.LocalVariableTable.local_variable_table[i].index
+        );
       break;
     case NUMBER_SourceFile:
+      u1_to_SourceFile(att_info.SourceFile, u1_stream);
+      printf("%s\tSource file index: %d\n", prefix, att_info.SourceFile.sourcefile_index);
       break;
     default:
       break;

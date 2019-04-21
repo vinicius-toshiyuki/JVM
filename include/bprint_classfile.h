@@ -158,4 +158,50 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
 
 #define u1_to_ConstantValue(__constantvalue, __u1_stream) memcpy(&__constantvalue, __u1_stream, 2), u2_flip(__constantvalue.constantvalue_index)
 
+#define u1_to_Exceptions(__exceptions, __u1_stream) \
+{ \
+  u1 *__stream = __u1_stream; \
+  memcpy(&__exceptions.number_of_exceptions, __stream, 2), __stream += 2; \
+  u2_flip(__exceptions.number_of_exceptions); \
+  for(int i = 0; i < __exceptions.number_of_exceptions; i++){ \
+    memcpy(&__exceptions.exception_index_table[i], __stream, 2), __stream += 2; \
+    u2_flip(__exceptions.exception_index_table[i]); \
+  } \
+}
+
+#define u1_to_LineNumberTable(__linenumbertable, __u1_stream) \
+{ \
+  u1 *__stream = __u1_stream; \
+  memcpy(&__linenumbertable.line_number_table_length, __stream, 2), __stream += 2; \
+  u2_flip(__linenumbertable.line_number_table_length); \
+  __linenumbertable.line_number_table = (line_number_table_info *) malloc(sizeof(line_number_table_info) * __linenumbertable.line_number_table_length); \
+  for(int i = 0; i < __linenumbertable.line_number_table_length; i++){ \
+    memcpy(&__linenumbertable.line_number_table[i].start_pc, __stream, 2), __stream += 2; \
+    memcpy(&__linenumbertable.line_number_table[i].line_number, __stream, 2), __stream += 2; \
+    u2_flip(__linenumbertable.line_number_table[i].start_pc); \
+    u2_flip(__linenumbertable.line_number_table[i].line_number); \
+  } \
+}
+
+#define u1_to_LocalVariableTable(__localvariabletable, __u1_stream) \
+{ \
+  u1 *__stream = __u1_stream; \
+  memcpy(&__localvariabletable.local_variable_table_length, __stream, 2), __stream += 2; \
+  u2_flip(__localvariabletable.local_variable_table_length); \
+  __localvariabletable.local_variable_table = (local_variable_table_info *) malloc(sizeof(local_variable_table_info) * __localvariabletable.local_variable_table_length); \
+  for(int i = 0; i < __localvariabletable.local_variable_table_length; i++){ \
+    memcpy(&__localvariabletable.local_variable_table[i].start_pc, __stream, 2), __stream += 2; \
+    u2_flip(__localvariabletable.local_variable_table[i].start_pc); \
+    memcpy(&__localvariabletable.local_variable_table[i].length, __stream, 2), __stream += 2; \
+    u2_flip(__localvariabletable.local_variable_table[i].length); \
+    memcpy(&__localvariabletable.local_variable_table[i].name_index, __stream, 2), __stream += 2; \
+    u2_flip(__localvariabletable.local_variable_table[i].name_index); \
+    memcpy(&__localvariabletable.local_variable_table[i].descriptor_index, __stream, 2), __stream += 2; \
+    u2_flip(__localvariabletable.local_variable_table[i].descriptor_index); \
+    memcpy(&__localvariabletable.local_variable_table[i].index, __stream, 2), __stream += 2; \
+    u2_flip(__localvariabletable.local_variable_table[i].index); \
+  } \
+}
+
+#define u1_to_SourceFile(__sourcefile, __u1_stream) memcpy(&__sourcefile.sourcefile_index, __u1_stream, 2), u2_flip(__sourcefile.sourcefile_index);
 #endif
