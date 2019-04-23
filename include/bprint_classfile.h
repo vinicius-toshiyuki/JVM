@@ -116,7 +116,7 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
     /* {"Code", "ConstantValue", "Deprecated", "Exceptions", "LineNumberTable", "LocalVariableTable", "SourceFile"}; */ \
     for(int j = 0; j < __attributes[i].attribute_length; j++) \
       printf("%02x ", __attributes[i].info[j]); \
-    printf("\b\"\n"); \
+    printf("%s\n", __attributes[i].attribute_length == 0 ? "" : "\b\""); \
     bprint_att_info(__attributes[i].info, __attributes[i].attribute_name_index, class, __prefix "\t"); \
   } \
 }

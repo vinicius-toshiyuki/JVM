@@ -1,4 +1,7 @@
 #include "../include/bprint_classfile.h"
+#include "../include/mnemonic.h"
+
+extern char * opcode_to_mnemonic[0x100];
 
 void bprint_classfile(ClassFile *class){
   bprint_magic(class);
@@ -67,7 +70,6 @@ void bprint_info(cp_info *cp, const char *prefix){
   return;
 }
 
-
 void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char prefix[]){
   static char attributes_types[ATT_C][ATT_M_S] = {"Code", "ConstantValue", "Deprecated", "Exceptions", "LineNumberTable", "LocalVariableTable", "SourceFile"};
   #ifndef att_type_value_assign
@@ -100,6 +102,7 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
       for(int i = 0; i < att_info.Code.code_length; i++)
         printf("%02x ", att_info.Code.code[i]);
       printf("\b\"\n");
+      printf("%s\n", opcode_to_mnemonic[att_info.Code.code[0]]);
       printf(
           "%s\tException table length: %d\n"
           "%s\tException table:\n",
