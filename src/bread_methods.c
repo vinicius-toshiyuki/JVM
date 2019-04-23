@@ -17,12 +17,11 @@ void bread_methods(ClassFile *class, FILE *classfile){
 
     class->methods[i].attributes = (attribute_info *) malloc(sizeof(attribute_info) * class->methods[i].attributes_count);
 
-    for(int j = 0; j < class->methods[i].attributes_count; j++)
-      bread_attributes(
-          &(class->methods[i].attributes[j]),
-          class->methods[i].attributes_count,
-          classfile
-      );
+    bread_attributes(
+        class->methods[i].attributes,
+        class->methods[i].attributes_count,
+        classfile
+    );
   }
 
   return;
