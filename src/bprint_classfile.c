@@ -136,6 +136,7 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
       strcat(att_prefix, prefix);
       for(int i = 0; i < att_info.Code.attributes_count; i++)
         bprint_att_info(att_info.Code.attributes[i].info, att_info.Code.attributes[i].attribute_name_index, class, att_prefix);
+      free(att_prefix);
       break;
     case NUMBER_ConstantValue:
       u1_to_ConstantValue(att_info.ConstantValue, u1_stream);
