@@ -4,6 +4,7 @@
 #include "../include/breads.h"
 #include "../include/bprint_classfile.h"
 #include "../include/bfree_classfile.h"
+#include "../include/stack.h"
 
 int verbose = 1;
 

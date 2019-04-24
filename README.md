@@ -13,9 +13,8 @@ Reads a .class file and prints it's structure as described in Oracle's official 
 ### Run:
 	$ ./breader <class file name>
 
-test/class has two simple .class files for testing
-
 ## TODO:
-* Translate Bytecode to 'Java assembly'
+* Translate Code Attributes's code to mnemonic
 * Print correctly non-ASCII Utf8 characters
 * Documentation
+* Free memory xppp

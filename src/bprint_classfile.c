@@ -1,6 +1,8 @@
 #include "../include/bprint_classfile.h"
 #include "../include/mnemonic.h"
 
+extern int verbose;
+extern void * opcode_handlers[];
 extern char * opcode_to_mnemonic[0x100];
 
 void bprint_classfile(ClassFile *class){
@@ -71,13 +73,14 @@ void bprint_info(cp_info *cp, const char *prefix){
 }
 
 void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char prefix[]){
-  static char attributes_types[ATT_C][ATT_M_S] = {"Code", "ConstantValue", "Deprecated", "Exceptions", "LineNumberTable", "LocalVariableTable", "SourceFile"};
-  #ifndef att_type_value_assign
-  #define att_type_value_assign
+  static char attributes_types[ATT_C][ATT_M_S] = {"Code", "ConstantValue", "Deprecated", "Exceptions", "LineNumberTable", "LocalVariableTable", "SourceFile"}, att_type_value_assign = 1;
+  if(att_type_value_assign){
+    att_type_value_assign = 0;
     // A enum NUMBERS tem que estar de acordo com essa numeração
     for(int i = 0; i < ATT_C; i++)
       attributes_types[i][ATT_M_S - 1] = i;
-  #endif
+    if(verbose) printf(BGC(127) FGC(83) "%sSetting attributes array" CLEARN, prefix);
+  }
   // Busca nome do atributo com o name_index na constant_pool
   
   char str_name[ATT_M_S] = {[0 ... ATT_M_S - 1] = '\0'};
@@ -102,7 +105,10 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
       for(int i = 0; i < att_info.Code.code_length; i++)
         printf("%02x ", att_info.Code.code[i]);
       printf("\b\"\n");
-      printf("%s\n", opcode_to_mnemonic[att_info.Code.code[0]]);
+      for(int i = 0; i < att_info.Code.code_length; i++){
+        printf("%s\t" BGC(80) "0x%02x:" CLEAR " ", prefix, att_info.Code.code[i]);
+        i += ((int (*)(u1 *))(opcode_handlers[att_info.Code.code[i]]))(att_info.Code.code + i);
+      }
       printf(
           "%s\tException table length: %d\n"
           "%s\tException table:\n",

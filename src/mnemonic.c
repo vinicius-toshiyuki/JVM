@@ -416,208 +416,253 @@ void * opcode_handlers[] = {
   [0xc4] = WIDE_handler
 };
 
-void AALOAD_handler(int arg, ...){return;}
-void AASTORE_handler(int arg, ...){return;}
-void ACONST_NULL_handler(int arg, ...){return;}
-void ALOAD_handler(int arg, ...){return;}
-void ALOAD_0_handler(int arg, ...){printf("%s\n", opcode_to_mnemonic[0x2a]);return;}
-void ALOAD_1_handler(int arg, ...){return;}
-void ALOAD_2_handler(int arg, ...){return;}
-void ALOAD_3_handler(int arg, ...){return;}
-void ANEWARRAY_handler(int arg, ...){return;}
-void ARETURN_handler(int arg, ...){return;}
-void ARRAYLENGTH_handler(int arg, ...){return;}
-void ASTORE_handler(int arg, ...){return;}
-void ASTORE_0_handler(int arg, ...){return;}
-void ASTORE_1_handler(int arg, ...){return;}
-void ASTORE_2_handler(int arg, ...){return;}
-void ASTORE_3_handler(int arg, ...){return;}
-void ATHROW_handler(int arg, ...){return;}
-void BALOAD_handler(int arg, ...){return;}
-void BASTORE_handler(int arg, ...){return;}
-void BIPUSH_handler(int arg, ...){return;}
-void BREAKPOINT_handler(int arg, ...){return;}
-void CALOAD_handler(int arg, ...){return;}
-void CASTORE_handler(int arg, ...){return;}
-void CHECKCAST_handler(int arg, ...){return;}
-void D2F_handler(int arg, ...){return;}
-void D2I_handler(int arg, ...){return;}
-void D2L_handler(int arg, ...){return;}
-void DADD_handler(int arg, ...){return;}
-void DALOAD_handler(int arg, ...){return;}
-void DASTORE_handler(int arg, ...){return;}
-void DCMPG_handler(int arg, ...){return;}
-void DCMPL_handler(int arg, ...){return;}
-void DCONST_0_handler(int arg, ...){return;}
-void DCONST_1_handler(int arg, ...){return;}
-void DDIV_handler(int arg, ...){return;}
-void DLOAD_handler(int arg, ...){return;}
-void DLOAD_0_handler(int arg, ...){return;}
-void DLOAD_1_handler(int arg, ...){return;}
-void DLOAD_2_handler(int arg, ...){return;}
-void DLOAD_3_handler(int arg, ...){return;}
-void DMUL_handler(int arg, ...){return;}
-void DNEG_handler(int arg, ...){return;}
-void DREM_handler(int arg, ...){return;}
-void DRETURN_handler(int arg, ...){return;}
-void DSTORE_handler(int arg, ...){return;}
-void DSTORE_0_handler(int arg, ...){return;}
-void DSTORE_1_handler(int arg, ...){return;}
-void DSTORE_2_handler(int arg, ...){return;}
-void DSTORE_3_handler(int arg, ...){return;}
-void DSUB_handler(int arg, ...){return;}
-void DUP_handler(int arg, ...){return;}
-void DUP_X1_handler(int arg, ...){return;}
-void DUP_X2_handler(int arg, ...){return;}
-void DUP2_handler(int arg, ...){return;}
-void DUP2_X1_handler(int arg, ...){return;}
-void DUP2_X2_handler(int arg, ...){return;}
-void F2D_handler(int arg, ...){return;}
-void F2I_handler(int arg, ...){return;}
-void F2L_handler(int arg, ...){return;}
-void FADD_handler(int arg, ...){return;}
-void FALOAD_handler(int arg, ...){return;}
-void FASTORE_handler(int arg, ...){return;}
-void FCMPG_handler(int arg, ...){return;}
-void FCMPL_handler(int arg, ...){return;}
-void FCONST_0_handler(int arg, ...){return;}
-void FCONST_1_handler(int arg, ...){return;}
-void FCONST_2_handler(int arg, ...){return;}
-void FDIV_handler(int arg, ...){return;}
-void FLOAD_handler(int arg, ...){return;}
-void FLOAD_0_handler(int arg, ...){return;}
-void FLOAD_1_handler(int arg, ...){return;}
-void FLOAD_2_handler(int arg, ...){return;}
-void FLOAD_3_handler(int arg, ...){return;}
-void FMUL_handler(int arg, ...){return;}
-void FNEG_handler(int arg, ...){return;}
-void FREM_handler(int arg, ...){return;}
-void FRETURN_handler(int arg, ...){return;}
-void FSTORE_handler(int arg, ...){return;}
-void FSTORE_0_handler(int arg, ...){return;}
-void FSTORE_1_handler(int arg, ...){return;}
-void FSTORE_2_handler(int arg, ...){return;}
-void FSTORE_3_handler(int arg, ...){return;}
-void FSUB_handler(int arg, ...){return;}
-void GETFIELD_handler(int arg, ...){return;}
-void GETSTATIC_handler(int arg, ...){return;}
-void GOTO_handler(int arg, ...){return;}
-void GOTO_W_handler(int arg, ...){return;}
-void I2B_handler(int arg, ...){return;}
-void I2C_handler(int arg, ...){return;}
-void I2D_handler(int arg, ...){return;}
-void I2F_handler(int arg, ...){return;}
-void I2L_handler(int arg, ...){return;}
-void I2S_handler(int arg, ...){return;}
-void IADD_handler(int arg, ...){return;}
-void IALOAD_handler(int arg, ...){return;}
-void IAND_handler(int arg, ...){return;}
-void IASTORE_handler(int arg, ...){return;}
-void ICONST_M1_handler(int arg, ...){return;}
-void ICONST_0_handler(int arg, ...){return;}
-void ICONST_1_handler(int arg, ...){return;}
-void ICONST_2_handler(int arg, ...){return;}
-void ICONST_3_handler(int arg, ...){return;}
-void ICONST_4_handler(int arg, ...){return;}
-void ICONST_5_handler(int arg, ...){return;}
-void IDIV_handler(int arg, ...){return;}
-void IF_ACMPEQ_handler(int arg, ...){return;}
-void IF_ACMPNE_handler(int arg, ...){return;}
-void IF_ICMPEQ_handler(int arg, ...){return;}
-void IF_ICMPGE_handler(int arg, ...){return;}
-void IF_ICMPGT_handler(int arg, ...){return;}
-void IF_ICMPLE_handler(int arg, ...){return;}
-void IF_ICMPLT_handler(int arg, ...){return;}
-void IF_ICMPNE_handler(int arg, ...){return;}
-void IFEQ_handler(int arg, ...){return;}
-void IFGE_handler(int arg, ...){return;}
-void IFGT_handler(int arg, ...){return;}
-void IFLE_handler(int arg, ...){return;}
-void IFLT_handler(int arg, ...){return;}
-void IFNE_handler(int arg, ...){return;}
-void IFNONNULL_handler(int arg, ...){return;}
-void IFNULL_handler(int arg, ...){return;}
-void IINC_handler(int arg, ...){return;}
-void ILOAD_handler(int arg, ...){return;}
-void ILOAD_0_handler(int arg, ...){return;}
-void ILOAD_1_handler(int arg, ...){return;}
-void ILOAD_2_handler(int arg, ...){return;}
-void ILOAD_3_handler(int arg, ...){return;}
-void IMPDEP1_handler(int arg, ...){return;}
-void IMPDEP2_handler(int arg, ...){return;}
-void IMUL_handler(int arg, ...){return;}
-void INEG_handler(int arg, ...){return;}
-void INSTANCEOF_handler(int arg, ...){return;}
-void INVOKEDYNAMIC_handler(int arg, ...){return;}
-void INVOKEINTERFACE_handler(int arg, ...){return;}
-void INVOKESPECIAL_handler(int arg, ...){return;}
-void INVOKESTATIC_handler(int arg, ...){return;}
-void INVOKEVIRTUAL_handler(int arg, ...){return;}
-void IOR_handler(int arg, ...){return;}
-void IREM_handler(int arg, ...){return;}
-void IRETURN_handler(int arg, ...){return;}
-void ISHL_handler(int arg, ...){return;}
-void ISHR_handler(int arg, ...){return;}
-void ISTORE_handler(int arg, ...){return;}
-void ISTORE_0_handler(int arg, ...){return;}
-void ISTORE_1_handler(int arg, ...){return;}
-void ISTORE_2_handler(int arg, ...){return;}
-void ISTORE_3_handler(int arg, ...){return;}
-void ISUB_handler(int arg, ...){return;}
-void IUSHR_handler(int arg, ...){return;}
-void IXOR_handler(int arg, ...){return;}
-void JSR_handler(int arg, ...){return;}
-void JSR_W_handler(int arg, ...){return;}
-void L2D_handler(int arg, ...){return;}
-void L2F_handler(int arg, ...){return;}
-void L2I_handler(int arg, ...){return;}
-void LADD_handler(int arg, ...){return;}
-void LALOAD_handler(int arg, ...){return;}
-void LAND_handler(int arg, ...){return;}
-void LASTORE_handler(int arg, ...){return;}
-void LCMP_handler(int arg, ...){return;}
-void LCONST_0_handler(int arg, ...){return;}
-void LCONST_1_handler(int arg, ...){return;}
-void LDC_handler(int arg, ...){return;}
-void LDC_W_handler(int arg, ...){return;}
-void LDC2_W_handler(int arg, ...){return;}
-void LDIV_handler(int arg, ...){return;}
-void LLOAD_handler(int arg, ...){return;}
-void LLOAD_0_handler(int arg, ...){return;}
-void LLOAD_1_handler(int arg, ...){return;}
-void LLOAD_2_handler(int arg, ...){return;}
-void LLOAD_3_handler(int arg, ...){return;}
-void LMUL_handler(int arg, ...){return;}
-void LNEG_handler(int arg, ...){return;}
-void LOOKUPSWITCH_handler(int arg, ...){return;}
-void LOR_handler(int arg, ...){return;}
-void LREM_handler(int arg, ...){return;}
-void LRETURN_handler(int arg, ...){return;}
-void LSHL_handler(int arg, ...){return;}
-void LSHR_handler(int arg, ...){return;}
-void LSTORE_handler(int arg, ...){return;}
-void LSTORE_0_handler(int arg, ...){return;}
-void LSTORE_1_handler(int arg, ...){return;}
-void LSTORE_2_handler(int arg, ...){return;}
-void LSTORE_3_handler(int arg, ...){return;}
-void LSUB_handler(int arg, ...){return;}
-void LUSHR_handler(int arg, ...){return;}
-void LXOR_handler(int arg, ...){return;}
-void MONITORENTER_handler(int arg, ...){return;}
-void MONITOREXIT_handler(int arg, ...){return;}
-void MULTIANEWARRAY_handler(int arg, ...){return;}
-void NEW_handler(int arg, ...){return;}
-void NEWARRAY_handler(int arg, ...){return;}
-void NOP_handler(int arg, ...){return;}
-void POP_handler(int arg, ...){return;}
-void POP2_handler(int arg, ...){return;}
-void PUTFIELD_handler(int arg, ...){return;}
-void PUTSTATIC_handler(int arg, ...){return;}
-void RET_handler(int arg, ...){return;}
-void RETURN_handler(int arg, ...){return;}
-void SALOAD_handler(int arg, ...){return;}
-void SASTORE_handler(int arg, ...){return;}
-void SIPUSH_handler(int arg, ...){return;}
-void SWAP_handler(int arg, ...){return;}
-void TABLESWITCH_handler(int arg, ...){return;}
-void WIDE_handler(int arg, ...){return;}
+int AALOAD_handler(u1 *bytestream){return 0;}
+int AASTORE_handler(u1 *bytestream){return 0;}
+int ACONST_NULL_handler(u1 *bytestream){return 0;}
+int ALOAD_handler(u1 *bytestream){return 0;}
+int ALOAD_0_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int ALOAD_1_handler(u1 *bytestream){return 0;}
+int ALOAD_2_handler(u1 *bytestream){return 0;}
+int ALOAD_3_handler(u1 *bytestream){return 0;}
+int ANEWARRAY_handler(u1 *bytestream){return 0;}
+int ARETURN_handler(u1 *bytestream){return 0;}
+int ARRAYLENGTH_handler(u1 *bytestream){return 0;}
+int ASTORE_handler(u1 *bytestream){return 0;}
+int ASTORE_0_handler(u1 *bytestream){return 0;}
+int ASTORE_1_handler(u1 *bytestream){return 0;}
+int ASTORE_2_handler(u1 *bytestream){return 0;}
+int ASTORE_3_handler(u1 *bytestream){return 0;}
+int ATHROW_handler(u1 *bytestream){return 0;}
+int BALOAD_handler(u1 *bytestream){return 0;}
+int BASTORE_handler(u1 *bytestream){return 0;}
+int BIPUSH_handler(u1 *bytestream){
+  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
+  return 1;
+}
+int BREAKPOINT_handler(u1 *bytestream){return 0;}
+int CALOAD_handler(u1 *bytestream){return 0;}
+int CASTORE_handler(u1 *bytestream){return 0;}
+int CHECKCAST_handler(u1 *bytestream){return 0;}
+int D2F_handler(u1 *bytestream){return 0;}
+int D2I_handler(u1 *bytestream){return 0;}
+int D2L_handler(u1 *bytestream){return 0;}
+int DADD_handler(u1 *bytestream){return 0;}
+int DALOAD_handler(u1 *bytestream){return 0;}
+int DASTORE_handler(u1 *bytestream){return 0;}
+int DCMPG_handler(u1 *bytestream){return 0;}
+int DCMPL_handler(u1 *bytestream){return 0;}
+int DCONST_0_handler(u1 *bytestream){return 0;}
+int DCONST_1_handler(u1 *bytestream){return 0;}
+int DDIV_handler(u1 *bytestream){return 0;}
+int DLOAD_handler(u1 *bytestream){return 0;}
+int DLOAD_0_handler(u1 *bytestream){return 0;}
+int DLOAD_1_handler(u1 *bytestream){return 0;}
+int DLOAD_2_handler(u1 *bytestream){return 0;}
+int DLOAD_3_handler(u1 *bytestream){return 0;}
+int DMUL_handler(u1 *bytestream){return 0;}
+int DNEG_handler(u1 *bytestream){return 0;}
+int DREM_handler(u1 *bytestream){return 0;}
+int DRETURN_handler(u1 *bytestream){return 0;}
+int DSTORE_handler(u1 *bytestream){return 0;}
+int DSTORE_0_handler(u1 *bytestream){return 0;}
+int DSTORE_1_handler(u1 *bytestream){return 0;}
+int DSTORE_2_handler(u1 *bytestream){return 0;}
+int DSTORE_3_handler(u1 *bytestream){return 0;}
+int DSUB_handler(u1 *bytestream){return 0;}
+int DUP_handler(u1 *bytestream){return 0;}
+int DUP_X1_handler(u1 *bytestream){return 0;}
+int DUP_X2_handler(u1 *bytestream){return 0;}
+int DUP2_handler(u1 *bytestream){return 0;}
+int DUP2_X1_handler(u1 *bytestream){return 0;}
+int DUP2_X2_handler(u1 *bytestream){return 0;}
+int F2D_handler(u1 *bytestream){return 0;}
+int F2I_handler(u1 *bytestream){return 0;}
+int F2L_handler(u1 *bytestream){return 0;}
+int FADD_handler(u1 *bytestream){return 0;}
+int FALOAD_handler(u1 *bytestream){return 0;}
+int FASTORE_handler(u1 *bytestream){return 0;}
+int FCMPG_handler(u1 *bytestream){return 0;}
+int FCMPL_handler(u1 *bytestream){return 0;}
+int FCONST_0_handler(u1 *bytestream){return 0;}
+int FCONST_1_handler(u1 *bytestream){return 0;}
+int FCONST_2_handler(u1 *bytestream){return 0;}
+int FDIV_handler(u1 *bytestream){return 0;}
+int FLOAD_handler(u1 *bytestream){return 0;}
+int FLOAD_0_handler(u1 *bytestream){return 0;}
+int FLOAD_1_handler(u1 *bytestream){return 0;}
+int FLOAD_2_handler(u1 *bytestream){return 0;}
+int FLOAD_3_handler(u1 *bytestream){return 0;}
+int FMUL_handler(u1 *bytestream){return 0;}
+int FNEG_handler(u1 *bytestream){return 0;}
+int FREM_handler(u1 *bytestream){return 0;}
+int FRETURN_handler(u1 *bytestream){return 0;}
+int FSTORE_handler(u1 *bytestream){return 0;}
+int FSTORE_0_handler(u1 *bytestream){return 0;}
+int FSTORE_1_handler(u1 *bytestream){return 0;}
+int FSTORE_2_handler(u1 *bytestream){return 0;}
+int FSTORE_3_handler(u1 *bytestream){return 0;}
+int FSUB_handler(u1 *bytestream){return 0;}
+int GETFIELD_handler(u1 *bytestream){return 0;}
+int GETSTATIC_handler(u1 *bytestream){return 0;}
+int GOTO_handler(u1 *bytestream){return 0;}
+int GOTO_W_handler(u1 *bytestream){return 0;}
+int I2B_handler(u1 *bytestream){return 0;}
+int I2C_handler(u1 *bytestream){return 0;}
+int I2D_handler(u1 *bytestream){return 0;}
+int I2F_handler(u1 *bytestream){return 0;}
+int I2L_handler(u1 *bytestream){return 0;}
+int I2S_handler(u1 *bytestream){return 0;}
+int IADD_handler(u1 *bytestream){return 0;}
+int IALOAD_handler(u1 *bytestream){return 0;}
+int IAND_handler(u1 *bytestream){return 0;}
+int IASTORE_handler(u1 *bytestream){return 0;}
+int ICONST_M1_handler(u1 *bytestream){return 0;}
+int ICONST_0_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int ICONST_1_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int ICONST_2_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int ICONST_3_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int ICONST_4_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int ICONST_5_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int IDIV_handler(u1 *bytestream){return 0;}
+int IF_ACMPEQ_handler(u1 *bytestream){return 0;}
+int IF_ACMPNE_handler(u1 *bytestream){return 0;}
+int IF_ICMPEQ_handler(u1 *bytestream){return 0;}
+int IF_ICMPGE_handler(u1 *bytestream){return 0;}
+int IF_ICMPGT_handler(u1 *bytestream){return 0;}
+int IF_ICMPLE_handler(u1 *bytestream){return 0;}
+int IF_ICMPLT_handler(u1 *bytestream){return 0;}
+int IF_ICMPNE_handler(u1 *bytestream){return 0;}
+int IFEQ_handler(u1 *bytestream){return 0;}
+int IFGE_handler(u1 *bytestream){return 0;}
+int IFGT_handler(u1 *bytestream){return 0;}
+int IFLE_handler(u1 *bytestream){return 0;}
+int IFLT_handler(u1 *bytestream){return 0;}
+int IFNE_handler(u1 *bytestream){return 0;}
+int IFNONNULL_handler(u1 *bytestream){return 0;}
+int IFNULL_handler(u1 *bytestream){return 0;}
+int IINC_handler(u1 *bytestream){return 0;}
+int ILOAD_handler(u1 *bytestream){return 0;}
+int ILOAD_0_handler(u1 *bytestream){return 0;}
+int ILOAD_1_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int ILOAD_2_handler(u1 *bytestream){return 0;}
+int ILOAD_3_handler(u1 *bytestream){return 0;}
+int IMPDEP1_handler(u1 *bytestream){return 0;}
+int IMPDEP2_handler(u1 *bytestream){return 0;}
+int IMUL_handler(u1 *bytestream){return 0;}
+int INEG_handler(u1 *bytestream){return 0;}
+int INSTANCEOF_handler(u1 *bytestream){return 0;}
+int INVOKEDYNAMIC_handler(u1 *bytestream){return 0;}
+int INVOKEINTERFACE_handler(u1 *bytestream){return 0;}
+int INVOKESPECIAL_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 2; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\n");
+  return 2;
+}
+int INVOKESTATIC_handler(u1 *bytestream){return 0;}
+int INVOKEVIRTUAL_handler(u1 *bytestream){return 0;}
+int IOR_handler(u1 *bytestream){return 0;}
+int IREM_handler(u1 *bytestream){return 0;}
+int IRETURN_handler(u1 *bytestream){return 0;}
+int ISHL_handler(u1 *bytestream){return 0;}
+int ISHR_handler(u1 *bytestream){return 0;}
+int ISTORE_handler(u1 *bytestream){return 0;}
+int ISTORE_0_handler(u1 *bytestream){return 0;}
+int ISTORE_1_handler(u1 *bytestream){return 0;}
+int ISTORE_2_handler(u1 *bytestream){return 0;}
+int ISTORE_3_handler(u1 *bytestream){return 0;}
+int ISUB_handler(u1 *bytestream){return 0;}
+int IUSHR_handler(u1 *bytestream){return 0;}
+int IXOR_handler(u1 *bytestream){return 0;}
+int JSR_handler(u1 *bytestream){return 0;}
+int JSR_W_handler(u1 *bytestream){return 0;}
+int L2D_handler(u1 *bytestream){return 0;}
+int L2F_handler(u1 *bytestream){return 0;}
+int L2I_handler(u1 *bytestream){return 0;}
+int LADD_handler(u1 *bytestream){return 0;}
+int LALOAD_handler(u1 *bytestream){return 0;}
+int LAND_handler(u1 *bytestream){return 0;}
+int LASTORE_handler(u1 *bytestream){return 0;}
+int LCMP_handler(u1 *bytestream){return 0;}
+int LCONST_0_handler(u1 *bytestream){return 0;}
+int LCONST_1_handler(u1 *bytestream){return 0;}
+int LDC_handler(u1 *bytestream){
+  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
+  return 1;
+}
+int LDC_W_handler(u1 *bytestream){return 0;}
+int LDC2_W_handler(u1 *bytestream){return 0;}
+int LDIV_handler(u1 *bytestream){return 0;}
+int LLOAD_handler(u1 *bytestream){return 0;}
+int LLOAD_0_handler(u1 *bytestream){return 0;}
+int LLOAD_1_handler(u1 *bytestream){return 0;}
+int LLOAD_2_handler(u1 *bytestream){return 0;}
+int LLOAD_3_handler(u1 *bytestream){return 0;}
+int LMUL_handler(u1 *bytestream){return 0;}
+int LNEG_handler(u1 *bytestream){return 0;}
+int LOOKUPSWITCH_handler(u1 *bytestream){return 0;}
+int LOR_handler(u1 *bytestream){return 0;}
+int LREM_handler(u1 *bytestream){return 0;}
+int LRETURN_handler(u1 *bytestream){return 0;}
+int LSHL_handler(u1 *bytestream){return 0;}
+int LSHR_handler(u1 *bytestream){return 0;}
+int LSTORE_handler(u1 *bytestream){return 0;}
+int LSTORE_0_handler(u1 *bytestream){return 0;}
+int LSTORE_1_handler(u1 *bytestream){return 0;}
+int LSTORE_2_handler(u1 *bytestream){return 0;}
+int LSTORE_3_handler(u1 *bytestream){return 0;}
+int LSUB_handler(u1 *bytestream){return 0;}
+int LUSHR_handler(u1 *bytestream){return 0;}
+int LXOR_handler(u1 *bytestream){return 0;}
+int MONITORENTER_handler(u1 *bytestream){return 0;}
+int MONITOREXIT_handler(u1 *bytestream){return 0;}
+int MULTIANEWARRAY_handler(u1 *bytestream){return 0;}
+int NEW_handler(u1 *bytestream){return 0;}
+int NEWARRAY_handler(u1 *bytestream){return 0;}
+int NOP_handler(u1 *bytestream){return 0;}
+int POP_handler(u1 *bytestream){return 0;}
+int POP2_handler(u1 *bytestream){return 0;}
+int PUTFIELD_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 2; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\n");
+  return 2;
+}
+int PUTSTATIC_handler(u1 *bytestream){return 0;}
+int RET_handler(u1 *bytestream){return 0;}
+int RETURN_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int SALOAD_handler(u1 *bytestream){return 0;}
+int SASTORE_handler(u1 *bytestream){return 0;}
+int SIPUSH_handler(u1 *bytestream){return 0;}
+int SWAP_handler(u1 *bytestream){return 0;}
+int TABLESWITCH_handler(u1 *bytestream){return 0;}
+int WIDE_handler(u1 *bytestream){return 0;}
