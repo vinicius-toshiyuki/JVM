@@ -416,110 +416,417 @@ void * opcode_handlers[] = {
   [0xc4] = WIDE_handler
 };
 
-int AALOAD_handler(u1 *bytestream){return 0;}
-int AASTORE_handler(u1 *bytestream){return 0;}
-int ACONST_NULL_handler(u1 *bytestream){return 0;}
-int ALOAD_handler(u1 *bytestream){return 0;}
+int AALOAD_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int AASTORE_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int ACONST_NULL_handler(u1 *bytestream){
+  /* Push a NULL reference */
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int ALOAD_handler(u1 *bytestream){
+  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
+  return 1;
+}
 int ALOAD_0_handler(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int ALOAD_1_handler(u1 *bytestream){return 0;}
-int ALOAD_2_handler(u1 *bytestream){return 0;}
-int ALOAD_3_handler(u1 *bytestream){return 0;}
-int ANEWARRAY_handler(u1 *bytestream){return 0;}
-int ARETURN_handler(u1 *bytestream){return 0;}
-int ARRAYLENGTH_handler(u1 *bytestream){return 0;}
-int ASTORE_handler(u1 *bytestream){return 0;}
-int ASTORE_0_handler(u1 *bytestream){return 0;}
-int ASTORE_1_handler(u1 *bytestream){return 0;}
-int ASTORE_2_handler(u1 *bytestream){return 0;}
-int ASTORE_3_handler(u1 *bytestream){return 0;}
-int ATHROW_handler(u1 *bytestream){return 0;}
-int BALOAD_handler(u1 *bytestream){return 0;}
-int BASTORE_handler(u1 *bytestream){return 0;}
+int ALOAD_1_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int ALOAD_2_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int ALOAD_3_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int ANEWARRAY_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 2; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\b\n");
+  return 2;
+}
+int ARETURN_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int ARRAYLENGTH_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int ASTORE_handler(u1 *bytestream){
+  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
+  return 1;
+}
+int ASTORE_0_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int ASTORE_1_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int ASTORE_2_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int ASTORE_3_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int ATHROW_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int BALOAD_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int BASTORE_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
 int BIPUSH_handler(u1 *bytestream){
   printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
   return 1;
 }
-int BREAKPOINT_handler(u1 *bytestream){return 0;}
-int CALOAD_handler(u1 *bytestream){return 0;}
-int CASTORE_handler(u1 *bytestream){return 0;}
-int CHECKCAST_handler(u1 *bytestream){return 0;}
-int D2F_handler(u1 *bytestream){return 0;}
-int D2I_handler(u1 *bytestream){return 0;}
-int D2L_handler(u1 *bytestream){return 0;}
-int DADD_handler(u1 *bytestream){return 0;}
-int DALOAD_handler(u1 *bytestream){return 0;}
-int DASTORE_handler(u1 *bytestream){return 0;}
-int DCMPG_handler(u1 *bytestream){return 0;}
-int DCMPL_handler(u1 *bytestream){return 0;}
-int DCONST_0_handler(u1 *bytestream){return 0;}
-int DCONST_1_handler(u1 *bytestream){return 0;}
-int DDIV_handler(u1 *bytestream){return 0;}
-int DLOAD_handler(u1 *bytestream){return 0;}
-int DLOAD_0_handler(u1 *bytestream){return 0;}
-int DLOAD_1_handler(u1 *bytestream){return 0;}
-int DLOAD_2_handler(u1 *bytestream){return 0;}
-int DLOAD_3_handler(u1 *bytestream){return 0;}
-int DMUL_handler(u1 *bytestream){return 0;}
-int DNEG_handler(u1 *bytestream){return 0;}
-int DREM_handler(u1 *bytestream){return 0;}
-int DRETURN_handler(u1 *bytestream){return 0;}
-int DSTORE_handler(u1 *bytestream){return 0;}
-int DSTORE_0_handler(u1 *bytestream){return 0;}
-int DSTORE_1_handler(u1 *bytestream){return 0;}
-int DSTORE_2_handler(u1 *bytestream){return 0;}
-int DSTORE_3_handler(u1 *bytestream){return 0;}
-int DSUB_handler(u1 *bytestream){return 0;}
-int DUP_handler(u1 *bytestream){return 0;}
-int DUP_X1_handler(u1 *bytestream){return 0;}
-int DUP_X2_handler(u1 *bytestream){return 0;}
-int DUP2_handler(u1 *bytestream){return 0;}
-int DUP2_X1_handler(u1 *bytestream){return 0;}
-int DUP2_X2_handler(u1 *bytestream){return 0;}
-int F2D_handler(u1 *bytestream){return 0;}
-int F2I_handler(u1 *bytestream){return 0;}
-int F2L_handler(u1 *bytestream){return 0;}
-int FADD_handler(u1 *bytestream){return 0;}
-int FALOAD_handler(u1 *bytestream){return 0;}
-int FASTORE_handler(u1 *bytestream){return 0;}
-int FCMPG_handler(u1 *bytestream){return 0;}
-int FCMPL_handler(u1 *bytestream){return 0;}
-int FCONST_0_handler(u1 *bytestream){return 0;}
-int FCONST_1_handler(u1 *bytestream){return 0;}
-int FCONST_2_handler(u1 *bytestream){return 0;}
-int FDIV_handler(u1 *bytestream){return 0;}
-int FLOAD_handler(u1 *bytestream){return 0;}
-int FLOAD_0_handler(u1 *bytestream){return 0;}
-int FLOAD_1_handler(u1 *bytestream){return 0;}
-int FLOAD_2_handler(u1 *bytestream){return 0;}
-int FLOAD_3_handler(u1 *bytestream){return 0;}
-int FMUL_handler(u1 *bytestream){return 0;}
-int FNEG_handler(u1 *bytestream){return 0;}
-int FREM_handler(u1 *bytestream){return 0;}
-int FRETURN_handler(u1 *bytestream){return 0;}
-int FSTORE_handler(u1 *bytestream){return 0;}
-int FSTORE_0_handler(u1 *bytestream){return 0;}
-int FSTORE_1_handler(u1 *bytestream){return 0;}
-int FSTORE_2_handler(u1 *bytestream){return 0;}
-int FSTORE_3_handler(u1 *bytestream){return 0;}
-int FSUB_handler(u1 *bytestream){return 0;}
-int GETFIELD_handler(u1 *bytestream){return 0;}
-int GETSTATIC_handler(u1 *bytestream){return 0;}
-int GOTO_handler(u1 *bytestream){return 0;}
-int GOTO_W_handler(u1 *bytestream){return 0;}
-int I2B_handler(u1 *bytestream){return 0;}
-int I2C_handler(u1 *bytestream){return 0;}
-int I2D_handler(u1 *bytestream){return 0;}
-int I2F_handler(u1 *bytestream){return 0;}
-int I2L_handler(u1 *bytestream){return 0;}
-int I2S_handler(u1 *bytestream){return 0;}
-int IADD_handler(u1 *bytestream){return 0;}
-int IALOAD_handler(u1 *bytestream){return 0;}
-int IAND_handler(u1 *bytestream){return 0;}
-int IASTORE_handler(u1 *bytestream){return 0;}
-int ICONST_M1_handler(u1 *bytestream){return 0;}
+int BREAKPOINT_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int CALOAD_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int CASTORE_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int CHECKCAST_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 2; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\n");
+  return 2;
+}
+int D2F_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int D2I_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int D2L_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int DADD_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int DALOAD_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int DASTORE_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int DCMPG_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int DCMPL_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int DCONST_0_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int DCONST_1_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int DDIV_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int DLOAD_handler(u1 *bytestream){
+  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
+  return 1;
+}
+int DLOAD_0_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int DLOAD_1_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int DLOAD_2_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int DLOAD_3_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int DMUL_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int DNEG_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int DREM_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int DRETURN_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int DSTORE_handler(u1 *bytestream){
+  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
+  return 1;
+}
+int DSTORE_0_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int DSTORE_1_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int DSTORE_2_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int DSTORE_3_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int DSUB_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int DUP_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int DUP_X1_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int DUP_X2_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int DUP2_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int DUP2_X1_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int DUP2_X2_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int F2D_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int F2I_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int F2L_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int FADD_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int FALOAD_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int FASTORE_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int FCMPG_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int FCMPL_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int FCONST_0_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int FCONST_1_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int FCONST_2_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int FDIV_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int FLOAD_handler(u1 *bytestream){
+  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
+  return 1;
+}
+int FLOAD_0_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int FLOAD_1_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int FLOAD_2_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int FLOAD_3_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int FMUL_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int FNEG_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int FREM_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int FRETURN_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int FSTORE_handler(u1 *bytestream){
+  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
+  return 1;
+}
+int FSTORE_0_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int FSTORE_1_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int FSTORE_2_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int FSTORE_3_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int FSUB_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int GETFIELD_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 2; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\b\n");
+  return 2;
+}
+int GETSTATIC_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 2; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\b\n");
+  return 2;
+}
+int GOTO_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 2; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\b\n");
+  return 2;
+}
+int GOTO_W_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 4; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\b\n");
+  return 4;
+}
+int I2B_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int I2C_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int I2D_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int I2F_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int I2L_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int I2S_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int IADD_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int IALOAD_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int IAND_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int IASTORE_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int ICONST_M1_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
 int ICONST_0_handler(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
@@ -544,39 +851,186 @@ int ICONST_5_handler(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int IDIV_handler(u1 *bytestream){return 0;}
-int IF_ACMPEQ_handler(u1 *bytestream){return 0;}
-int IF_ACMPNE_handler(u1 *bytestream){return 0;}
-int IF_ICMPEQ_handler(u1 *bytestream){return 0;}
-int IF_ICMPGE_handler(u1 *bytestream){return 0;}
-int IF_ICMPGT_handler(u1 *bytestream){return 0;}
-int IF_ICMPLE_handler(u1 *bytestream){return 0;}
-int IF_ICMPLT_handler(u1 *bytestream){return 0;}
-int IF_ICMPNE_handler(u1 *bytestream){return 0;}
-int IFEQ_handler(u1 *bytestream){return 0;}
-int IFGE_handler(u1 *bytestream){return 0;}
-int IFGT_handler(u1 *bytestream){return 0;}
-int IFLE_handler(u1 *bytestream){return 0;}
-int IFLT_handler(u1 *bytestream){return 0;}
-int IFNE_handler(u1 *bytestream){return 0;}
-int IFNONNULL_handler(u1 *bytestream){return 0;}
-int IFNULL_handler(u1 *bytestream){return 0;}
-int IINC_handler(u1 *bytestream){return 0;}
-int ILOAD_handler(u1 *bytestream){return 0;}
-int ILOAD_0_handler(u1 *bytestream){return 0;}
+int IDIV_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int IF_ACMPEQ_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 2; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\b\n");
+  return 2;
+}
+int IF_ACMPNE_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 2; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\b\n");
+  return 2;
+}
+int IF_ICMPEQ_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 2; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\b\n");
+  return 2;
+}
+int IF_ICMPGE_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 2; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\b\n");
+  return 2;
+}
+int IF_ICMPGT_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 2; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\b\n");
+  return 2;
+}
+int IF_ICMPLE_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 2; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\b\n");
+  return 2;
+}
+int IF_ICMPLT_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 2; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\b\n");
+  return 2;
+}
+int IF_ICMPNE_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 2; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\b\n");
+  return 2;
+}
+int IFEQ_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 2; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\b\n");
+  return 2;
+}
+int IFGE_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 2; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\b\n");
+  return 2;
+}
+int IFGT_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 2; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\b\n");
+  return 2;
+}
+int IFLE_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 2; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\b\n");
+  return 2;
+}
+int IFLT_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 2; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\b\n");
+  return 2;
+}
+int IFNE_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 2; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\b\n");
+  return 2;
+}
+int IFNONNULL_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 2; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\b\n");
+  return 2;
+}
+int IFNULL_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 2; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\b\n");
+  return 2;
+}
+int IINC_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 2; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\b\n");
+  return 2;
+}
+int ILOAD_handler(u1 *bytestream){
+  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
+  return 1;
+}
+int ILOAD_0_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
 int ILOAD_1_handler(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int ILOAD_2_handler(u1 *bytestream){return 0;}
-int ILOAD_3_handler(u1 *bytestream){return 0;}
-int IMPDEP1_handler(u1 *bytestream){return 0;}
-int IMPDEP2_handler(u1 *bytestream){return 0;}
-int IMUL_handler(u1 *bytestream){return 0;}
-int INEG_handler(u1 *bytestream){return 0;}
-int INSTANCEOF_handler(u1 *bytestream){return 0;}
-int INVOKEDYNAMIC_handler(u1 *bytestream){return 0;}
-int INVOKEINTERFACE_handler(u1 *bytestream){return 0;}
+int ILOAD_2_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int ILOAD_3_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int IMPDEP1_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int IMPDEP2_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int IMUL_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int INEG_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int INSTANCEOF_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 2; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\b\n");
+  return 2;
+}
+int INVOKEDYNAMIC_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 4; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\b\n");
+  return 4;
+}
+int INVOKEINTERFACE_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 4; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\b\n");
+  return 4;
+}
 int INVOKESPECIAL_handler(u1 *bytestream){
   printf("%s ", opcode_to_mnemonic[bytestream[0]]);
   for(int i = 0; i < 2; i++)
@@ -584,47 +1038,176 @@ int INVOKESPECIAL_handler(u1 *bytestream){
   printf("\n");
   return 2;
 }
-int INVOKESTATIC_handler(u1 *bytestream){return 0;}
-int INVOKEVIRTUAL_handler(u1 *bytestream){return 0;}
-int IOR_handler(u1 *bytestream){return 0;}
-int IREM_handler(u1 *bytestream){return 0;}
-int IRETURN_handler(u1 *bytestream){return 0;}
-int ISHL_handler(u1 *bytestream){return 0;}
-int ISHR_handler(u1 *bytestream){return 0;}
-int ISTORE_handler(u1 *bytestream){return 0;}
-int ISTORE_0_handler(u1 *bytestream){return 0;}
-int ISTORE_1_handler(u1 *bytestream){return 0;}
-int ISTORE_2_handler(u1 *bytestream){return 0;}
-int ISTORE_3_handler(u1 *bytestream){return 0;}
-int ISUB_handler(u1 *bytestream){return 0;}
-int IUSHR_handler(u1 *bytestream){return 0;}
-int IXOR_handler(u1 *bytestream){return 0;}
-int JSR_handler(u1 *bytestream){return 0;}
-int JSR_W_handler(u1 *bytestream){return 0;}
-int L2D_handler(u1 *bytestream){return 0;}
-int L2F_handler(u1 *bytestream){return 0;}
-int L2I_handler(u1 *bytestream){return 0;}
-int LADD_handler(u1 *bytestream){return 0;}
-int LALOAD_handler(u1 *bytestream){return 0;}
-int LAND_handler(u1 *bytestream){return 0;}
-int LASTORE_handler(u1 *bytestream){return 0;}
-int LCMP_handler(u1 *bytestream){return 0;}
-int LCONST_0_handler(u1 *bytestream){return 0;}
-int LCONST_1_handler(u1 *bytestream){return 0;}
+int INVOKESTATIC_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 2; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\b\n");
+  return 2;
+}
+int INVOKEVIRTUAL_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 2; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\b\n");
+  return 2;
+}
+int IOR_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int IREM_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int IRETURN_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int ISHL_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int ISHR_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int ISTORE_handler(u1 *bytestream){
+  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
+  return 1;
+}
+int ISTORE_0_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int ISTORE_1_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int ISTORE_2_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int ISTORE_3_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int ISUB_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int IUSHR_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int IXOR_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int JSR_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 2; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\b\n");
+  return 2;
+}
+int JSR_W_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 4; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\b\n");
+  return 4;
+}
+int L2D_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int L2F_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int L2I_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int LADD_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int LALOAD_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int LAND_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int LASTORE_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int LCMP_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int LCONST_0_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int LCONST_1_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
 int LDC_handler(u1 *bytestream){
   printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
   return 1;
 }
-int LDC_W_handler(u1 *bytestream){return 0;}
-int LDC2_W_handler(u1 *bytestream){return 0;}
-int LDIV_handler(u1 *bytestream){return 0;}
-int LLOAD_handler(u1 *bytestream){return 0;}
-int LLOAD_0_handler(u1 *bytestream){return 0;}
-int LLOAD_1_handler(u1 *bytestream){return 0;}
-int LLOAD_2_handler(u1 *bytestream){return 0;}
-int LLOAD_3_handler(u1 *bytestream){return 0;}
-int LMUL_handler(u1 *bytestream){return 0;}
-int LNEG_handler(u1 *bytestream){return 0;}
+int LDC_W_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 2; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\b\n");
+  return 2;
+}
+int LDC2_W_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 2; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\b\n");
+  return 2;
+}
+int LDIV_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int LLOAD_handler(u1 *bytestream){
+  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
+  return 1;
+}
+int LLOAD_0_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int LLOAD_1_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int LLOAD_2_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int LLOAD_3_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int LMUL_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
+int LNEG_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+  return 0;
+}
 int LOOKUPSWITCH_handler(u1 *bytestream){return 0;}
 int LOR_handler(u1 *bytestream){return 0;}
 int LREM_handler(u1 *bytestream){return 0;}
