@@ -107,7 +107,15 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
       printf("\b\"\n");
       for(int i = 0; i < att_info.Code.code_length; i++){
         printf("%s\t" BGC(80) "0x%02x:" CLEAR " ", prefix, att_info.Code.code[i]);
-        i += ((int (*)(u1 *))(opcode_handlers[att_info.Code.code[i]]))(att_info.Code.code + i);
+        int ret = ((int (*)(u1 *))(opcode_handlers[att_info.Code.code[i]]))(att_info.Code.code + i);
+        if(ret == -1 && i % 4){
+					u1 pad = (u1) (4 - (i % 4));
+					att_info.Code.code[i + 1] = pad;
+					i--;
+				}else{
+					i += ret;
+				}
+				//i += ((int (*)(u1 *))(opcode_handlers[att_info.Code.code[i]]))(att_info.Code.code + i);
       }
       printf(
           "%s\tException table length: %d\n"

@@ -1208,7 +1208,30 @@ int LNEG_handler(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int LOOKUPSWITCH_handler(u1 *bytestream){return 0;}
+int LOOKUPSWITCH_handler(u1 *bytestream){
+	static int state = 0;
+	if(state == 0){
+		state = 1;
+		return -1;
+	}
+	state = 0;
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+	u1 pad = bytestream[1];
+	u1 *paddedstream = bytestream + pad;
+	printf("0x%08x ", 
+			(paddedstream[1] << 24) |
+			(paddedstream[2] << 16) |
+			(paddedstream[3] << 8) | 
+			paddedstream[4]
+	);
+	printf("0x%08x ", 
+			(paddedstream[5] << 24) |
+			(paddedstream[6] << 16) |
+			(paddedstream[7] << 8) | 
+			paddedstream[8]
+	);
+	return pad + 8;
+}
 int LOR_handler(u1 *bytestream){return 0;}
 int LREM_handler(u1 *bytestream){return 0;}
 int LRETURN_handler(u1 *bytestream){return 0;}

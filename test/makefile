@@ -8,7 +8,7 @@ FLAGS= -g -std=c99
 
 NAME= breader
 
-all: objects main
+all: objects main clean
 
 objects: $(CFILES)
 	gcc -c $(CFILES) $(FLAGS)
