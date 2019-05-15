@@ -416,6 +416,8 @@ void * opcode_handlers[] = {
   [0xc4] = WIDE_handler
 };
 
+int _wide_index = 0;
+
 int AALOAD_handler(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
@@ -430,8 +432,16 @@ int ACONST_NULL_handler(u1 *bytestream){
   return 0;
 }
 int ALOAD_handler(u1 *bytestream){
-  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
-  return 1;
+	if(!_wide_index){
+	  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
+ 		return 1;
+	} else {
+		printf("%s 0x%04x\n",
+				opcode_to_mnemonic[bytestream[0]],
+				(bytestream[1] << 8) | bytestream[2]
+		);
+		return 2;
+	}
 }
 int ALOAD_0_handler(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
@@ -465,8 +475,16 @@ int ARRAYLENGTH_handler(u1 *bytestream){
   return 0;
 }
 int ASTORE_handler(u1 *bytestream){
-  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
-  return 1;
+	if(!_wide_index){
+	  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
+ 		return 1;
+	} else {
+		printf("%s 0x%04x\n",
+				opcode_to_mnemonic[bytestream[0]],
+				(bytestream[1] << 8) | bytestream[2]
+		);
+		return 2;
+	}
 }
 int ASTORE_0_handler(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
@@ -564,8 +582,16 @@ int DDIV_handler(u1 *bytestream){
   return 0;
 }
 int DLOAD_handler(u1 *bytestream){
-  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
-  return 1;
+	if(!_wide_index){
+	  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
+ 		return 1;
+	} else {
+		printf("%s 0x%04x\n",
+				opcode_to_mnemonic[bytestream[0]],
+				(bytestream[1] << 8) | bytestream[2]
+		);
+		return 2;
+	}
 }
 int DLOAD_0_handler(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
@@ -600,8 +626,16 @@ int DRETURN_handler(u1 *bytestream){
   return 0;
 }
 int DSTORE_handler(u1 *bytestream){
-  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
-  return 1;
+	if(!_wide_index){
+	  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
+ 		return 1;
+	} else {
+		printf("%s 0x%04x\n",
+				opcode_to_mnemonic[bytestream[0]],
+				(bytestream[1] << 8) | bytestream[2]
+		);
+		return 2;
+	}
 }
 int DSTORE_0_handler(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
@@ -696,8 +730,16 @@ int FDIV_handler(u1 *bytestream){
   return 0;
 }
 int FLOAD_handler(u1 *bytestream){
-  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
-  return 1;
+	if(!_wide_index){
+	  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
+ 		return 1;
+	} else {
+		printf("%s 0x%04x\n",
+				opcode_to_mnemonic[bytestream[0]],
+				(bytestream[1] << 8) | bytestream[2]
+		);
+		return 2;
+	}
 }
 int FLOAD_0_handler(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
@@ -732,8 +774,16 @@ int FRETURN_handler(u1 *bytestream){
   return 0;
 }
 int FSTORE_handler(u1 *bytestream){
-  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
-  return 1;
+	if(!_wide_index){
+	  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
+ 		return 1;
+	} else {
+		printf("%s 0x%04x\n",
+				opcode_to_mnemonic[bytestream[0]],
+				(bytestream[1] << 8) | bytestream[2]
+		);
+		return 2;
+	}
 }
 int FSTORE_0_handler(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
@@ -968,15 +1018,31 @@ int IFNULL_handler(u1 *bytestream){
   return 2;
 }
 int IINC_handler(u1 *bytestream){
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
-  for(int i = 0; i < 2; i++)
-    printf("0x%02x ", bytestream[i + 1]);
-  printf("\b\n");
-  return 2;
+	if(!_wide_index){
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		for(int i = 0; i < 2; i++)
+			printf("0x%02x ", bytestream[i + 1]);
+		printf("\b\n");
+		return 2;
+	} else {
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		for(int i = 0; i < 2; i++)
+			printf("0x%04x ", (bytestream[2 * i + 1] << 8) | bytestream[2 * i + 2]);
+		printf("\b\n");
+		return 4;
+	}
 }
 int ILOAD_handler(u1 *bytestream){
-  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
-  return 1;
+	if(!_wide_index){
+	  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
+ 		return 1;
+	} else {
+		printf("%s 0x%04x\n",
+				opcode_to_mnemonic[bytestream[0]],
+				(bytestream[1] << 8) | bytestream[2]
+		);
+		return 2;
+	}
 }
 int ILOAD_0_handler(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
@@ -1073,8 +1139,16 @@ int ISHR_handler(u1 *bytestream){
   return 0;
 }
 int ISTORE_handler(u1 *bytestream){
-  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
-  return 1;
+	if(!_wide_index){
+	  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
+ 		return 1;
+	} else {
+		printf("%s 0x%04x\n",
+				opcode_to_mnemonic[bytestream[0]],
+				(bytestream[1] << 8) | bytestream[2]
+		);
+		return 2;
+	}
 }
 int ISTORE_0_handler(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
@@ -1181,8 +1255,16 @@ int LDIV_handler(u1 *bytestream){
   return 0;
 }
 int LLOAD_handler(u1 *bytestream){
-  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
-  return 1;
+	if(!_wide_index){
+	  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
+ 		return 1;
+	} else {
+		printf("%s 0x%04x\n",
+				opcode_to_mnemonic[bytestream[0]],
+				(bytestream[1] << 8) | bytestream[2]
+		);
+		return 2;
+	}
 }
 int LLOAD_0_handler(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
@@ -1232,27 +1314,104 @@ int LOOKUPSWITCH_handler(u1 *bytestream){
 	);
 	return pad + 8;
 }
-int LOR_handler(u1 *bytestream){return 0;}
-int LREM_handler(u1 *bytestream){return 0;}
-int LRETURN_handler(u1 *bytestream){return 0;}
-int LSHL_handler(u1 *bytestream){return 0;}
-int LSHR_handler(u1 *bytestream){return 0;}
-int LSTORE_handler(u1 *bytestream){return 0;}
-int LSTORE_0_handler(u1 *bytestream){return 0;}
-int LSTORE_1_handler(u1 *bytestream){return 0;}
-int LSTORE_2_handler(u1 *bytestream){return 0;}
-int LSTORE_3_handler(u1 *bytestream){return 0;}
-int LSUB_handler(u1 *bytestream){return 0;}
-int LUSHR_handler(u1 *bytestream){return 0;}
-int LXOR_handler(u1 *bytestream){return 0;}
-int MONITORENTER_handler(u1 *bytestream){return 0;}
-int MONITOREXIT_handler(u1 *bytestream){return 0;}
-int MULTIANEWARRAY_handler(u1 *bytestream){return 0;}
-int NEW_handler(u1 *bytestream){return 0;}
-int NEWARRAY_handler(u1 *bytestream){return 0;}
-int NOP_handler(u1 *bytestream){return 0;}
-int POP_handler(u1 *bytestream){return 0;}
-int POP2_handler(u1 *bytestream){return 0;}
+int LOR_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+	return 0;
+}
+int LREM_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+	return 0;
+}
+int LRETURN_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+	return 0;
+}
+int LSHL_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+	return 0;
+}
+int LSHR_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+	return 0;
+}
+int LSTORE_handler(u1 *bytestream){
+	if(!_wide_index){
+	  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
+ 		return 1;
+	} else {
+		printf("%s 0x%04x\n",
+				opcode_to_mnemonic[bytestream[0]],
+				(bytestream[1] << 8) | bytestream[2]
+		);
+		return 2;
+	}
+}
+int LSTORE_0_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+	return 0;
+}
+int LSTORE_1_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+	return 0;
+}
+int LSTORE_2_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+	return 0;
+}
+int LSTORE_3_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+	return 0;
+}
+int LSUB_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+	return 0;
+}
+int LUSHR_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+	return 0;
+}
+int LXOR_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+	return 0;
+}
+int MONITORENTER_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+	return 0;
+}
+int MONITOREXIT_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+	return 0;
+}
+int MULTIANEWARRAY_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 3; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\b\n");
+	return 3;
+}
+int NEW_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 2; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\b\n");
+	return 2;
+}
+int NEWARRAY_handler(u1 *bytestream){
+  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
+	return 1;
+}
+int NOP_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+	return 0;
+}
+int POP_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+	return 0;
+}
+int POP2_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+	return 0;
+}
 int PUTFIELD_handler(u1 *bytestream){
   printf("%s ", opcode_to_mnemonic[bytestream[0]]);
   for(int i = 0; i < 2; i++)
@@ -1260,15 +1419,95 @@ int PUTFIELD_handler(u1 *bytestream){
   printf("\n");
   return 2;
 }
-int PUTSTATIC_handler(u1 *bytestream){return 0;}
-int RET_handler(u1 *bytestream){return 0;}
+int PUTSTATIC_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 2; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\b\n");
+	return 2;
+}
+int RET_handler(u1 *bytestream){
+	if(!_wide_index){
+	  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
+ 		return 1;
+	} else {
+		printf("%s 0x%04x\n",
+				opcode_to_mnemonic[bytestream[0]],
+				(bytestream[1] << 8) | bytestream[2]
+		);
+		return 2;
+	}
+}
 int RETURN_handler(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int SALOAD_handler(u1 *bytestream){return 0;}
-int SASTORE_handler(u1 *bytestream){return 0;}
-int SIPUSH_handler(u1 *bytestream){return 0;}
-int SWAP_handler(u1 *bytestream){return 0;}
-int TABLESWITCH_handler(u1 *bytestream){return 0;}
-int WIDE_handler(u1 *bytestream){return 0;}
+int SALOAD_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+	return 0;
+}
+int SASTORE_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+	return 0;
+}
+int SIPUSH_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  for(int i = 0; i < 2; i++)
+    printf("0x%02x ", bytestream[i + 1]);
+  printf("\b\n");
+	return 2;
+}
+int SWAP_handler(u1 *bytestream){
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
+	return 0;
+}
+int TABLESWITCH_handler(u1 *bytestream){
+	static int state = 0;
+	if(state == 0){
+		state = 1;
+		return -1;
+	}
+	state = 0;
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+	u1 pad = bytestream[1];
+	u1 *paddedstream = bytestream + pad;
+	// Default bytes (1-4)
+	printf("0x%08x ", 
+			(paddedstream[1] << 24) |
+			(paddedstream[2] << 16) |
+			(paddedstream[3] << 8) | 
+			paddedstream[4]
+	);
+	// Low bytes (1-4)
+	uint32_t low = \
+			(paddedstream[5] << 24) | \
+			(paddedstream[6] << 16) | \
+			(paddedstream[7] << 8) | \
+			paddedstream[8];
+	printf("0x%08x ", low);
+	// High bytes (1-4)
+	uint32_t high = \
+			(paddedstream[9] << 24) | \
+			(paddedstream[10] << 16) | \
+			(paddedstream[11] << 8) | \
+			paddedstream[12];
+	printf("0x%08x ", high);
+	// Offsets (x)
+	uint32_t x = high - low + 1;
+	for(int i = 0; i < x; i++){
+		printf("0x%08x ", 
+				(paddedstream[12 + i + 1] << 24) |
+				(paddedstream[12 + i + 1] << 16) |
+				(paddedstream[12 + i + 1] << 8) | 
+				paddedstream[12 + i + 1]
+		);
+	}
+	return pad + 12 + x * 4;
+}
+int WIDE_handler(u1 *bytestream){
+  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+	_wide_index = 1;
+  int ret = ((int (*)(u1 *))(opcode_handlers[bytestream[1]]))(bytestream + 1);
+	_wide_index = 0;
+	return ret + 1; // index bytes + bytestream[1] opcode
+}
