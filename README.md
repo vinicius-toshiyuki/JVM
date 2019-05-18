@@ -14,7 +14,5 @@ Reads a .class file and prints it's structure as described in Oracle's official 
 	$ ./breader <class file name>
 
 ## TODO:
-* Translate Code Attributes's code to mnemonic
 * Print correctly non-ASCII Utf8 characters
 * Documentation
-* Free memory xppp
