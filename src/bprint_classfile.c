@@ -1,6 +1,8 @@
 #include "../include/bprint_classfile.h"
 #include "../include/mnemonic.h"
 
+#include <wchar.h>
+
 extern int verbose;
 extern void * opcode_handlers[];
 extern char * opcode_to_mnemonic[0x100];
@@ -62,8 +64,24 @@ void bprint_info(cp_info *cp, const char *prefix){
       break;
     case CONSTANT_Utf8:
       printf("%sLength: %d\n%sBytes: \"", prefix, cp->info->Utf8.length, prefix);
-      for(int i = 0; i < cp->info->Utf8.length; i++)
-        printf("%c", cp->info->Utf8.bytes[i]);
+			u1 *bytes = cp->info->Utf8.bytes;
+      for(int i = 0; i < cp->info->Utf8.length; i++){
+				wchar_t utf8char;
+//e      d      a      0      b      e      e      d      b      5      b      0
+//1110   1101   1010   0000   1011   1110   1110   1101   1011   0101   1011   0000
+				if((bytes[i] | 0x01111111) == 0x01111111)
+	        utf8char = (wchar_t) bytes[i];
+				else if((bytes[i] | 0x00011111) == 0x11011111)
+					utf8char = (wchar_t) ((bytes[i] << 8) | bytes[i + 1]), i++;
+				else if((bytes[i] | 0x00001111) == 0x11101111)
+					utf8char = (wchar_t) ((bytes[i] << 16) | (bytes[i + 1] << 8) | bytes[i + 2]), i += 2;
+				else if((bytes[i] | 0x00000111) == 0x11110111)
+					utf8char = (wchar_t) ((bytes[i] << 24) | (bytes[i + 1] << 16) | (bytes[i + 2] << 8) | bytes[i + 3]), i += 3;
+				else
+					printf("0x%02x\n", bytes[i]);
+				printf("%lc", utf8char);
+//				printf("%02x ", bytes[i]);
+			}
       printf("\"\n");
       /*  printf("%02x ", cp->info->Utf8.bytes[i]);
       printf("\b\"\n");*/

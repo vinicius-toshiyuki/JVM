@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <wchar.h>
+#include <locale.h>
 
 #include "../include/breads.h"
 #include "../include/bprint_classfile.h"
@@ -14,6 +16,7 @@ int main(int argc, char **argv){
     exit(ERR_NOFILE);
   }
 
+	setlocale(LC_ALL, "");
   char *filename = argv[1];
   FILE *classfile = fopen(filename, "rb");
 
