@@ -69,16 +69,16 @@ void bprint_info(cp_info *cp, const char *prefix){
 				wchar_t utf8char;
 //e      d      a      0      b      e      e      d      b      5      b      0
 //1110   1101   1010   0000   1011   1110   1110   1101   1011   0101   1011   0000
-				if((bytes[i] | 0x01111111) == 0x01111111)
+				if((bytes[i] & 0x80) == 0x00)
 	        utf8char = (wchar_t) bytes[i];
-				else if((bytes[i] | 0x00011111) == 0x11011111)
-					utf8char = (wchar_t) ((bytes[i] << 8) | bytes[i + 1]), i++;
-				else if((bytes[i] | 0x00001111) == 0x11101111)
-					utf8char = (wchar_t) ((bytes[i] << 16) | (bytes[i + 1] << 8) | bytes[i + 2]), i += 2;
-				else if((bytes[i] | 0x00000111) == 0x11110111)
-					utf8char = (wchar_t) ((bytes[i] << 24) | (bytes[i + 1] << 16) | (bytes[i + 2] << 8) | bytes[i + 3]), i += 3;
+				else if((bytes[i] & 0xE0) == 0xC0)
+					utf8char = (wchar_t) (((bytes[i] & 0x1F) << 6) | (bytes[i + 1] & 0x3F)), i++;
+				else if((bytes[i] & 0xF0) == 0xE0)
+					utf8char = (wchar_t) (((bytes[i] & 0x0F) << 12) | ((bytes[i + 1] & 0x3F) << 6) | (bytes[i + 2] & 0x3F)), i += 2;
+				else if((bytes[i] & 0xF8) == 0xF0)
+					utf8char = (wchar_t) (((bytes[i] & 0x07) << 18) | ((bytes[i + 1] & 0x3F) << 12) | ((bytes[i + 2] & 0x4F) << 6) | (bytes[i + 3] & 0x3F)), i += 3;
 				else
-					printf("0x%02x\n", bytes[i]);
+					printf("0x%02x ", bytes[i]);
 				printf("%lc", utf8char);
 //				printf("%02x ", bytes[i]);
 			}
