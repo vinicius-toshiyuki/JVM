@@ -17,5 +17,9 @@ main: $(OFILES)
 	gcc -o ./$(NAME) $(OFILES) $(FLAGS)
 
 clean:
+ifeq ($(OS), Windows_NT)
+	del *.o
+else
 	rm $(OFILES)
 	rm *.o
+endif
