@@ -14,5 +14,7 @@ Reads a .class file and prints it's structure as described in Oracle's official 
 	$ ./breader <class file name>
 
 ## TODO:
-* Print correctly non-ASCII Utf8 characters
-* Documentation
+- [x] Print correctly non-ASCII Utf8 characters
+- [ ] Documentation
+- [ ] Print constant pool value using opcode argument as index if needed
+- [ ] Print jump destination on jump opcodes printing
