@@ -4,6 +4,8 @@ breader
 *.o
 *.exe
 *.out
-*~
+*.~
+*.c.un~
+*.c~
 
 .vscode/
