@@ -15,7 +15,7 @@ void bread_constant_pool_count(ClassFile *class, FILE *classfile){
   return;
 }
 
-int bread_constant_pool_tag(cp_info *cp, FILE *classfile){
+inline int bread_constant_pool_tag(cp_info *cp, FILE *classfile){
   u1_read(cp->tag, classfile);
   return cp->tag;
 }
@@ -41,9 +41,9 @@ void bread_constant_pool_info(ClassFile *class, FILE *classfile){
       case CONSTANT_Float:
         bread_float_info((&(cp->info->Float)), classfile); break;
       case CONSTANT_Long:
-        bread_long_info((&(cp->info->Long)), classfile); break;
+        bread_long_info((&(cp->info->Long)), classfile); i++; break;
       case CONSTANT_Double:
-        bread_double_info((&(cp->info->Double)), classfile); break;
+        bread_double_info((&(cp->info->Double)), classfile); i++; break;
       case CONSTANT_NameAndType:
         bread_nameandtype_info((&(cp->info->NameAndType)), classfile); break;
       case CONSTANT_Utf8:

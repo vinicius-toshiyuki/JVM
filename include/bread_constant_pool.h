@@ -70,7 +70,7 @@ int bread_constant_pool_tag(cp_info *cp, FILE *classfile);
   u2_read(__Utf8->length, __classfile); \
   __Utf8->bytes = (u1 *) malloc(sizeof(u1) * __Utf8->length); \
   for(int i = 0; i < __Utf8->length; i++) \
-    u1_read(__Utf8->bytes[i], __classfile); \
+    u1_read((__Utf8->bytes[i]), __classfile); \
 }
 
 #endif

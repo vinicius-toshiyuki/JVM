@@ -20,6 +20,5 @@ clean:
 ifeq ($(OS), Windows_NT)
 	del *.o
 else
-	rm $(OFILES)
 	rm *.o
 endif
