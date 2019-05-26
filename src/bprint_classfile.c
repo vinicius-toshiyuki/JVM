@@ -42,7 +42,7 @@ void bprint_classfile(ClassFile *class){
 
 void bprint_info(ClassFile *class, int index, const char *prefix){
 	cp_info *cp = &class->constant_pool[index];
-	char *new_prefix = (char *) calloc(sizeof(prefix), sizeof(char));
+	char *new_prefix = (char *) calloc(sizeof(prefix) + 1, sizeof(char));
 	strcpy(new_prefix, prefix); strcat(new_prefix, "\t");
 
   if(cp->tag) printf(
@@ -122,9 +122,11 @@ void bprint_info(ClassFile *class, int index, const char *prefix){
       printf("\"\n");
       break;
   }
+	free(new_prefix);
   return;
 }
 
+extern int _jump;
 void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char prefix[]){
   static char attributes_types[ATT_C][ATT_M_S] = {"Code", "ConstantValue", "Deprecated", "Exceptions", "LineNumberTable", "LocalVariableTable", "SourceFile"}, att_type_value_assign = 1;
   if(att_type_value_assign){
@@ -140,8 +142,10 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
   memcpy(str_name, class->constant_pool[name_index - 1].info->Utf8.bytes  /*Bytes do nome do atributo*/, class->constant_pool[name_index - 1].info->Utf8.length);
   int number_code = ((char *) (bsearch(str_name, attributes_types, ATT_C, ATT_M_S, (int (*)(const void *, const void *)) strcmp)))[ATT_M_S - 1];
 
-  printf(BGC(27) "%s%s attribute:" CLEARN, prefix, str_name);
+  printf(BGC(27) FGC(11) "%s%s attribute:" CLEARN, prefix, str_name);
 
+	char *new_prefix = (char *) calloc(strlen(prefix) + 3, sizeof(char));
+	strcpy(new_prefix, prefix); strcat(new_prefix, "\t\t");
   Attributes att_info;
   switch(number_code){ // Vou para o código correto para imprimir o atributo
     case NUMBER_Code:
@@ -158,12 +162,20 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
       for(int i = 0; i < att_info.Code.code_length; i++)
         printf("%02x ", att_info.Code.code[i]);
       printf("\b\"\n");
+			int ret = 0;
       for(int i = 0; i < att_info.Code.code_length; i++){
-        printf("%s\t" BGC(80) "0x%02x:" CLEAR " ", prefix, att_info.Code.code[i]);
-        int ret = ((int (*)(u1 *))(opcode_handlers[att_info.Code.code[i]]))(att_info.Code.code + i);
-        if(ret == -1 && i % 4){
+        if(ret >= 0) printf("%s\t" BGC(80) FGC(96) "0x%02x:" CLEAR " ", prefix, att_info.Code.code[i]);
+        ret = ((int (*)(u1 *))(opcode_handlers[att_info.Code.code[i]]))(att_info.Code.code + i);
+				if(_jump){
+					printf("%sJump address: %d (Offset: %d)\n", new_prefix, i + 1 - ret, ret);
+					i--;
+				}else if(ret == -1 && i % 4){
 					u1 pad = (u1) (4 - (i % 4));
 					att_info.Code.code[i + 1] = pad;
+					i--;
+				}else if(ret < -1){
+					printf("%s", new_prefix);
+					bprint_info(class, -++ret - 1, new_prefix);
 					i--;
 				}else{
 					i += ret;
@@ -200,7 +212,8 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
       break;
     case NUMBER_ConstantValue:
       u1_to_ConstantValue(att_info.ConstantValue, u1_stream);
-      printf("%s\tConstant value index: %d\n", prefix, att_info.ConstantValue.constantvalue_index);
+      printf("%s\tConstant value index: %d\n%s", prefix, att_info.ConstantValue.constantvalue_index, new_prefix);
+			bprint_info(class, att_info.ConstantValue.constantvalue_index - 1, new_prefix);
       break;
     case NUMBER_Deprecated: /* Tem nada */
       break;
@@ -211,11 +224,13 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
           "%s\tException index table:\n",
           prefix, att_info.Exceptions.number_of_exceptions, prefix
       );
-      for(int i = 0; i < att_info.Exceptions.number_of_exceptions; i++)
+      for(int i = 0; i < att_info.Exceptions.number_of_exceptions; i++){
         printf(
-            "%s\t\tException %d: %d\n",
-            prefix, i, att_info.Exceptions.exception_index_table[i]
+            "%s\t\tException %d: %d\n%s",
+            prefix, i, att_info.Exceptions.exception_index_table[i], new_prefix
         );
+				bprint_info(class, att_info.Exceptions.exception_index_table[i] - 1, new_prefix);
+			}
       break;
     case NUMBER_LineNumberTable:
       u1_to_LineNumberTable(att_info.LineNumberTable, u1_stream);
@@ -241,29 +256,38 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
           "%s\tLocal variable table:\n",
           prefix, att_info.LocalVariableTable.local_variable_table_length, prefix
       );
-      for(int i = 0; i < att_info.LocalVariableTable.local_variable_table_length; i++)
+      for(int i = 0; i < att_info.LocalVariableTable.local_variable_table_length; i++){
         printf(
             "%s\t\tLocal variable %d:\n"
             "%s\t\tStart PC: 0x%04x\n"
             "%s\t\tLength: %d\n"
-            "%s\t\tName index: %d\n"
-            "%s\t\tDescriptor index: %d\n"
-            "%s\t\tIndex: %d\n",
+						"%s\t\tName index: %d\n%s",
             prefix, i,
             prefix, att_info.LocalVariableTable.local_variable_table[i].start_pc,
             prefix, att_info.LocalVariableTable.local_variable_table[i].length,
-            prefix, att_info.LocalVariableTable.local_variable_table[i].name_index,
-            prefix, att_info.LocalVariableTable.local_variable_table[i].descriptor_index,
+            prefix, att_info.LocalVariableTable.local_variable_table[i].name_index, new_prefix
+				);
+				bprint_info(class, att_info.LocalVariableTable.local_variable_table[i].name_index - 1, new_prefix);
+				printf(
+            "%s\t\tDescriptor index: %d\n%s",
+            prefix, att_info.LocalVariableTable.local_variable_table[i].descriptor_index, new_prefix
+				);
+				bprint_info(class, att_info.LocalVariableTable.local_variable_table[i].descriptor_index - 1, new_prefix);
+				printf(
+            "%s\t\tIndex: %d\n",
             prefix, att_info.LocalVariableTable.local_variable_table[i].index
         );
+			}
       break;
     case NUMBER_SourceFile:
       u1_to_SourceFile(att_info.SourceFile, u1_stream);
       printf("%s\tSource file index: %d\n", prefix, att_info.SourceFile.sourcefile_index);
+			printf("%s", new_prefix);
+			bprint_info(class, att_info.SourceFile.sourcefile_index - 1, new_prefix);
       break;
     default:
       break;
   }
-
+	free(new_prefix);
   return;
 }

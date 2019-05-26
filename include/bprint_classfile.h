@@ -123,14 +123,14 @@ static inline void bprint_access_flags(u2 af){
   } \
 }
 
-#define bprint_attributes_count(__class) printf(BGC(30) "Attributes count: %d" CLEARN, __class->attributes_count)
+#define bprint_attributes_count(__class) printf(BGC(30) FGC(47) "Attributes count: %d" CLEARN, __class->attributes_count)
 
 #define bprint_attributes(__attributes, __attributes_count, __prefix) \
 { \
-  printf(__prefix BGC(38) "Attributes:" CLEARN); \
+  printf(__prefix BGC(38) FGC(22) "Attributes:" CLEARN); \
   for(int i = 0; i < __attributes_count; i++){ \
     printf( \
-        __prefix "\t" BGC(45) "Attribute %d:" CLEARN \
+        __prefix "\t" BGC(45) FGC(29) "Attribute %d:" CLEARN \
         __prefix "\tAttribute name index: %d ", \
         i, __attributes[i].attribute_name_index \
 		); \

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <wchar.h>
 #include <locale.h>
 
@@ -8,12 +9,21 @@
 #include "../include/bfree_classfile.h"
 //#include "../include/stack.h"
 
-int verbose = 1;
+int comp(const void *a, const void *b){return *((char *) a) - *((char *) b);}
+
+int verbose = 0;
 
 int main(int argc, char **argv){
 	if(argc < 2){
 		fprintf(stderr, "Usage:\n\t%s <.class file name>\n", argv[0]);
 		exit(ERR_NOFILE);
+	}
+
+	if(argc == 3){
+		char opt[] = "v";
+		char *options = *(argv + 2);
+		qsort(options, strlen(options), sizeof(char), comp);
+		if(bsearch(&opt[0], options, strlen(options), sizeof(char), comp)) verbose = 1;
 	}
 
 	setlocale(LC_ALL, "");

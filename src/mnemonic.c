@@ -417,6 +417,8 @@ void * opcode_handlers[] = {
 };
 
 int _wide_index = 0;
+int _constant_print = 1;
+int _jump = 0;
 
 int AALOAD_handler(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
@@ -460,10 +462,13 @@ int ALOAD_3_handler(u1 *bytestream){
   return 0;
 }
 int ANEWARRAY_handler(u1 *bytestream){
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
-  for(int i = 0; i < 2; i++)
-    printf("0x%02x ", bytestream[i + 1]);
-  printf("\b\n");
+	if(_constant_print--){
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		u2 index = (u2) (bytestream[1] << 8 | bytestream[2]);
+		printf("%d\n", index);
+		return -index - 1;
+	}
+	_constant_print += 2;
   return 2;
 }
 int ARETURN_handler(u1 *bytestream){
@@ -531,10 +536,13 @@ int CASTORE_handler(u1 *bytestream){
   return 0;
 }
 int CHECKCAST_handler(u1 *bytestream){
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
-  for(int i = 0; i < 2; i++)
-    printf("0x%02x ", bytestream[i + 1]);
-  printf("\n");
+	if(_constant_print--){
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		u2 index = (u2) (bytestream[1] << 8 | bytestream[2]);
+		printf("%d\n", index);
+		return -index - 1;
+	}
+	_constant_print += 2;
   return 2;
 }
 int D2F_handler(u1 *bytestream){
@@ -806,31 +814,43 @@ int FSUB_handler(u1 *bytestream){
   return 0;
 }
 int GETFIELD_handler(u1 *bytestream){
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
-  for(int i = 0; i < 2; i++)
-    printf("0x%02x ", bytestream[i + 1]);
-  printf("\b\n");
+	if(_constant_print--){
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		u2 index = (u2) (bytestream[1] << 8 | bytestream[2]);
+		printf("%d\n", index);
+		return -index - 1;
+	}
+	_constant_print += 2;
   return 2;
 }
 int GETSTATIC_handler(u1 *bytestream){
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
-  for(int i = 0; i < 2; i++)
-    printf("0x%02x ", bytestream[i + 1]);
-  printf("\b\n");
+	if(_constant_print--){
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		u2 index = (u2) (bytestream[1] << 8 | bytestream[2]);
+		printf("%d\n", index);
+		return -index - 1;
+	}
+	_constant_print += 2;
   return 2;
 }
 int GOTO_handler(u1 *bytestream){
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
-  for(int i = 0; i < 2; i++)
-    printf("0x%02x ", bytestream[i + 1]);
-  printf("\b\n");
+	if(!_jump++){
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		int16_t branchoffset = bytestream[1] << 8 | bytestream[2];
+		printf("%d\n", branchoffset);
+		return branchoffset;
+	}
+	_jump += -2;
   return 2;
 }
 int GOTO_W_handler(u1 *bytestream){
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
-  for(int i = 0; i < 4; i++)
-    printf("0x%02x ", bytestream[i + 1]);
-  printf("\b\n");
+	if(!_jump++){
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		int32_t branchoffset = bytestream[1] << 24 | bytestream[2] << 16 | bytestream[3] << 8 | bytestream[4];
+		printf("%d\n", branchoffset);
+		return branchoffset;
+	}
+	_jump += -2;
   return 4;
 }
 int I2B_handler(u1 *bytestream){
@@ -906,115 +926,163 @@ int IDIV_handler(u1 *bytestream){
   return 0;
 }
 int IF_ACMPEQ_handler(u1 *bytestream){
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
-  for(int i = 0; i < 2; i++)
-    printf("0x%02x ", bytestream[i + 1]);
-  printf("\b\n");
+	if(!_jump++){
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		int16_t branchoffset = bytestream[1] << 8 | bytestream[2];
+		printf("%d\n", branchoffset);
+		return branchoffset;
+	}
+	_jump += -2;
   return 2;
 }
 int IF_ACMPNE_handler(u1 *bytestream){
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
-  for(int i = 0; i < 2; i++)
-    printf("0x%02x ", bytestream[i + 1]);
-  printf("\b\n");
+	if(!_jump++){
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		int16_t branchoffset = bytestream[1] << 8 | bytestream[2];
+		printf("%d\n", branchoffset);
+		return branchoffset;
+	}
+	_jump += -2;
   return 2;
 }
 int IF_ICMPEQ_handler(u1 *bytestream){
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
-  for(int i = 0; i < 2; i++)
-    printf("0x%02x ", bytestream[i + 1]);
-  printf("\b\n");
+	if(!_jump++){
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		int16_t branchoffset = bytestream[1] << 8 | bytestream[2];
+		printf("%d\n", branchoffset);
+		return branchoffset;
+	}
+	_jump += -2;
   return 2;
 }
 int IF_ICMPGE_handler(u1 *bytestream){
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
-  for(int i = 0; i < 2; i++)
-    printf("0x%02x ", bytestream[i + 1]);
-  printf("\b\n");
+	if(!_jump++){
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		int16_t branchoffset = bytestream[1] << 8 | bytestream[2];
+		printf("%d\n", branchoffset);
+		return branchoffset;
+	}
+	_jump += -2;
   return 2;
 }
 int IF_ICMPGT_handler(u1 *bytestream){
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
-  for(int i = 0; i < 2; i++)
-    printf("0x%02x ", bytestream[i + 1]);
-  printf("\b\n");
+	if(!_jump++){
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		int16_t branchoffset = bytestream[1] << 8 | bytestream[2];
+		printf("%d\n", branchoffset);
+		return branchoffset;
+	}
+	_jump += -2;
   return 2;
 }
 int IF_ICMPLE_handler(u1 *bytestream){
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
-  for(int i = 0; i < 2; i++)
-    printf("0x%02x ", bytestream[i + 1]);
-  printf("\b\n");
+	if(!_jump++){
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		int16_t branchoffset = bytestream[1] << 8 | bytestream[2];
+		printf("%d\n", branchoffset);
+		return branchoffset;
+	}
+	_jump += -2;
   return 2;
 }
 int IF_ICMPLT_handler(u1 *bytestream){
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
-  for(int i = 0; i < 2; i++)
-    printf("0x%02x ", bytestream[i + 1]);
-  printf("\b\n");
+	if(!_jump++){
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		int16_t branchoffset = bytestream[1] << 8 | bytestream[2];
+		printf("%d\n", branchoffset);
+		return branchoffset;
+	}
+	_jump += -2;
   return 2;
 }
 int IF_ICMPNE_handler(u1 *bytestream){
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
-  for(int i = 0; i < 2; i++)
-    printf("0x%02x ", bytestream[i + 1]);
-  printf("\b\n");
+	if(!_jump++){
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		int16_t branchoffset = bytestream[1] << 8 | bytestream[2];
+		printf("%d\n", branchoffset);
+		return branchoffset;
+	}
+	_jump += -2;
   return 2;
 }
 int IFEQ_handler(u1 *bytestream){
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
-  for(int i = 0; i < 2; i++)
-    printf("0x%02x ", bytestream[i + 1]);
-  printf("\b\n");
+	if(!_jump++){
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		int16_t branchoffset = bytestream[1] << 8 | bytestream[2];
+		printf("%d\n", branchoffset);
+		return branchoffset;
+	}
+	_jump += -2;
   return 2;
 }
 int IFGE_handler(u1 *bytestream){
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
-  for(int i = 0; i < 2; i++)
-    printf("0x%02x ", bytestream[i + 1]);
-  printf("\b\n");
+	if(!_jump++){
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		int16_t branchoffset = bytestream[1] << 8 | bytestream[2];
+		printf("%d\n", branchoffset);
+		return branchoffset;
+	}
+	_jump += -2;
   return 2;
 }
 int IFGT_handler(u1 *bytestream){
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
-  for(int i = 0; i < 2; i++)
-    printf("0x%02x ", bytestream[i + 1]);
-  printf("\b\n");
+	if(!_jump++){
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		int16_t branchoffset = bytestream[1] << 8 | bytestream[2];
+		printf("%d\n", branchoffset);
+		return branchoffset;
+	}
+	_jump += -2;
   return 2;
 }
 int IFLE_handler(u1 *bytestream){
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
-  for(int i = 0; i < 2; i++)
-    printf("0x%02x ", bytestream[i + 1]);
-  printf("\b\n");
+	if(!_jump++){
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		int16_t branchoffset = bytestream[1] << 8 | bytestream[2];
+		printf("%d\n", branchoffset);
+		return branchoffset;
+	}
+	_jump += -2;
   return 2;
 }
 int IFLT_handler(u1 *bytestream){
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
-  for(int i = 0; i < 2; i++)
-    printf("0x%02x ", bytestream[i + 1]);
-  printf("\b\n");
+	if(!_jump++){
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		int16_t branchoffset = bytestream[1] << 8 | bytestream[2];
+		printf("%d\n", branchoffset);
+		return branchoffset;
+	}
+	_jump += -2;
   return 2;
 }
 int IFNE_handler(u1 *bytestream){
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
-  for(int i = 0; i < 2; i++)
-    printf("0x%02x ", bytestream[i + 1]);
-  printf("\b\n");
+	if(!_jump++){
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		int16_t branchoffset = bytestream[1] << 8 | bytestream[2];
+		printf("%d\n", branchoffset);
+		return branchoffset;
+	}
+	_jump += -2;
   return 2;
 }
 int IFNONNULL_handler(u1 *bytestream){
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
-  for(int i = 0; i < 2; i++)
-    printf("0x%02x ", bytestream[i + 1]);
-  printf("\b\n");
+	if(!_jump++){
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		int16_t branchoffset = bytestream[1] << 8 | bytestream[2];
+		printf("%d\n", branchoffset);
+		return branchoffset;
+	}
+	_jump += -2;
   return 2;
 }
 int IFNULL_handler(u1 *bytestream){
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
-  for(int i = 0; i < 2; i++)
-    printf("0x%02x ", bytestream[i + 1]);
-  printf("\b\n");
+	if(!_jump++){
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		int16_t branchoffset = bytestream[1] << 8 | bytestream[2];
+		printf("%d\n", branchoffset);
+		return branchoffset;
+	}
+	_jump += -2;
   return 2;
 }
 int IINC_handler(u1 *bytestream){
@@ -1077,45 +1145,63 @@ int INEG_handler(u1 *bytestream){
   return 0;
 }
 int INSTANCEOF_handler(u1 *bytestream){
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
-  for(int i = 0; i < 2; i++)
-    printf("0x%02x ", bytestream[i + 1]);
-  printf("\b\n");
+	if(_constant_print--){
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		u2 index = (u2) (bytestream[1] << 8 | bytestream[2]);
+		printf("%d\n", index);
+		return -index - 1;
+	}
+	_constant_print += 2;
   return 2;
 }
 int INVOKEDYNAMIC_handler(u1 *bytestream){
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
-  for(int i = 0; i < 4; i++)
-    printf("0x%02x ", bytestream[i + 1]);
-  printf("\b\n");
+	if(_constant_print--){
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		u2 index = (u2) (bytestream[1] << 8 | bytestream[2]);
+		printf("%d\n", index);
+		return -index - 1;
+	}
+	_constant_print += 2;
   return 4;
 }
 int INVOKEINTERFACE_handler(u1 *bytestream){
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
-  for(int i = 0; i < 4; i++)
-    printf("0x%02x ", bytestream[i + 1]);
-  printf("\b\n");
+	if(_constant_print--){
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		u2 index = (u2) (bytestream[1] << 8 | bytestream[2]);
+		printf("%d\n", index);
+		return -index - 1;
+	}
+	_constant_print += 2;
   return 4;
 }
 int INVOKESPECIAL_handler(u1 *bytestream){
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
-  for(int i = 0; i < 2; i++)
-    printf("0x%02x ", bytestream[i + 1]);
-  printf("\n");
+	if(_constant_print--){
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		u2 index = (u2) (bytestream[1] << 8 | bytestream[2]);
+		printf("%d\n", index);
+		return -index - 1;
+	}
+	_constant_print += 2;
   return 2;
 }
 int INVOKESTATIC_handler(u1 *bytestream){
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
-  for(int i = 0; i < 2; i++)
-    printf("0x%02x ", bytestream[i + 1]);
-  printf("\b\n");
+	if(_constant_print--){
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		u2 index = (u2) (bytestream[1] << 8 | bytestream[2]);
+		printf("%d\n", index);
+		return -index - 1;
+	}
+	_constant_print += 2;
   return 2;
 }
 int INVOKEVIRTUAL_handler(u1 *bytestream){
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
-  for(int i = 0; i < 2; i++)
-    printf("0x%02x ", bytestream[i + 1]);
-  printf("\b\n");
+	if(_constant_print--){
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		u2 index = (u2) (bytestream[1] << 8 | bytestream[2]);
+		printf("%d\n", index);
+		return -index - 1;
+	}
+	_constant_print += 2;
   return 2;
 }
 int IOR_handler(u1 *bytestream){
@@ -1179,17 +1265,23 @@ int IXOR_handler(u1 *bytestream){
   return 0;
 }
 int JSR_handler(u1 *bytestream){
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
-  for(int i = 0; i < 2; i++)
-    printf("0x%02x ", bytestream[i + 1]);
-  printf("\b\n");
+	if(!_jump++){
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		int16_t branchoffset = bytestream[1] << 8 | bytestream[2];
+		printf("%d\n", branchoffset);
+		return branchoffset;
+	}
+	_jump += -2;
   return 2;
 }
 int JSR_W_handler(u1 *bytestream){
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
-  for(int i = 0; i < 4; i++)
-    printf("0x%02x ", bytestream[i + 1]);
-  printf("\b\n");
+	if(!_jump++){
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		int32_t branchoffset = bytestream[1] << 24 | bytestream[2] << 16 | bytestream[3] << 8 | bytestream[4];
+		printf("%d\n", branchoffset);
+		return branchoffset;
+	}
+	_jump += -2;
   return 4;
 }
 int L2D_handler(u1 *bytestream){
@@ -1233,21 +1325,33 @@ int LCONST_1_handler(u1 *bytestream){
   return 0;
 }
 int LDC_handler(u1 *bytestream){
-  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
+	if(_constant_print--){
+	  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		u1 index = bytestream[1];
+		printf("%d\n", index);
+		return -index - 1;
+	}
+	_constant_print += 2;
   return 1;
 }
 int LDC_W_handler(u1 *bytestream){
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
-  for(int i = 0; i < 2; i++)
-    printf("0x%02x ", bytestream[i + 1]);
-  printf("\b\n");
+	if(_constant_print--){
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		u2 index = (u2) (bytestream[1] << 8 | bytestream[2]);
+		printf("%d\n", index);
+		return -index - 1;
+	}
+	_constant_print += 2;
   return 2;
 }
 int LDC2_W_handler(u1 *bytestream){
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
-  for(int i = 0; i < 2; i++)
-    printf("0x%02x ", bytestream[i + 1]);
-  printf("\b\n");
+	if(_constant_print--){
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		u2 index = (u2) (bytestream[1] << 8 | bytestream[2]);
+		printf("%d\n", index);
+		return -index - 1;
+	}
+	_constant_print += 2;
   return 2;
 }
 int LDIV_handler(u1 *bytestream){
@@ -1383,17 +1487,23 @@ int MONITOREXIT_handler(u1 *bytestream){
 	return 0;
 }
 int MULTIANEWARRAY_handler(u1 *bytestream){
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
-  for(int i = 0; i < 3; i++)
-    printf("0x%02x ", bytestream[i + 1]);
-  printf("\b\n");
+	if(_constant_print--){
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		u2 index = (u2) (bytestream[1] << 8 | bytestream[2]);
+		printf("%d %d\n", index, bytestream[3]);
+		return -index - 1;
+	}
+	_constant_print += 2;
 	return 3;
 }
 int NEW_handler(u1 *bytestream){
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
-  for(int i = 0; i < 2; i++)
-    printf("0x%02x ", bytestream[i + 1]);
-  printf("\b\n");
+	if(_constant_print--){
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		u2 index = (u2) (bytestream[1] << 8 | bytestream[2]);
+		printf("%d\n", index);
+		return -index - 1;
+	}
+	_constant_print += 2;
 	return 2;
 }
 int NEWARRAY_handler(u1 *bytestream){
@@ -1413,18 +1523,24 @@ int POP2_handler(u1 *bytestream){
 	return 0;
 }
 int PUTFIELD_handler(u1 *bytestream){
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
-  for(int i = 0; i < 2; i++)
-    printf("0x%02x ", bytestream[i + 1]);
-  printf("\n");
+	if(_constant_print--){
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		u2 index = (u2) (bytestream[1] << 8 | bytestream[2]);
+		printf("%d\n", index);
+		return -index - 1;
+	}
+	_constant_print += 2;
   return 2;
 }
 int PUTSTATIC_handler(u1 *bytestream){
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
-  for(int i = 0; i < 2; i++)
-    printf("0x%02x ", bytestream[i + 1]);
-  printf("\b\n");
-	return 2;
+	if(_constant_print--){
+		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+		u2 index = (u2) (bytestream[1] << 8 | bytestream[2]);
+		printf("%d\n", index);
+		return -index - 1;
+	}
+	_constant_print += 2;
+  return 2;
 }
 int RET_handler(u1 *bytestream){
 	if(!_wide_index){
