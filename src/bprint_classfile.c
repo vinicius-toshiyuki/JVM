@@ -26,7 +26,7 @@ void bprint_classfile(ClassFile *class){
   bprint_versions(class);
   bprint_const_pool_count(class);
   bprint_constant_pool(class);
-  bprint_access_flags(class);
+  bprint_access_flags(class->access_flags);
   bprint_this_class(class);
   bprint_super_class(class);
   bprint_interfaces_count(class);
@@ -57,26 +57,26 @@ void bprint_info(ClassFile *class, int index, const char *prefix){
 	printf(CLEARN);
   switch(cp->tag){
     case CONSTANT_Class:
-      printf("%sName index: %d ", prefix, cp->info->Class.name_index + 1);
-			bprint_info(class, cp->info->Class.name_index, new_prefix);
+      printf("%sName index: %d ", prefix, cp->info->Class.name_index);
+			bprint_info(class, cp->info->Class.name_index - 1, new_prefix);
       break;
     case CONSTANT_Fieldref:
     case CONSTANT_Methodref:
     case CONSTANT_InterfaceMethodref:
       printf(
           "%sClass index: %d ",
-          prefix, cp->info->Fieldref.class_index + 1
+          prefix, cp->info->Fieldref.class_index
       );
-			bprint_info(class, cp->info->Fieldref.class_index, new_prefix);
+			bprint_info(class, cp->info->Fieldref.class_index - 1, new_prefix);
       printf(
 					"%sName and type index: %d ",
-          prefix, cp->info->Fieldref.name_and_type_index + 1
+          prefix, cp->info->Fieldref.name_and_type_index
       );
-			bprint_info(class, cp->info->Fieldref.name_and_type_index, new_prefix);
+			bprint_info(class, cp->info->Fieldref.name_and_type_index - 1, new_prefix);
       break;
     case CONSTANT_String:
-      printf("%sString index: %d ", prefix, cp->info->String.string_index + 1);
-			bprint_info(class, cp->info->String.string_index, new_prefix);
+      printf("%sString index: %d ", prefix, cp->info->String.string_index);
+			bprint_info(class, cp->info->String.string_index - 1, new_prefix);
       break;
     case CONSTANT_Integer:
     case CONSTANT_Float:
@@ -93,14 +93,14 @@ void bprint_info(ClassFile *class, int index, const char *prefix){
     case CONSTANT_NameAndType:
       printf(
           "%sName index: %d ",
-          prefix, cp->info->NameAndType.name_index + 1
+          prefix, cp->info->NameAndType.name_index
       );
-			bprint_info(class, cp->info->NameAndType.name_index, new_prefix);
+			bprint_info(class, cp->info->NameAndType.name_index - 1, new_prefix);
       printf(
 					"%sDescripitor index: %d ",
-          prefix, cp->info->NameAndType.descriptor_index + 1
+          prefix, cp->info->NameAndType.descriptor_index
       );
-			bprint_info(class, cp->info->NameAndType.descriptor_index, new_prefix);
+			bprint_info(class, cp->info->NameAndType.descriptor_index - 1, new_prefix);
       break;
     case CONSTANT_Utf8:
       printf("%sLength: %d\n%sBytes: \"", prefix, cp->info->Utf8.length, prefix);
@@ -168,7 +168,6 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
 				}else{
 					i += ret;
 				}
-				//i += ((int (*)(u1 *))(opcode_handlers[att_info.Code.code[i]]))(att_info.Code.code + i);
       }
       printf(
           "%s\tException table length: %d\n"

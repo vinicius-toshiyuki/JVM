@@ -10,6 +10,22 @@ void bprint_classfile(ClassFile *class);
 void bprint_info(ClassFile *class, int index, const char *prefix);
 void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char prefix[]);
 
+enum {
+	ACC_PUBLIC     = 0x0001,
+	ACC_PRIVATE    = 0x0002,
+	ACC_PROTECTED  = 0x0004,
+	ACC_STATIC     = 0x0008,
+	ACC_FINAL      = 0x0010,
+	ACC_SUPER      = 0x0020,
+	ACC_VOLATILE   = 0x0040,
+	ACC_TRANSIENT  = 0x0080,
+	ACC_INTERFACE  = 0x0200,
+	ACC_ABSTRACT   = 0x0400,
+	ACC_SYNTHETIC  = 0x1000,
+	ACC_ANNOTATION = 0x2000,
+	ACC_ENUM       = 0x4000
+} ACCESS_FLAGS;
+
 #define ATT_C 7
 #define ATT_M_S 20
 
@@ -22,75 +38,87 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
   __bytes = (__a << 16) | __b; \
 }
 
-
 #define bprint_magic(__class) printf("Magic number: 0x%x\n", __class->magic)
 
 #define bprint_versions(__class) printf("Minor version: 0x%02x\nMajor version: 0x%02x\n", __class->minor_version, __class->major_version)
 
-#define bprint_const_pool_count(__class) printf(BGC(182) "Constant pool count: %d" CLEARN, __class->const_pool_count)
+#define bprint_const_pool_count(__class) printf(BGC(226) FGC(88) "Constant pool count: %d" CLEARN, __class->const_pool_count)
 
 #define bprint_constant_pool(__class) \
 { \
-  printf(BGC(183) "Constant pool:" CLEARN); \
+  printf(BGC(226) FGC(88) "Constant pool:" CLEARN); \
   for(int i = 0; i < __class->const_pool_count - 1; i++){ \
 		printf(BGC(10) FGC(1) "Tag %d: ", i + 1); \
     bprint_info(__class, i, "\t"); \
   } \
 }
 
-#define bprint_access_flags(__class) printf("Access flags: 0x%04x\n", __class->access_flags)
+static inline void bprint_access_flags(u2 af){
+	printf("Access flags: 0x%04x (", af);
 
-#define bprint_this_class(__class) printf("This class: %d\n", __class->this_class)
+	if(af&ACC_PUBLIC)     printf ("Public ");
+	if(af&ACC_PRIVATE)    printf ("Private ");
+	if(af&ACC_PROTECTED)  printf ("Protected ");
+	if(af&ACC_STATIC)     printf ("Static ");
+	if(af&ACC_FINAL)      printf ("Final ");
+	if(af&ACC_SUPER)      printf ("Super ");
+	if(af&ACC_VOLATILE)   printf ("Volatile ");
+	if(af&ACC_TRANSIENT)  printf ("Transient ");
+	if(af&ACC_INTERFACE)  printf ("Interface ");
+	if(af&ACC_ABSTRACT)   printf ("Abstract ");
+	if(af&ACC_SYNTHETIC)  printf ("Synthetic ");
+	if(af&ACC_ANNOTATION) printf ("Annotation ");
+	if(af&ACC_ENUM)       printf ("Enum ");
 
-#define bprint_super_class(__class) printf("Super class: %d\n", __class->super_class)
+	printf("\b)\n");
+	return;
+}
+
+#define bprint_this_class(__class) printf("This class: %d ", __class->this_class); bprint_info(__class, __class->this_class - 1, "\t")
+
+#define bprint_super_class(__class) printf("Super class: %d ", __class->super_class); bprint_info(__class, __class->super_class - 1, "\t")
 
 #define bprint_interfaces_count(__class) printf("Interfaces count: %d\n", __class->interfaces_count)
 
 #define bprint_interfaces(__class) \
 { \
   printf("Interfaces:\n"); \
-  for(int i = 0; i < __class->interfaces_count; i++) \
-    printf("\tInterface %d: %d\n", i, __class->interfaces[i]); \
+  for(int i = 0; i < __class->interfaces_count; i++){ \
+    printf("\tInterface %d: %d ", i, __class->interfaces[i]); \
+		bprint_info(__class, __class->interfaces[i] - 1, "\t"); \
+	} \
 }
 
-#define bprint_fields_count(__class) printf(BGC(211) "Fields count: %d" CLEARN, __class->fields_count)
+#define bprint_fields_count(__class) printf(BGC(211) FGC(51) "Fields count: %d" CLEARN, __class->fields_count)
   
 #define bprint_fields(__class) \
 { \
-  printf(BGC(210) "Fields:" CLEARN); \
+  printf(BGC(210) FGC(51) "Fields:" CLEARN); \
   for(int i = 0; i < __class->fields_count; i++){ \
-    printf( \
-        "\t" BGC(218) "Field %d:" CLEARN \
-        "\tAccess flags: 0x%04x\n" \
-        "\tName index: %d\n" \
-        "\tDescriptor index: %d\n" \
-        "\tAttributes count: %d\n", \
-        i, __class->fields[i].access_flags, \
-        __class->fields[i].name_index, \
-        __class->fields[i].descriptor_index, \
-        __class->fields[i].attributes_count \
-    ); \
+    printf("\t" BGC(218) FGC(51) "Field %d:" CLEARN "\t", i); \
+		bprint_access_flags(__class->fields[i].access_flags); \
+		printf("\tName index: %d ", __class->fields[i].name_index); \
+		bprint_info(__class, __class->fields[i].name_index - 1, "\t\t"); \
+		printf("\tDescriptor index: %d ", __class->fields[i].descriptor_index); \
+		bprint_info(__class, __class->fields[i].descriptor_index - 1, "\t\t"); \
+		printf("\tAttributes count: %d\n", __class->fields[i].attributes_count); \
     bprint_attributes(__class->fields[i].attributes, __class->fields[i].attributes_count, "\t"); \
   } \
 }
 
-#define bprint_methods_count(__class) printf(BGC(148) "Methods count: %d" CLEARN, __class->methods_count)
+#define bprint_methods_count(__class) printf(BGC(148) FGC(166) "Methods count: %d" CLEARN, __class->methods_count)
 
 #define bprint_methods(__class) \
 { \
-  printf(BGC(156) "Methods:" CLEARN); \
+  printf(BGC(156) FGC(166) "Methods:" CLEARN); \
   for(int i = 0; i < __class->methods_count; i++){ \
-    printf( \
-        "\t" BGC(157) "Method %d:" CLEARN \
-        "\tAccess flags: 0x%04x\n" \
-        "\tName index: %d\n" \
-        "\tDescriptor index: %d\n" \
-        "\tAttributes count: %d\n", \
-        i, __class->methods[i].access_flags, \
-        __class->methods[i].name_index, \
-        __class->methods[i].descriptor_index, \
-        __class->methods[i].attributes_count \
-    ); \
+    printf("\t" BGC(157) FGC(166) "Method %d:" CLEARN "\t", i); \
+		bprint_access_flags(__class->methods[i].access_flags); \
+		printf("\tName index: %d ", __class->methods[i].name_index); \
+		bprint_info(__class, __class->methods[i].name_index - 1, "\t\t"); \
+    printf("\tDescriptor index: %d ", __class->methods[i].descriptor_index); \
+		bprint_info(__class, __class->methods[i].descriptor_index - 1, "\t\t"); \
+    printf("\tAttributes count: %d\n", __class->methods[i].attributes_count);\
     bprint_attributes(__class->methods[i].attributes, __class->methods[i].attributes_count, "\t"); \
   } \
 }
@@ -103,10 +131,13 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
   for(int i = 0; i < __attributes_count; i++){ \
     printf( \
         __prefix "\t" BGC(45) "Attribute %d:" CLEARN \
-        __prefix "\tAttribute name index: %d\n" \
+        __prefix "\tAttribute name index: %d ", \
+        i, __attributes[i].attribute_name_index \
+		); \
+		bprint_info(class, __attributes[i].attribute_name_index - 1, __prefix "\t\t"); \
+		printf( \
         __prefix "\tAttribute length: %d\n" \
         __prefix "\tInfo: \"", \
-        i, __attributes[i].attribute_name_index, \
         __attributes[i].attribute_length \
     ); \
     /* Procurar o tipo do atributo com o name_index na constant_pool */ \
