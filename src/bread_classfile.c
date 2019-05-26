@@ -12,6 +12,7 @@ ClassFile * bread_classfile(FILE *classfile){
 		/* Magic number */
 	if(bread_magic(class, classfile)){
 		free(class);
+		free(classfile);
 		fprintf(stderr, "Invalid .class file. Magic number \"0xcafebabe\" does not check.\n");
 		exit(ERR_MAGIC);
 	}
@@ -22,6 +23,7 @@ ClassFile * bread_classfile(FILE *classfile){
 		fprintf(stderr, "Minor version superior to Java SE (0x%02x)\n", JAVAVERSION);
 		fprintf(stderr, "\'y\': continue anyways\nany other key: stop\n");
 		if(getchar() != 'y'){
+			free(classfile);
 			free(class);
 			exit(ERR_MINOR);
 		}
@@ -31,6 +33,7 @@ ClassFile * bread_classfile(FILE *classfile){
 		fprintf(stderr, "Major version inferior to Java SE (0x%02x)\n", JAVAVERSION);
 		fprintf(stderr, "\'y\': continue anyways\nany other key: stop\n");
 		if(getchar() != 'y'){
+			free(classfile);
 			free(class);
 			exit(ERR_MAJOR);
 		}

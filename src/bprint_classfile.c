@@ -40,6 +40,10 @@ void bprint_classfile(ClassFile *class){
   return;
 }
 
+int charcmp(const void *a, const void *b){
+	return *((char *) a) - *((char *) b);
+}
+
 void bprint_info(ClassFile *class, int index, const char *prefix){
 	cp_info *cp = &class->constant_pool[index];
 	char *new_prefix = (char *) calloc(sizeof(prefix) + 1, sizeof(char));
@@ -102,14 +106,22 @@ void bprint_info(ClassFile *class, int index, const char *prefix){
       );
 			bprint_info(class, cp->info->NameAndType.descriptor_index - 1, new_prefix);
       break;
-    case CONSTANT_Utf8:
+    case CONSTANT_Utf8:;
+			static char escapes[7][4] = {"\aa", "\bb", "\tt", "\nn", "\vv", "\ff", "\rr"};
       printf("%sLength: %d\n%sBytes: \"", prefix, cp->info->Utf8.length, prefix);
 			u1 *bytes = cp->info->Utf8.bytes;
       for(int i = 0; i < cp->info->Utf8.length; i++){
 				wchar_t utf8char;
-				if((bytes[i] & 0x80) == 0x00)
-	        utf8char = (wchar_t) bytes[i];
-				else if((bytes[i] & 0xE0) == 0xC0)
+				if((bytes[i] & 0x80) == 0x00){
+					char c[] = {bytes[i], '\0'}, *c1;
+					c1 = bsearch(c, escapes, 7, 4, charcmp);
+					if(c1){
+						printf("\\%c", *++c1);
+						utf8char = *++c1;
+					}else{
+						utf8char = (wchar_t) bytes[i];
+					}
+				}else if((bytes[i] & 0xE0) == 0xC0)
 					utf8char = (wchar_t) (((bytes[i] & 0x1F) << 6) | (bytes[i + 1] & 0x3F)), i++;
 				else if((bytes[i] & 0xF0) == 0xE0)
 					utf8char = (wchar_t) (((bytes[i] & 0x0F) << 12) | ((bytes[i + 1] & 0x3F) << 6) | (bytes[i + 2] & 0x3F)), i += 2;
@@ -233,6 +245,11 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
       for(int i = 0; i < att_info.Code.attributes_count; i++)
         bprint_att_info(att_info.Code.attributes[i].info, att_info.Code.attributes[i].attribute_name_index, class, att_prefix);
       free(att_prefix);
+			free(att_info.Code.code);
+			free(att_info.Code.exception_table);
+			int i; for(i = 0; i < att_info.Code.attributes_count; i++)
+				free(att_info.Code.attributes[i].info);
+			free(att_info.Code.attributes);
       break;
     case NUMBER_ConstantValue:
       u1_to_ConstantValue(att_info.ConstantValue, u1_stream);
@@ -272,6 +289,7 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
             prefix, att_info.LineNumberTable.line_number_table[i].start_pc,
             prefix, att_info.LineNumberTable.line_number_table[i].line_number
         );
+			free(att_info.LineNumberTable.line_number_table);
       break;
     case NUMBER_LocalVariableTable:
       u1_to_LocalVariableTable(att_info.LocalVariableTable, u1_stream);
@@ -302,6 +320,7 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
             prefix, att_info.LocalVariableTable.local_variable_table[i].index
         );
 			}
+			free(att_info.LocalVariableTable.local_variable_table);
       break;
     case NUMBER_SourceFile:
       u1_to_SourceFile(att_info.SourceFile, u1_stream);

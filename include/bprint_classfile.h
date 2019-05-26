@@ -9,6 +9,7 @@
 void bprint_classfile(ClassFile *class);
 void bprint_info(ClassFile *class, int index, const char *prefix);
 void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char prefix[]);
+int charcmp(const void *a, const void *b);
 
 enum {
 	ACC_PUBLIC     = 0x0001,
