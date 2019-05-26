@@ -6,7 +6,11 @@ OFILES= ./main.o ./bread_constant_pool.o ./bread_magic.o ./bread_versions.o ./br
 
 FLAGS= -g -std=c99
 
+ifeq ($(OS), Windows_NT)
 NAME= breader
+else
+NAME= breader.out
+endif
 
 all: objects main clean
 
@@ -15,7 +19,6 @@ objects: $(CFILES)
 
 main: $(OFILES)
 	gcc -o ./$(NAME) $(OFILES) $(FLAGS)
-
 clean:
 ifeq ($(OS), Windows_NT)
 	del *.o

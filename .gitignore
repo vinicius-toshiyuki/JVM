@@ -9,3 +9,4 @@ breader
 *.c~
 
 .vscode/
+infer-out/
