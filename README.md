@@ -10,12 +10,13 @@ Reads a .class file and prints it's structure as described in Oracle's official 
 
 ### Compile: (only tested in Ubuntu 18.04 and Windows 10)
 
- $ cd test/
- $ make
+>$ cd test/
+>
+>$ make
 
 ### Run
 
- $ ./breader (class file name)
+>$ ./breader (class file name)
 
 ## TODO
 
