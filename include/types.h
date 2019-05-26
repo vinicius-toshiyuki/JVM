@@ -7,18 +7,38 @@ typedef uint8_t u1;
 typedef uint16_t u2;
 typedef uint32_t u4;
 
-#define u1_read(buffer, file) { fread(&buffer, sizeof(u1), 1, file); }
-/* Por algum motivo não funciona com um for em algum caso: zera o valor de buffer ao final ou até deu segmentation fault */
-#define u2_read(buffer, file) \
-{ \
-  buffer = 0x0000; \
-  u1 __byte; \
-  u1_read(__byte, file); \
-  buffer |= __byte; \
-  u1_read(__byte, file); \
-  buffer = (buffer << 8) | __byte; \
+#define CLEAN 0x0000
+
+/*-------------------------------------------FILE READ------------------------------------------*/
+
+/*Le um byte do class_file e armazena no buffer*/
+#define u1_read(__buff__, __class_file__) {\
+    fread(&__buff__, sizeof(u1), 1, __class_file__);\
 }
-#define u4_read(buffer, file) { int ____i; for(____i = 0; ____i < 4; ____i++){u1 ____byte; u1_read(____byte, file); buffer <<= ____i == 0 ? 0 : 8; buffer |= ____byte;} }
+
+/*Le 2 bytes no formato big endian e armazena no buffer*/
+#define u2_read(__buff__, __class_file__) { \
+    u1 __byte1__ = CLEAN; \
+    u1 __byte2__ = CLEAN; \
+    fread(&__byte1__, sizeof(u1), 1, __class_file__); \
+    fread(&__byte2__, sizeof(u1), 1, __class_file__); \
+    __buff__ = ((__byte1__ << 8) | __byte2__); \
+}
+
+/*Le 4 bytes no formato big endian e armazena no buffer*/
+#define u4_read(__buff__, __class_file__) { \
+    u1 __byte1__ = CLEAN; \
+    u1 __byte2__ = CLEAN; \
+    u1 __byte3__ = CLEAN; \
+    u1 __byte4__ = CLEAN; \
+    fread(&__byte1__, sizeof(u1), 1, __class_file__); \
+    fread(&__byte2__, sizeof(u1), 1, __class_file__); \
+    fread(&__byte3__, sizeof(u1), 1, __class_file__); \
+    fread(&__byte4__, sizeof(u1), 1, __class_file__); \
+    __buff__ = ((__byte1__ << 8) | __byte2__); \
+    __buff__ = ((__buff__ << 8) | __byte3__); \
+    __buff__ = ((__buff__ << 8) | __byte4__); \
+}
 
 #endif
 
