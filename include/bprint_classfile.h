@@ -7,7 +7,7 @@
 #include <string.h>
 
 void bprint_classfile(ClassFile *class);
-void bprint_info(cp_info *cp, const char *prefix);
+void bprint_info(ClassFile *class, int index, const char *prefix);
 void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char prefix[]);
 
 #define ATT_C 7
@@ -33,8 +33,8 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
 { \
   printf(BGC(183) "Constant pool:" CLEARN); \
   for(int i = 0; i < __class->const_pool_count - 1; i++){ \
-    printf("\t" BGC(189) "Tag %d: %d" CLEARN, i + 1, __class->constant_pool[i].tag); \
-    bprint_info(&__class->constant_pool[i], "\t"); \
+		printf(BGC(10) FGC(1) "Tag %d: ", i + 1); \
+    bprint_info(__class, i, "\t"); \
   } \
 }
 

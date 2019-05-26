@@ -7,6 +7,20 @@ extern int verbose;
 extern void * opcode_handlers[];
 extern char * opcode_to_mnemonic[0x100];
 
+char *constant_name[] = {
+  [CONSTANT_Class]              = "Class",
+  [CONSTANT_Fieldref]           = "Fieldref",
+  [CONSTANT_Methodref]          = "Methodref",
+  [CONSTANT_InterfaceMethodref] = "InterfaceMethodref",
+  [CONSTANT_String]             = "String",
+  [CONSTANT_Integer]            = "Integer",
+  [CONSTANT_Float]              = "Float",
+  [CONSTANT_Long]               = "Long",
+  [CONSTANT_Double]             = "Double",
+  [CONSTANT_NameAndType]        = "NameAndType",
+  [CONSTANT_Utf8]               = "Utf8"
+};
+
 void bprint_classfile(ClassFile *class){
   bprint_magic(class);
   bprint_versions(class);
@@ -26,22 +40,43 @@ void bprint_classfile(ClassFile *class){
   return;
 }
 
-void bprint_info(cp_info *cp, const char *prefix){
+void bprint_info(ClassFile *class, int index, const char *prefix){
+	cp_info *cp = &class->constant_pool[index];
+	char *new_prefix = (char *) calloc(sizeof(prefix), sizeof(char));
+	strcpy(new_prefix, prefix); strcat(new_prefix, "\t");
+
+  if(cp->tag) printf(
+			"(%d %s)",
+			cp->tag,
+			constant_name[cp->tag]
+	); else printf(
+		"(%d %s)",
+		cp->tag,
+		constant_name[(cp-1)->tag]
+	);
+	printf(CLEARN);
   switch(cp->tag){
     case CONSTANT_Class:
-      printf("%sName index: %d\n", prefix, cp->info->Class.name_index);
+      printf("%sName index: %d ", prefix, cp->info->Class.name_index + 1);
+			bprint_info(class, cp->info->Class.name_index, new_prefix);
       break;
     case CONSTANT_Fieldref:
     case CONSTANT_Methodref:
     case CONSTANT_InterfaceMethodref:
       printf(
-          "%sClass index: %d\n%sName and type index: %d\n",
-          prefix, cp->info->Fieldref.class_index,
-          prefix, cp->info->Fieldref.name_and_type_index
+          "%sClass index: %d ",
+          prefix, cp->info->Fieldref.class_index + 1
       );
+			bprint_info(class, cp->info->Fieldref.class_index, new_prefix);
+      printf(
+					"%sName and type index: %d ",
+          prefix, cp->info->Fieldref.name_and_type_index + 1
+      );
+			bprint_info(class, cp->info->Fieldref.name_and_type_index, new_prefix);
       break;
     case CONSTANT_String:
-      printf("%sString index: %d\n", prefix, cp->info->String.string_index);
+      printf("%sString index: %d ", prefix, cp->info->String.string_index + 1);
+			bprint_info(class, cp->info->String.string_index, new_prefix);
       break;
     case CONSTANT_Integer:
     case CONSTANT_Float:
@@ -57,18 +92,21 @@ void bprint_info(cp_info *cp, const char *prefix){
       break;
     case CONSTANT_NameAndType:
       printf(
-          "%sName index: %d\n%sDescripitor index: %d\n",
-          prefix, cp->info->NameAndType.name_index,
-          prefix, cp->info->NameAndType.descriptor_index
+          "%sName index: %d ",
+          prefix, cp->info->NameAndType.name_index + 1
       );
+			bprint_info(class, cp->info->NameAndType.name_index, new_prefix);
+      printf(
+					"%sDescripitor index: %d ",
+          prefix, cp->info->NameAndType.descriptor_index + 1
+      );
+			bprint_info(class, cp->info->NameAndType.descriptor_index, new_prefix);
       break;
     case CONSTANT_Utf8:
       printf("%sLength: %d\n%sBytes: \"", prefix, cp->info->Utf8.length, prefix);
 			u1 *bytes = cp->info->Utf8.bytes;
       for(int i = 0; i < cp->info->Utf8.length; i++){
 				wchar_t utf8char;
-//e      d      a      0      b      e      e      d      b      5      b      0
-//1110   1101   1010   0000   1011   1110   1110   1101   1011   0101   1011   0000
 				if((bytes[i] & 0x80) == 0x00)
 	        utf8char = (wchar_t) bytes[i];
 				else if((bytes[i] & 0xE0) == 0xC0)
@@ -80,11 +118,8 @@ void bprint_info(cp_info *cp, const char *prefix){
 				else
 					printf("0x%02x ", bytes[i]);
 				printf("%lc", utf8char);
-//				printf("%02x ", bytes[i]);
 			}
       printf("\"\n");
-      /*  printf("%02x ", cp->info->Utf8.bytes[i]);
-      printf("\b\"\n");*/
       break;
   }
   return;
