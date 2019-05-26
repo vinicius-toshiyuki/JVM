@@ -3,10 +3,10 @@
 
 #include <stdio.h>
 
-#define BGC(__code) "\e[48;5;" #__code "m"
-#define FGC(__code) "\e[38;5;" #__code "m"
-#define CLEAR "\e[0m"
-#define CLEARN "\e[0m\n"
+#define BGC(__code) ""
+#define FGC(__code) ""
+#define CLEAR ""
+#define CLEARN "\n"
 
 #endif
 
