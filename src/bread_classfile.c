@@ -18,6 +18,7 @@ ClassFile * bread_classfile(FILE *classfile){
 	if(verbose) printf("Read magic number\n");
 
 		/* Minor and major versions */
+<<<<<<< HEAD
 	if(bread_minor(class, classfile) > JAVAVERSION){
 		fprintf(stderr, "Minor version superior to Java SE (0x%02x)\n", JAVAVERSION);
 		fprintf(stderr, "\'y\': continue anyways\nany other key: stop\n");
@@ -34,6 +35,18 @@ ClassFile * bread_classfile(FILE *classfile){
 			free(class);
 			exit(ERR_MAJOR);
 		}
+=======
+	if(bread_minor(class, classfile) > JAVAVERSION && 0){
+		free(class);
+		fprintf(stderr, "Minor version superior to Java SE 8 (0x34)\n");
+		exit(ERR_MINOR);
+	}
+	if(verbose) printf("Read minor version\n");
+	if(bread_major(class, classfile) < JAVAVERSION && 0){
+		free(class);
+		fprintf(stderr, "Major version inferior to Java SE 8 (0x34)\n");
+		exit(ERR_MAJOR);
+>>>>>>> f0dcbf1727fcda23c16ba0a0719db625ff9bdfa0
 	}
 	if(verbose) printf("Read major version\n");
 		/* Constant pool count and constant pool */
