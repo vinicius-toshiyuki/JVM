@@ -1396,7 +1396,7 @@ int LNEG_handler(u1 *bytestream){
 }
 int LOOKUPSWITCH_handler(u1 *bytestream){
 	static int state = 0;
-	if(state == 0){
+	if(!state){
 		state = 1;
 		return -1;
 	}
