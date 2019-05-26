@@ -1,6 +1,7 @@
 breader
 resutado
 saida
+*.txt
 *.java
 *.swp
 *.o
