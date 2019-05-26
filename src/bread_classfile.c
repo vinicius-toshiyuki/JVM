@@ -18,13 +18,13 @@ ClassFile * bread_classfile(FILE *classfile){
 	if(verbose) printf("Read magic number\n");
 
 		/* Minor and major versions */
-	if(bread_minor(class, classfile) > JAVAVERSION){
+	if(bread_minor(class, classfile) > JAVAVERSION && 0){
 		free(class);
 		fprintf(stderr, "Minor version superior to Java SE 8 (0x34)\n");
 		exit(ERR_MINOR);
 	}
 	if(verbose) printf("Read minor version\n");
-	if(bread_major(class, classfile) < JAVAVERSION){
+	if(bread_major(class, classfile) < JAVAVERSION && 0){
 		free(class);
 		fprintf(stderr, "Major version inferior to Java SE 8 (0x34)\n");
 		exit(ERR_MAJOR);
