@@ -25,7 +25,9 @@ int main(int argc, char **argv){
 		qsort(options, strlen(options), sizeof(char), comp);
 		if(bsearch(&opt[0], options, strlen(options), sizeof(char), comp)) verbose = 1;
 	}
-
+	
+	/*Permite a localização do programa na lingua em que o sistema operacional esta selecionada
+	  isso faz com que caracteres como 'ç' sejam exibidas no programa caso o SO esteja em pt-br*/
 	setlocale(LC_ALL, "");
 	char *filename = argv[1];
 	FILE *classfile = fopen(filename, "rb");
