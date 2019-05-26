@@ -3,7 +3,7 @@
 
 #include <wchar.h>
 
-extern int verbose;
+extern int verbose, print_pool;
 extern void * opcode_handlers[];
 extern char * opcode_to_mnemonic[0x100];
 
@@ -25,7 +25,7 @@ void bprint_classfile(ClassFile *class){
   bprint_magic(class);
   bprint_versions(class);
   bprint_const_pool_count(class);
-  bprint_constant_pool(class);
+  if(print_pool) bprint_constant_pool(class);
   bprint_access_flags(class->access_flags);
   bprint_this_class(class);
   bprint_super_class(class);
@@ -171,25 +171,26 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
       printf("\b\"\n");
 			int ret = 0;
       for(int i = 0; i < att_info.Code.code_length; i++){
-        if(ret >= 0) printf("%s\t" "%03d " BGC(80) FGC(96) "0x%02x:" CLEAR " ", prefix, i, att_info.Code.code[i]);
+        if(ret >= 0 && !_jump) printf("%s\t" "%03d " BGC(80) FGC(96) "0x%02x:" CLEAR " ", prefix, i, att_info.Code.code[i]);
         ret = ((int (*)(u1 *))(opcode_handlers[att_info.Code.code[i]]))(att_info.Code.code + i);
         if(lookup){
           printf("%sNpairs: %d\n", new_prefix, lookup_result.npairs);
           int j; for(j = 0; j < lookup_result.npairs; j++){
             printf(
-              "%s%d: %d (%d)\n",
+              "%s%d: %d (%s%d)\n",
               new_prefix, lookup_result.pairs[j][0],
               i + lookup_result.pairs[j][1],
+              lookup_result.pairs[j][1] < 0 ? "" : "+",
               lookup_result.pairs[j][1]
             );
             free(lookup_result.pairs[j]);
           }
           free(lookup_result.pairs);
-          printf("%sDefault: %d (%d)\n", new_prefix, i + lookup_result.default_offset, lookup_result.default_offset);
+          printf("%sDefault: %d (%s%d)\n", new_prefix, i + lookup_result.default_offset, lookup_result.default_offset < 0 ? "" : "+",lookup_result.default_offset);
           lookup = 0;
         }
 				if(_jump){
-					printf("%sJump address: %d (Offset: %d)\n", new_prefix, i + 1 - ret, ret);
+					printf("%sJump address: %d (Offset: %s%d)\n", new_prefix, i + ret, ret < 0 ? "" : "+", ret);
 					i--;
 				}else if(ret == -1 && (i + 1) % 4){
 					u1 pad = (u1) (4 - ((i + 1 ) % 4));

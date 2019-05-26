@@ -19,15 +19,21 @@ ClassFile * bread_classfile(FILE *classfile){
 
 		/* Minor and major versions */
 	if(bread_minor(class, classfile) > JAVAVERSION){
-		free(class);
-		fprintf(stderr, "Minor version superior to Java SE 8 (0x34)\n");
-		exit(ERR_MINOR);
+		fprintf(stderr, "Minor version superior to Java SE (0x%02x)\n", JAVAVERSION);
+		fprintf(stderr, "\'y\': continue anyways\nany other key: stop\n");
+		if(getchar() != 'y'){
+			free(class);
+			exit(ERR_MINOR);
+		}
 	}
 	if(verbose) printf("Read minor version\n");
 	if(bread_major(class, classfile) < JAVAVERSION){
-		free(class);
-		fprintf(stderr, "Major version inferior to Java SE 8 (0x34)\n");
-		exit(ERR_MAJOR);
+		fprintf(stderr, "Major version inferior to Java SE (0x%02x)\n", JAVAVERSION);
+		fprintf(stderr, "\'y\': continue anyways\nany other key: stop\n");
+		if(getchar() != 'y'){
+			free(class);
+			exit(ERR_MAJOR);
+		}
 	}
 	if(verbose) printf("Read major version\n");
 		/* Constant pool count and constant pool */

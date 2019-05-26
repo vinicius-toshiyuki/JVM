@@ -1606,39 +1606,43 @@ int TABLESWITCH_handler(u1 *bytestream){
 		return -1;
 	}
 	state = 0;
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
 	u1 pad = bytestream[1];
 	u1 *paddedstream = bytestream + pad;
 	// Default bytes (1-4)
-	printf("0x%08x ", 
-			(paddedstream[1] << 24) |
-			(paddedstream[2] << 16) |
-			(paddedstream[3] << 8) | 
-			paddedstream[4]
-	);
+	u4 defaultbytes = \
+			(paddedstream[1] << 24) | \
+			(paddedstream[2] << 16) | \
+			(paddedstream[3] << 8) | \
+			paddedstream[4];
+	lookup_result.default_offset = defaultbytes;
 	// Low bytes (1-4)
-	uint32_t low = \
+	u4 low = \
 			(paddedstream[5] << 24) | \
 			(paddedstream[6] << 16) | \
 			(paddedstream[7] << 8) | \
 			paddedstream[8];
-	printf("0x%08x ", low);
+	// printf("0x%08x ", low);
 	// High bytes (1-4)
-	uint32_t high = \
+	u4 high = \
 			(paddedstream[9] << 24) | \
 			(paddedstream[10] << 16) | \
 			(paddedstream[11] << 8) | \
 			paddedstream[12];
-	printf("0x%08x ", high);
+	// printf("0x%08x ", high);
 	// Offsets (x)
-	uint32_t x = high - low + 1;
-	for(int i = 0; i < x; i++){
-		printf("0x%08x ", 
-				(paddedstream[12 + i + 1] << 24) |
-				(paddedstream[12 + i + 1] << 16) |
-				(paddedstream[12 + i + 1] << 8) | 
-				paddedstream[12 + i + 1]
-		);
+	u4 x = high - low + 1;
+	lookup_result.npairs = x;
+	int i, j;
+	lookup_result.pairs = (u4 **) malloc(sizeof(u4 *) * x);
+	for(i = 0, j = low; i < x; i++, j++){
+    lookup_result.pairs[i] = (u4 *) malloc(sizeof(u4) * 2);
+		lookup_result.pairs[i][0] = j;
+		lookup_result.pairs[i][1] = \
+				paddedstream[13 + i * 4] << 24 | \
+				paddedstream[14 + i * 4] << 16 | \
+				paddedstream[15 + i * 4] << 8 | \
+				paddedstream[16 + i * 4];
 	}
 	return pad + 12 + x * 4;
 }

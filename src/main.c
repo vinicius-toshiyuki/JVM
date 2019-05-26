@@ -11,7 +11,7 @@
 
 int comp(const void *a, const void *b){return *((char *) a) - *((char *) b);}
 
-int verbose = 0;
+int verbose = 0, print_pool;
 
 int main(int argc, char **argv){
 	if(argc < 2){
@@ -20,10 +20,11 @@ int main(int argc, char **argv){
 	}
 
 	if(argc == 3){
-		char opt[] = "v";
+		char opt[] = "vc";
 		char *options = *(argv + 2);
 		qsort(options, strlen(options), sizeof(char), comp);
 		if(bsearch(&opt[0], options, strlen(options), sizeof(char), comp)) verbose = 1;
+		if(bsearch(&opt[1], options, strlen(options), sizeof(char), comp)) print_pool = 1;
 	}
 
 	setlocale(LC_ALL, "");
