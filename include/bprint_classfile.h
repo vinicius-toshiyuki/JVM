@@ -128,27 +128,27 @@ static inline void bprint_access_flags(u2 af){
 #define bprint_attributes(__attributes, __attributes_count, __prefix) \
 { \
   printf(__prefix BGC(38) FGC(22) "Attributes:" CLEARN); \
-  for(int i = 0; i < __attributes_count; i++){ \
+  for(int j = 0; j < __attributes_count; j++){ \
     printf( \
         __prefix "\t" BGC(45) FGC(29) "Attribute %d:" CLEARN \
         __prefix "\tAttribute name index: %d ", \
-        i, __attributes[i].attribute_name_index \
+        j, __attributes[j].attribute_name_index \
 		); \
-		bprint_info(class, __attributes[i].attribute_name_index - 1, __prefix "\t\t"); \
+		bprint_info(class, __attributes[j].attribute_name_index - 1, __prefix "\t\t"); \
 		printf( \
         __prefix "\tAttribute length: %d\n" \
         __prefix "\tInfo: \"", \
-        __attributes[i].attribute_length \
+        __attributes[j].attribute_length \
     ); \
     /* Procurar o tipo do atributo com o name_index na constant_pool */ \
     /* Escolher o elemento certo da union Attributes */ \
     /* Imprimir os elementos */ \
     /* E quando o elemento for um attribute_info? */ \
     /* {"Code", "ConstantValue", "Deprecated", "Exceptions", "LineNumberTable", "LocalVariableTable", "SourceFile"}; */ \
-    for(int j = 0; j < __attributes[i].attribute_length; j++) \
-      printf("%02x ", __attributes[i].info[j]); \
-    printf("%s\n", __attributes[i].attribute_length == 0 ? "" : "\b\""); \
-    bprint_att_info(__attributes[i].info, __attributes[i].attribute_name_index, class, __prefix "\t"); \
+    for(int k = 0; k < __attributes[j].attribute_length; k++) \
+      printf("%02x ", __attributes[j].info[k]); \
+    printf("%s\n", __attributes[j].attribute_length == 0 ? "" : "\b\""); \
+    bprint_att_info(__attributes[j].info, __attributes[j].attribute_name_index, class, __prefix "\t"); \
   } \
 }
 

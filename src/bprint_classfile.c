@@ -127,8 +127,14 @@ void bprint_info(ClassFile *class, int index, const char *prefix){
 }
 
 extern int _jump;
+extern struct {
+  u4 default_offset;
+  u4 npairs;
+  u4 **pairs;
+} lookup_result;
 void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char prefix[]){
   static char attributes_types[ATT_C][ATT_M_S] = {"Code", "ConstantValue", "Deprecated", "Exceptions", "LineNumberTable", "LocalVariableTable", "SourceFile"}, att_type_value_assign = 1;
+  static int lookup = 0;
   if(att_type_value_assign){
     att_type_value_assign = 0;
     // A enum NUMBERS tem que estar de acordo com essa numeração
@@ -140,7 +146,8 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
   
   char str_name[ATT_M_S] = {[0 ... ATT_M_S - 1] = '\0'};
   memcpy(str_name, class->constant_pool[name_index - 1].info->Utf8.bytes  /*Bytes do nome do atributo*/, class->constant_pool[name_index - 1].info->Utf8.length);
-  int number_code = ((char *) (bsearch(str_name, attributes_types, ATT_C, ATT_M_S, (int (*)(const void *, const void *)) strcmp)))[ATT_M_S - 1];
+  void *bsearch_result = bsearch(str_name, attributes_types, ATT_C, ATT_M_S, (int (*)(const void *, const void *)) strcmp);
+  int number_code = bsearch_result != NULL ? ((char *) bsearch_result)[ATT_M_S - 1] : NUMBER_Invalid;
 
   printf(BGC(27) FGC(11) "%s%s attribute:" CLEARN, prefix, str_name);
 
@@ -164,14 +171,30 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
       printf("\b\"\n");
 			int ret = 0;
       for(int i = 0; i < att_info.Code.code_length; i++){
-        if(ret >= 0) printf("%s\t" BGC(80) FGC(96) "0x%02x:" CLEAR " ", prefix, att_info.Code.code[i]);
+        if(ret >= 0) printf("%s\t" "%03d " BGC(80) FGC(96) "0x%02x:" CLEAR " ", prefix, i, att_info.Code.code[i]);
         ret = ((int (*)(u1 *))(opcode_handlers[att_info.Code.code[i]]))(att_info.Code.code + i);
+        if(lookup){
+          printf("%sNpairs: %d\n", new_prefix, lookup_result.npairs);
+          int j; for(j = 0; j < lookup_result.npairs; j++){
+            printf(
+              "%s%d: %d (%d)\n",
+              new_prefix, lookup_result.pairs[j][0],
+              i + lookup_result.pairs[j][1],
+              lookup_result.pairs[j][1]
+            );
+            free(lookup_result.pairs[j]);
+          }
+          free(lookup_result.pairs);
+          printf("%sDefault: %d (%d)\n", new_prefix, i + lookup_result.default_offset, lookup_result.default_offset);
+          lookup = 0;
+        }
 				if(_jump){
 					printf("%sJump address: %d (Offset: %d)\n", new_prefix, i + 1 - ret, ret);
 					i--;
-				}else if(ret == -1 && i % 4){
-					u1 pad = (u1) (4 - (i % 4));
+				}else if(ret == -1 && (i + 1) % 4){
+					u1 pad = (u1) (4 - ((i + 1 ) % 4));
 					att_info.Code.code[i + 1] = pad;
+          lookup = 1;
 					i--;
 				}else if(ret < -1){
 					printf("%s", new_prefix);

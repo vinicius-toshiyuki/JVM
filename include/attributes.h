@@ -4,6 +4,7 @@
 #include "breads.h"
 
 typedef enum {
+  NUMBER_Invalid = -1,
   NUMBER_Code = 0,
   NUMBER_ConstantValue,
   NUMBER_Deprecated,

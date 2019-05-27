@@ -420,6 +420,12 @@ int _wide_index = 0;
 int _constant_print = 1;
 int _jump = 0;
 
+struct {
+  u4 default_offset;
+  u4 npairs;
+  u4 **pairs;
+} lookup_result;
+
 int AALOAD_handler(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
@@ -1401,22 +1407,38 @@ int LOOKUPSWITCH_handler(u1 *bytestream){
 		return -1;
 	}
 	state = 0;
-  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
+  printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
 	u1 pad = bytestream[1];
 	u1 *paddedstream = bytestream + pad;
-	printf("0x%08x ", 
-			(paddedstream[1] << 24) |
-			(paddedstream[2] << 16) |
-			(paddedstream[3] << 8) | 
-			paddedstream[4]
-	);
-	printf("0x%08x ", 
-			(paddedstream[5] << 24) |
-			(paddedstream[6] << 16) |
-			(paddedstream[7] << 8) | 
-			paddedstream[8]
-	);
-	return pad + 8;
+  // Default bytes
+	int32_t defaultbytes = \
+			(paddedstream[1] << 24) | \
+			(paddedstream[2] << 16) | \
+			(paddedstream[3] << 8) | \
+			paddedstream[4];
+  //printf("Default offset: %d ", defaultbytes);
+  lookup_result.default_offset = defaultbytes;
+  // N pairs
+  int32_t npairs = \
+			(paddedstream[5] << 24) | \
+			(paddedstream[6] << 16) | \
+			(paddedstream[7] << 8) | \
+			paddedstream[8];
+	//printf("Npairs: %d ", npairs);
+  lookup_result.npairs = npairs;
+  int i;
+  lookup_result.pairs = (u4 **) malloc(sizeof(u4 *) * npairs);
+  for(i = 0; i < npairs; i++){
+    lookup_result.pairs[i] = (u4 *) malloc(sizeof(u4) * 2);
+    lookup_result.pairs[i][0] = paddedstream[9 + i * 8] << 24 | paddedstream[10 + i * 8] << 16 | paddedstream[11 + i * 8] << 8 | paddedstream[12 + i * 8];
+    lookup_result.pairs[i][1] = paddedstream[13 + i * 8] << 24 | paddedstream[14 + i * 8] << 16 | paddedstream[15 + i * 8] << 8 | paddedstream[16 + i * 8];
+    /*printf(
+      "(Match: %d Offset: %d) ",
+      paddedstream[9 + i * 8] << 24 | paddedstream[10 + i * 8] << 16 | paddedstream[11 + i * 8] << 8 | paddedstream[12 + i * 8],
+      paddedstream[13 + i * 8] << 24 | paddedstream[14 + i * 8] << 16 | paddedstream[15 + i * 8] << 8 | paddedstream[16 + i * 8]
+    );*/
+  }
+	return pad + 8 + npairs * 8;
 }
 int LOR_handler(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
