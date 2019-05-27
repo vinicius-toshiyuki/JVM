@@ -10,6 +10,9 @@ saida
 *.~
 *.c.un~
 *.c~
+*.pdf
+*.pptx
 
 .vscode/
 infer-out/
+Apresentacao_slides/
