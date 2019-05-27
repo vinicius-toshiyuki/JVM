@@ -24,3 +24,9 @@ Reads a .class file and prints it's structure as described in Oracle's official 
 - [ ] Documentation
 - [x] Print constant pool value using opcode argument as index if needed
 - [x] Print jump destination on jump opcodes printing
+
+## Authors
+
+- Vinicius Toshiyuki Menezes Sugimoto - 17/0023664
+
+- Henrique Mendes de Freitas Mariano - 17/0012280
