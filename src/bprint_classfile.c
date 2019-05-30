@@ -44,11 +44,12 @@ int charcmp(const void *a, const void *b){
 	return *((char *) a) - *((char *) b);
 }
 
-void bprint_info(ClassFile *class, int index, const char *prefix){
+int bprint_info(ClassFile *class, int index, const char *prefix, int inner){
 	cp_info *cp = &class->constant_pool[index];
 	char *new_prefix = (char *) calloc(sizeof(prefix) + 1, sizeof(char));
 	strcpy(new_prefix, prefix); strcat(new_prefix, "\t");
-
+	
+	if(!inner){
   if(cp->tag) printf(
 			"(%d %s)",
 			cp->tag,
@@ -58,57 +59,40 @@ void bprint_info(ClassFile *class, int index, const char *prefix){
 		cp->tag,
 		constant_name[(cp-1)->tag]
 	);
-	printf(CLEARN);
+	printf(CLEARN);}
   switch(cp->tag){
     case CONSTANT_Class:
-      printf("%sName index: %d ", prefix, cp->info->Class.name_index);
-			bprint_info(class, cp->info->Class.name_index - 1, new_prefix);
+      if(!inner) printf("%sName index: %d\n", prefix, cp->info->Class.name_index);
+			bprint_info(class, cp->info->Class.name_index - 1, new_prefix, 1);
       break;
     case CONSTANT_Fieldref:
     case CONSTANT_Methodref:
     case CONSTANT_InterfaceMethodref:
-      printf(
-          "%sClass index: %d ",
-          prefix, cp->info->Fieldref.class_index
-      );
-			bprint_info(class, cp->info->Fieldref.class_index - 1, new_prefix);
-      printf(
-					"%sName and type index: %d ",
-          prefix, cp->info->Fieldref.name_and_type_index
-      );
-			bprint_info(class, cp->info->Fieldref.name_and_type_index - 1, new_prefix);
-      break;
-    case CONSTANT_String:
-      printf("%sString index: %d ", prefix, cp->info->String.string_index);
-			bprint_info(class, cp->info->String.string_index - 1, new_prefix);
+      if(!inner) printf("%sClass index: %d\n", prefix, cp->info->Fieldref.class_index);
+			bprint_info(class, cp->info->Fieldref.class_index - 1, new_prefix, 1);
+			if(!inner) printf("%sName and type index: %d\n",	prefix, cp->info->Fieldref.name_and_type_index);
+			bprint_info(class, cp->info->Fieldref.name_and_type_index - 1, new_prefix, 1);			
+			break;
+		case CONSTANT_String:
+			if(!inner) printf("%sString index: %d\n",	prefix, cp->info->String.string_index);
+			bprint_info(class, cp->info->String.string_index - 1, new_prefix, 1);
       break;
     case CONSTANT_Integer:
     case CONSTANT_Float:
-      printf("%sBytes: %d\n", prefix, cp->info->Integer.bytes);
-      break;
     case CONSTANT_Long:
     case CONSTANT_Double:
-      printf(
-          "%sHigh bytes: 0x%08x\n%sLow bytes: 0x%08x\n",
-          prefix, cp->info->Long.high_bytes,
-          prefix, cp->info->Long.low_bytes
-      );
-      break;
+			bprint_numeral(cp->tag);
+			break;
     case CONSTANT_NameAndType:
-      printf(
-          "%sName index: %d ",
-          prefix, cp->info->NameAndType.name_index
-      );
-			bprint_info(class, cp->info->NameAndType.name_index - 1, new_prefix);
-      printf(
-					"%sDescripitor index: %d ",
-          prefix, cp->info->NameAndType.descriptor_index
-      );
-			bprint_info(class, cp->info->NameAndType.descriptor_index - 1, new_prefix);
+      if(!inner) printf("%sName index: %d\n", prefix, cp->info->NameAndType.name_index);
+			bprint_info(class, cp->info->NameAndType.name_index - 1, new_prefix, 1);
+      if(!inner) printf("%sDescripitor index: %d\n", prefix, cp->info->NameAndType.descriptor_index);
+			bprint_info(class, cp->info->NameAndType.descriptor_index - 1, new_prefix, 1);
       break;
     case CONSTANT_Utf8:;
 			static char escapes[7][4] = {"\aa", "\bb", "\tt", "\nn", "\vv", "\ff", "\rr"};
-      printf("%sLength: %d\n%sBytes: \"", prefix, cp->info->Utf8.length, prefix);
+      if(!inner) printf("%sLength: %d\n%sBytes: ", prefix, cp->info->Utf8.length, prefix);
+			printf("%s\"", inner ? prefix: "");
 			u1 *bytes = cp->info->Utf8.bytes;
       for(int i = 0; i < cp->info->Utf8.length; i++){
 				wchar_t utf8char;
@@ -135,7 +119,7 @@ void bprint_info(ClassFile *class, int index, const char *prefix){
       break;
   }
 	free(new_prefix);
-  return;
+  return index + 1;
 }
 
 extern int _jump;
@@ -211,7 +195,7 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
 					i--;
 				}else if(ret < -1){
 					printf("%s", new_prefix);
-					bprint_info(class, -++ret - 1, new_prefix);
+					bprint_info(class, -++ret - 1, new_prefix, 1);
 					i--;
 				}else{
 					i += ret;
@@ -254,7 +238,7 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
     case NUMBER_ConstantValue:
       u1_to_ConstantValue(att_info.ConstantValue, u1_stream);
       printf("%s\tConstant value index: %d\n%s", prefix, att_info.ConstantValue.constantvalue_index, new_prefix);
-			bprint_info(class, att_info.ConstantValue.constantvalue_index - 1, new_prefix);
+			bprint_info(class, att_info.ConstantValue.constantvalue_index - 1, new_prefix, 1);
       break;
     case NUMBER_Deprecated: /* Tem nada */
       break;
@@ -270,7 +254,7 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
             "%s\t\tException %d: %d\n%s",
             prefix, i, att_info.Exceptions.exception_index_table[i], new_prefix
         );
-				bprint_info(class, att_info.Exceptions.exception_index_table[i] - 1, new_prefix);
+				bprint_info(class, att_info.Exceptions.exception_index_table[i] - 1, new_prefix, 1);
 			}
       break;
     case NUMBER_LineNumberTable:
@@ -309,12 +293,12 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
             prefix, att_info.LocalVariableTable.local_variable_table[i].length,
             prefix, att_info.LocalVariableTable.local_variable_table[i].name_index, new_prefix
 				);
-				bprint_info(class, att_info.LocalVariableTable.local_variable_table[i].name_index - 1, new_prefix);
+				bprint_info(class, att_info.LocalVariableTable.local_variable_table[i].name_index - 1, new_prefix, 1);
 				printf(
             "%s\t\tDescriptor index: %d\n%s",
             prefix, att_info.LocalVariableTable.local_variable_table[i].descriptor_index, new_prefix
 				);
-				bprint_info(class, att_info.LocalVariableTable.local_variable_table[i].descriptor_index - 1, new_prefix);
+				bprint_info(class, att_info.LocalVariableTable.local_variable_table[i].descriptor_index - 1, new_prefix, 1);
 				printf(
             "%s\t\tIndex: %d\n",
             prefix, att_info.LocalVariableTable.local_variable_table[i].index
@@ -326,7 +310,7 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
       u1_to_SourceFile(att_info.SourceFile, u1_stream);
       printf("%s\tSource file index: %d\n", prefix, att_info.SourceFile.sourcefile_index);
 			printf("%s", new_prefix);
-			bprint_info(class, att_info.SourceFile.sourcefile_index - 1, new_prefix);
+			bprint_info(class, att_info.SourceFile.sourcefile_index - 1, new_prefix, 1);
       break;
     default:
       break;

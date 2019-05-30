@@ -7,7 +7,7 @@
 #include <string.h>
 
 void bprint_classfile(ClassFile *class);
-void bprint_info(ClassFile *class, int index, const char *prefix);
+int bprint_info(ClassFile *class, int index, const char *prefix, int inner);
 void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char prefix[]);
 int charcmp(const void *a, const void *b);
 
@@ -50,34 +50,34 @@ enum {
   printf(BGC(226) FGC(88) "Constant pool:" CLEARN); \
   for(int i = 0; i < __class->const_pool_count - 1; i++){ \
 		printf(BGC(10) FGC(1) "Tag %d: ", i + 1); \
-    bprint_info(__class, i, "\t"); \
+    bprint_info(__class, i, "\t", 0); \
   } \
 }
 
 static inline void bprint_access_flags(u2 af){
 	printf("Access flags: 0x%04x (", af);
 
-	if(af&ACC_PUBLIC)     printf ("Public ");
-	if(af&ACC_PRIVATE)    printf ("Private ");
-	if(af&ACC_PROTECTED)  printf ("Protected ");
-	if(af&ACC_STATIC)     printf ("Static ");
-	if(af&ACC_FINAL)      printf ("Final ");
-	if(af&ACC_SUPER)      printf ("Super ");
-	if(af&ACC_VOLATILE)   printf ("Volatile ");
-	if(af&ACC_TRANSIENT)  printf ("Transient ");
-	if(af&ACC_INTERFACE)  printf ("Interface ");
-	if(af&ACC_ABSTRACT)   printf ("Abstract ");
-	if(af&ACC_SYNTHETIC)  printf ("Synthetic ");
-	if(af&ACC_ANNOTATION) printf ("Annotation ");
-	if(af&ACC_ENUM)       printf ("Enum ");
+	if(af & ACC_PUBLIC)     printf ("Public ");
+	if(af & ACC_PRIVATE)    printf ("Private ");
+	if(af & ACC_PROTECTED)  printf ("Protected ");
+	if(af & ACC_STATIC)     printf ("Static ");
+	if(af & ACC_FINAL)      printf ("Final ");
+	if(af & ACC_SUPER)      printf ("Super ");
+	if(af & ACC_VOLATILE)   printf ("Volatile ");
+	if(af & ACC_TRANSIENT)  printf ("Transient ");
+	if(af & ACC_INTERFACE)  printf ("Interface ");
+	if(af & ACC_ABSTRACT)   printf ("Abstract ");
+	if(af & ACC_SYNTHETIC)  printf ("Synthetic ");
+	if(af & ACC_ANNOTATION) printf ("Annotation ");
+	if(af & ACC_ENUM)       printf ("Enum ");
 
 	printf("\b)\n");
 	return;
 }
 
-#define bprint_this_class(__class) printf("This class: %d ", __class->this_class); bprint_info(__class, __class->this_class - 1, "\t")
+#define bprint_this_class(__class) printf("This class: %d ", __class->this_class); bprint_info(__class, __class->this_class - 1, "\t", 0)
 
-#define bprint_super_class(__class) printf("Super class: %d ", __class->super_class); bprint_info(__class, __class->super_class - 1, "\t")
+#define bprint_super_class(__class) printf("Super class: %d ", __class->super_class); bprint_info(__class, __class->super_class - 1, "\t", 0)
 
 #define bprint_interfaces_count(__class) printf("Interfaces count: %d\n", __class->interfaces_count)
 
@@ -86,7 +86,7 @@ static inline void bprint_access_flags(u2 af){
   printf("Interfaces:\n"); \
   for(int i = 0; i < __class->interfaces_count; i++){ \
     printf("\tInterface %d: %d ", i, __class->interfaces[i]); \
-		bprint_info(__class, __class->interfaces[i] - 1, "\t"); \
+		bprint_info(__class, __class->interfaces[i] - 1, "\t", 0); \
 	} \
 }
 
@@ -99,9 +99,9 @@ static inline void bprint_access_flags(u2 af){
     printf("\t" BGC(218) FGC(51) "Field %d:" CLEARN "\t", i); \
 		bprint_access_flags(__class->fields[i].access_flags); \
 		printf("\tName index: %d ", __class->fields[i].name_index); \
-		bprint_info(__class, __class->fields[i].name_index - 1, "\t\t"); \
+		bprint_info(__class, __class->fields[i].name_index - 1, "\t\t", 0); \
 		printf("\tDescriptor index: %d ", __class->fields[i].descriptor_index); \
-		bprint_info(__class, __class->fields[i].descriptor_index - 1, "\t\t"); \
+		bprint_info(__class, __class->fields[i].descriptor_index - 1, "\t\t", 0); \
 		printf("\tAttributes count: %d\n", __class->fields[i].attributes_count); \
     bprint_attributes(__class->fields[i].attributes, __class->fields[i].attributes_count, "\t"); \
   } \
@@ -116,9 +116,9 @@ static inline void bprint_access_flags(u2 af){
     printf("\t" BGC(157) FGC(166) "Method %d:" CLEARN "\t", i); \
 		bprint_access_flags(__class->methods[i].access_flags); \
 		printf("\tName index: %d ", __class->methods[i].name_index); \
-		bprint_info(__class, __class->methods[i].name_index - 1, "\t\t"); \
+		bprint_info(__class, __class->methods[i].name_index - 1, "\t\t", 0); \
     printf("\tDescriptor index: %d ", __class->methods[i].descriptor_index); \
-		bprint_info(__class, __class->methods[i].descriptor_index - 1, "\t\t"); \
+		bprint_info(__class, __class->methods[i].descriptor_index - 1, "\t\t", 0); \
     printf("\tAttributes count: %d\n", __class->methods[i].attributes_count);\
     bprint_attributes(__class->methods[i].attributes, __class->methods[i].attributes_count, "\t"); \
   } \
@@ -135,7 +135,7 @@ static inline void bprint_access_flags(u2 af){
         __prefix "\tAttribute name index: %d ", \
         j, __attributes[j].attribute_name_index \
 		); \
-		bprint_info(class, __attributes[j].attribute_name_index - 1, __prefix "\t\t"); \
+		bprint_info(class, __attributes[j].attribute_name_index - 1, __prefix "\t\t", 0); \
 		printf( \
         __prefix "\tAttribute length: %d\n" \
         __prefix "\tInfo: \"", \
@@ -236,4 +236,30 @@ static inline void bprint_access_flags(u2 af){
 }
 
 #define u1_to_SourceFile(__sourcefile, __u1_stream) memcpy(&__sourcefile.sourcefile_index, __u1_stream, 2), u2_flip(__sourcefile.sourcefile_index);
+
+#define bprint_numeral(tag) \
+{ \
+	switch(tag){ \
+		case CONSTANT_Integer: \
+      printf("%sBytes: %d\n", prefix, cp->info->Integer.bytes); \
+      break; \
+		case CONSTANT_Float: \
+      printf("%sBytes: %d\n", prefix, cp->info->Integer.bytes); \
+      break; \
+		case CONSTANT_Long: \
+      printf( \
+          "%sHigh bytes: 0x%08x\n%sLow bytes: 0x%08x\n", \
+          prefix, cp->info->Long.high_bytes, \
+          prefix, cp->info->Long.low_bytes \
+      ); \
+      break; \
+		case CONSTANT_Double: \
+      printf( \
+          "%sHigh bytes: 0x%08x\n%sLow bytes: 0x%08x\n", \
+          prefix, cp->info->Long.high_bytes, \
+          prefix, cp->info->Long.low_bytes \
+      ); \
+      break; \
+	} \
+}
 #endif
