@@ -1,4 +1,4 @@
-# Bytecode reader and printer
+# Bytecode viewer and interpreter
 
 ## breader
 
@@ -6,9 +6,9 @@
 
 ### Description
 
-Reads a .class file and prints it's structure as described in Oracle's official [Java Virtual Machine Specification](https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html "Documentation")
+Reads .class files and let you choose to prints it's structure as described in Oracle's official [Java Virtual Machine Specification](https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html "Documentation") or interpret it's instrunctions as JVM 8 does (mais ou menos ne)
 
-### Compile: (only tested in Ubuntu 18.04 and Windows 10)
+### Compile: (tested in Ubuntu 18.04 and Windows 10)
 
 >$ cd test/
 >
@@ -16,7 +16,7 @@ Reads a .class file and prints it's structure as described in Oracle's official 
 
 ### Run
 
->$ ./breader (class file name)
+>$ ./breader.out (class file name)
 
 ## TODO
 
@@ -24,6 +24,13 @@ Reads a .class file and prints it's structure as described in Oracle's official 
 - [ ] Documentation
 - [x] Print constant pool value using opcode argument as index if needed
 - [x] Print jump destination on jump opcodes printing
+- [ ] Fix consistency
+- [ ] Clean output
+- [ ] Refactor code
+- [ ] Pass command line arguments (path, main and mode at least)
+- [ ] Implement java bytecode instructions
+- [ ] Frame stack
+- [ ] Method area
 
 ## Authors
 
