@@ -15,7 +15,7 @@ int verbose = 0, print_pool = 1;
 char *nomearq;
 
 int main(int argc, char **argv){
-	/*Verifica os argumentos passado na execução do programa*/
+	
 	verify_arguments(argc, argv);
 
 	nomearq = (char *) calloc(strlen(argv[1]) + 1, sizeof(char));

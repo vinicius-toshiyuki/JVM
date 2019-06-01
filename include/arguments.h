@@ -7,6 +7,7 @@
 #include "../include/errcodes.h"
 #include "../include/utils.h"
 
+/*Verifica os argumentos passado na execução do programa*/
 void verify_arguments(int argc, char **argv);
 
 #endif
