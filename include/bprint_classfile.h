@@ -41,7 +41,7 @@ enum {
 
 #define bprint_magic(__class) printf("Magic number: 0x%x\n", __class->magic)
 
-#define bprint_versions(__class) printf("Minor version: 0x%02x\nMajor version: 0x%02x\n", __class->minor_version, __class->major_version)
+#define bprint_versions(__class) printf("Minor version: %d\nMajor version: %d\nJava version: %s\n", __class->minor_version, __class->major_version, java_version[__class->major_version])
 
 #define bprint_const_pool_count(__class) printf(BGC(226) FGC(88) "Constant pool count: %d" CLEARN, __class->const_pool_count)
 
