@@ -7,7 +7,8 @@ enum {
   ERR_UNKTAG,
   ERR_CANTOPENFILE,
 	ERR_MINOR,
-	ERR_MAJOR
+	ERR_MAJOR,
+  ERR_SRC
 } Errors;
 
 #endif

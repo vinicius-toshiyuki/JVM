@@ -3,6 +3,7 @@
 #define JAVAVERSION 0x34
 
 extern int verbose;
+extern char *nomearq;
 
 ClassFile * bread_classfile(FILE *classfile){
 
@@ -63,6 +64,31 @@ ClassFile * bread_classfile(FILE *classfile){
 	if(verbose) printf("Read attributes count\n");
 	bread_attributes(class->attributes, class->attributes_count, classfile);
 	if(verbose) printf("Read attributes\n");
+
+	int len = strlen(nomearq), ponto = 0, barra = 0;
+	char *novo;
+	for(int i = 0; i < len;  i++){
+		if(nomearq[len - i] == '.'){
+			ponto = 1;
+			nomearq[len - i] = '\0';
+		}
+		if(!ponto){
+			nomearq[len - i] = '\0';
+		}
+		if(nomearq[len - i] == '/' || nomearq[len - i] == '\\'){
+			novo = nomearq + len - i + 1;
+			break;
+		}
+	}
+	strcat(novo, ".java");
+	if(strcmp(novo, (char *) class->constant_pool[class->attributes[0].attribute_name_index].info->Utf8.bytes)){
+		fprintf(stderr, "Source file name not equal\n");
+		free(classfile);
+		free(class);
+		free(nomearq);
+		exit(ERR_SRC);
+	}
+	free(nomearq);
 
 	if(verbose) printf("Finished reading class\n");
 	return class;

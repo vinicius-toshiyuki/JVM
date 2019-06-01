@@ -21,6 +21,18 @@ char *constant_name[] = {
   [CONSTANT_Utf8]               = "Utf8"
 };
 
+char *java_version[] = {
+  [57] = "Java SE 13",
+  [56] = "Java SE 12",
+  [55] = "Java SE 11",
+  [54] = "Java SE 10",
+  [53] = "Java SE 9",
+  [52] = "Java SE 8",
+  [51] = "Java SE 7",
+  [50] = "Java SE 6.0",
+  [49] = "Java SE 5.0",
+};
+
 void bprint_classfile(ClassFile *class){
   bprint_magic(class);
   bprint_versions(class);
@@ -83,15 +95,25 @@ void bprint_info(ClassFile *class, int index, const char *prefix){
 			bprint_info(class, cp->info->String.string_index - 1, new_prefix);
       break;
     case CONSTANT_Integer:
+      printf("%sBytes: 0x%04x\n%sValue: %d\n", prefix, cp->info->Integer.bytes, prefix, cp->info->Integer.bytes);
+      break;
     case CONSTANT_Float:
-      printf("%sBytes: %d\n", prefix, cp->info->Integer.bytes);
+      printf("%sBytes: 0x%04x\n%sValue: %f\n", prefix, cp->info->Integer.bytes, prefix, cp->info->Integer.bytes);
       break;
     case CONSTANT_Long:
+      printf(
+          "%sHigh bytes: 0x%08x\n%sLow bytes: 0x%08x\n%sValue: %ld\n",
+          prefix, cp->info->Long.high_bytes,
+          prefix, cp->info->Long.low_bytes,
+          prefix, ((uint64_t) cp->info->Long.high_bytes) << 32 | cp->info->Long.low_bytes
+      );
+      break;
     case CONSTANT_Double:
       printf(
-          "%sHigh bytes: 0x%08x\n%sLow bytes: 0x%08x\n",
-          prefix, cp->info->Long.high_bytes,
-          prefix, cp->info->Long.low_bytes
+          "%sHigh bytes: 0x%08x\n%sLow bytes: 0x%08x\n%sValue: %lf\n",
+          prefix, cp->info->Double.high_bytes,
+          prefix, cp->info->Double.low_bytes,
+          prefix, ((uint64_t) cp->info->Double.high_bytes) << 32 | cp->info->Double.low_bytes
       );
       break;
     case CONSTANT_NameAndType:

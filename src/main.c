@@ -12,12 +12,16 @@
 int comp(const void *a, const void *b){return *((char *) a) - *((char *) b);}
 
 int verbose = 0, print_pool = 1;
+char *nomearq;
 
 int main(int argc, char **argv){
 	if(argc < 2){
 		fprintf(stderr, "Usage:\n\t%s <.class file name>\n", argv[0]);
 		exit(ERR_NOFILE);
 	}
+
+	nomearq = (char *) calloc(strlen(argv[1]) + 1, sizeof(char));
+	strcpy(nomearq, argv[1]);
 
 	if(argc == 3){
 		char opt[] = "vc";
