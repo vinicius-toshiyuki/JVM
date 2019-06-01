@@ -7,29 +7,19 @@
 #include "../include/breads.h"
 #include "../include/bprint_classfile.h"
 #include "../include/bfree_classfile.h"
+#include "../include/utils.h"
+#include "../include/arguments.h"
 //#include "../include/stack.h"
-
-int comp(const void *a, const void *b){return *((char *) a) - *((char *) b);}
 
 int verbose = 0, print_pool = 1;
 char *nomearq;
 
 int main(int argc, char **argv){
-	if(argc < 2){
-		fprintf(stderr, "Usage:\n\t%s <.class file name>\n", argv[0]);
-		exit(ERR_NOFILE);
-	}
+	/*Verifica os argumentos passado na execução do programa*/
+	verify_arguments(argc, argv);
 
 	nomearq = (char *) calloc(strlen(argv[1]) + 1, sizeof(char));
 	strcpy(nomearq, argv[1]);
-
-	if(argc == 3){
-		char opt[] = "vc";
-		char *options = *(argv + 2);
-		qsort(options, strlen(options), sizeof(char), comp);
-		if(bsearch(&opt[0], options, strlen(options), sizeof(char), comp)) verbose = 1;
-		if(bsearch(&opt[1], options, strlen(options), sizeof(char), comp)) print_pool = 0;
-	}
 	
 	/*Permite a localização do programa na lingua em que o sistema operacional esta selecionada
 	  isso faz com que caracteres como 'ç' sejam exibidas no programa caso o SO esteja em pt-br*/
