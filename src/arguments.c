@@ -18,4 +18,5 @@ void verify_arguments(int argc, char **argv) {
 		if(bsearch(&opt[0], options, strlen(options), sizeof(char), comp)) verbose = 1;
 		if(bsearch(&opt[1], options, strlen(options), sizeof(char), comp)) print_pool = 0;
 	}
+	return;
 }
