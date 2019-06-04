@@ -211,6 +211,8 @@ typedef enum {
   WIDE = 0xc4
 } OPCODES;
 
+typedef int (*handler)(u1 *);
+
 int AALOAD_handler(u1 *bytestream);
 int AASTORE_handler(u1 *bytestream);
 int ACONST_NULL_handler(u1 *bytestream);

@@ -208,7 +208,7 @@ char * opcode_to_mnemonic[0x100] = {
   [0xaa] = "TABLESWITCH",
   [0xc4] = "WIDE"
 };
-void * opcode_handlers[] = {
+handler opcode_handlers[] = {
   [0x32] = AALOAD_handler,
   [0x53] = AASTORE_handler,
   [0x01] = ACONST_NULL_handler,
@@ -1649,7 +1649,7 @@ int TABLESWITCH_handler(u1 *bytestream){
 int WIDE_handler(u1 *bytestream){
   printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 	_wide_index = 1;
-  int ret = ((int (*)(u1 *))(opcode_handlers[bytestream[1]]))(bytestream + 1);
+  int ret = (opcode_handlers[bytestream[1]])(bytestream + 1);
 	_wide_index = 0;
 	return ret + 1; // index bytes + bytestream[1] opcode
 }

@@ -70,7 +70,7 @@ typedef struct {
   local_variable_table_info *local_variable_table;
 } LocalVariableTable_attribute;
 
-typedef struct {} Deprecated_attribute;
+// typedef struct {} Deprecated_attribute;
 
 typedef union {
   ConstantValue_attribute ConstantValue;

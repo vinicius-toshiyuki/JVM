@@ -2,94 +2,94 @@
 
 #define JAVAVERSION 0x34
 
-extern int verbose;
-extern char *nomearq;
+extern int VERBOSE;
+extern char *CLASSFILE;
+extern char *java_version[];
 
 ClassFile * bread_classfile(FILE *classfile){
 
 	ClassFile *class = (ClassFile *) calloc(1, sizeof(ClassFile));
-	if(verbose) printf("Alloc'd memory for ClassFile\n");
+	if(VERBOSE) printf("Alloc'd memory for ClassFile\n");
 
 		/* Magic number */
 	if(bread_magic(class, classfile)){
 		free(class);
-		free(classfile);
+		fclose(classfile);
 		fprintf(stderr, "Invalid .class file. Magic number \"0xcafebabe\" does not check.\n");
 		exit(ERR_MAGIC);
 	}
-	if(verbose) printf("Read magic number\n");
+	if(VERBOSE) printf("Read magic number\n");
 
 		/* Minor and major versions */
 	if(bread_minor(class, classfile) > JAVAVERSION){
-		fprintf(stderr, "Minor version superior to Java SE (0x%02x)\n", JAVAVERSION);
+		fprintf(stderr, "Minor version superior to %s\n", java_version[JAVAVERSION]);
 		fprintf(stderr, "\'y\': continue anyways\nany other key: stop\n");
+		setbuf(stdin, NULL);
 		if(getchar() != 'y'){
-			free(classfile);
+			fclose(classfile);
 			free(class);
 			exit(ERR_MINOR);
 		}
 	}
-	if(verbose) printf("Read minor version\n");
+	if(VERBOSE) printf("Read minor version\n");
 	if(bread_major(class, classfile) < JAVAVERSION){
-		fprintf(stderr, "Major version inferior to Java SE (0x%02x)\n", JAVAVERSION);
+		fprintf(stderr, "Major version inferior to %s\n", java_version[JAVAVERSION]);
 		fprintf(stderr, "\'y\': continue anyways\nany other key: stop\n");
+		setbuf(stdin, NULL);
 		if(getchar() != 'y'){
-			free(classfile);
+			fclose(classfile);
 			free(class);
 			exit(ERR_MAJOR);
 		}
 	}
-	if(verbose) printf("Read major version\n");
+	if(VERBOSE) printf("Read major version\n");
 		/* Constant pool count and constant pool */
 	bread_constant_pool(class, classfile);
-	if(verbose) printf("Read constant pool\n");
+	if(VERBOSE) printf("Read constant pool\n");
 		/* Access flags, this class and super class */
 	bread_access_flags(class, classfile);
-	if(verbose) printf("Read access flags\n");
+	if(VERBOSE) printf("Read access flags\n");
 	bread_this_class(class, classfile);
-	if(verbose) printf("Read this class\n");
+	if(VERBOSE) printf("Read this class\n");
 	bread_super_class(class, classfile);
-	if(verbose) printf("Read super class\n");
+	if(VERBOSE) printf("Read super class\n");
 		/* Interfaces count and interfaces */
 	bread_interfaces(class, classfile);
-	if(verbose) printf("Read interfaces\n");
+	if(VERBOSE) printf("Read interfaces\n");
 		/* Fields count and fields */
 	bread_fields(class, classfile);
-	if(verbose) printf("Read fields\n");
+	if(VERBOSE) printf("Read fields\n");
 		/* Methods */
 	bread_methods(class, classfile);
-	if(verbose) printf("Read methods\n");
+	if(VERBOSE) printf("Read methods\n");
 		/* Attributes */
 	bread_attributes_count(class, classfile);
-	if(verbose) printf("Read attributes count\n");
+	if(VERBOSE) printf("Read attributes count\n");
 	bread_attributes(class->attributes, class->attributes_count, classfile);
-	if(verbose) printf("Read attributes\n");
+	if(VERBOSE) printf("Read attributes\n");
 
-	int len = strlen(nomearq), ponto = 0, barra = 0;
+	int len = strlen(CLASSFILE);
 	char *novo;
+	/* ./class/novo = {double_aritimetica}\0class */
 	for(int i = 0; i < len;  i++){
-		if(nomearq[len - i] == '.'){
-			ponto = 1;
-			nomearq[len - i] = '\0';
+		if(CLASSFILE[len - i] == '.'){
+			CLASSFILE[len - i] = '\0';
 		}
-		if(!ponto){
-			nomearq[len - i] = '\0';
-		}
-		if(nomearq[len - i] == '/' || nomearq[len - i] == '\\'){
-			novo = nomearq + len - i + 1;
+		if(CLASSFILE[len - i] == '/' || CLASSFILE[len - i] == '\\'){
+			novo = CLASSFILE + len - i + 1;
 			break;
 		}
 	}
 	strcat(novo, ".java");
 	if(strcmp(novo, (char *) class->constant_pool[class->attributes[0].attribute_name_index].info->Utf8.bytes)){
 		fprintf(stderr, "Source file name not equal\n");
-		free(classfile);
+		fclose(classfile);
 		free(class);
-		free(nomearq);
+		free(CLASSFILE);
 		exit(ERR_SRC);
 	}
-	free(nomearq);
+	free(CLASSFILE);
 
-	if(verbose) printf("Finished reading class\n");
+	if(VERBOSE) printf("Finished reading class\n");
 	return class;
 }

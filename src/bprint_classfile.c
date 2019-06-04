@@ -3,8 +3,8 @@
 
 #include <wchar.h>
 
-extern int verbose, print_pool;
-extern void * opcode_handlers[];
+extern int VERBOSE, CONSTPOOL;
+extern handler opcode_handlers[];
 extern char * opcode_to_mnemonic[0x100];
 
 char *constant_name[] = {
@@ -41,7 +41,7 @@ void bprint_classfile(ClassFile *class){
   bprint_magic(class);
   bprint_versions(class);
   bprint_const_pool_count(class);
-  if(print_pool) bprint_constant_pool(class);
+  if(CONSTPOOL) bprint_constant_pool(class);
   bprint_access_flags(class->access_flags);
   bprint_this_class(class);
   bprint_super_class(class);
@@ -154,16 +154,17 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
     // A enum NUMBERS tem que estar de acordo com essa numeração
     for(int i = 0; i < ATT_C; i++)
       attributes_types[i][ATT_M_S - 1] = i;
-    if(verbose) printf(BGC(127) FGC(83) "%sSetting attributes array" CLEARN, prefix);
+    if(VERBOSE) printf(BGC(127) FGC(83) "%sSetting attributes array" CLEARN, prefix);
   }
   // Busca nome do atributo com o name_index na constant_pool
   
-  char str_name[ATT_M_S] = {[0 ... ATT_M_S - 1] = '\0'};
+  char *str_name = (char *) calloc(ATT_M_S - 1, sizeof(char));
   memcpy(str_name, class->constant_pool[name_index - 1].info->Utf8.bytes  /*Bytes do nome do atributo*/, class->constant_pool[name_index - 1].info->Utf8.length);
   void *bsearch_result = bsearch(str_name, attributes_types, ATT_C, ATT_M_S, (int (*)(const void *, const void *)) strcmp);
   int number_code = bsearch_result != NULL ? ((char *) bsearch_result)[ATT_M_S - 1] : NUMBER_Invalid;
 
   printf(BGC(27) FGC(11) "%s%s attribute:" CLEARN, prefix, str_name);
+  free(str_name);
 
 	char *new_prefix = (char *) calloc(strlen(prefix) + 3, sizeof(char));
 	strcpy(new_prefix, prefix); strcat(new_prefix, "\t\t");
@@ -186,7 +187,7 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
 			int ret = 0;
       for(int i = 0; i < att_info.Code.code_length; i++){
         if(ret >= 0 && !_jump) printf("%s\t" "%03d " BGC(80) FGC(96) "0x%02x:" CLEAR " ", prefix, i, att_info.Code.code[i]);
-        ret = ((int (*)(u1 *))(opcode_handlers[att_info.Code.code[i]]))(att_info.Code.code + i);
+        ret = (opcode_handlers[att_info.Code.code[i]])(att_info.Code.code + i);
         if(lookup){
           printf("%sNpairs: %d\n", new_prefix, lookup_result.npairs);
           int j; for(j = 0; j < lookup_result.npairs; j++){

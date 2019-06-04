@@ -24,7 +24,7 @@ Reads .class files and let you choose to prints it's structure as described in O
 - [ ] Documentation
 - [x] Print constant pool value using opcode argument as index if needed
 - [x] Print jump destination on jump opcodes printing
-- [ ] Fix consistency
+- [x] Fix consistency
 - [ ] Clean output
 - [ ] Refactor code
 - [ ] Pass command line arguments (path, main and mode at least)
