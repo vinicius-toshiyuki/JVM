@@ -137,8 +137,7 @@ static inline void bprint_access_flags(u2 af){
 		); \
 		bprint_info(class, __attributes[j].attribute_name_index - 1, __prefix "\t\t", 0); \
 		printf( \
-        __prefix "\tAttribute length: %d\n" \
-        __prefix "\tInfo: \"", \
+        __prefix "\tAttribute length: %d\n", \
         __attributes[j].attribute_length \
     ); \
     /* Procurar o tipo do atributo com o name_index na constant_pool */ \
@@ -146,9 +145,6 @@ static inline void bprint_access_flags(u2 af){
     /* Imprimir os elementos */ \
     /* E quando o elemento for um attribute_info? */ \
     /* {"Code", "ConstantValue", "Deprecated", "Exceptions", "LineNumberTable", "LocalVariableTable", "SourceFile"}; */ \
-    for(int k = 0; k < __attributes[j].attribute_length; k++) \
-      printf("%02x ", __attributes[j].info[k]); \
-    printf("%s\n", __attributes[j].attribute_length == 0 ? "" : "\b\""); \
     bprint_att_info(__attributes[j].info, __attributes[j].attribute_name_index, class, __prefix "\t"); \
   } \
 }

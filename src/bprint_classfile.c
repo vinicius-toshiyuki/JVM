@@ -175,15 +175,11 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
       printf(
           "%s\tMax stack: %d\n"
           "%s\tMax locals: %d\n"
-          "%s\tCode length: %d\n"
-          "%s\tCode: \"",
+          "%s\tCode length: %d\n",
           prefix, att_info.Code.max_stack,
           prefix, att_info.Code.max_locals,
-          prefix, att_info.Code.code_length, prefix
+          prefix, att_info.Code.code_length
       );
-      for(int i = 0; i < att_info.Code.code_length; i++)
-        printf("%02x ", att_info.Code.code[i]);
-      printf("\b\"\n");
 			int ret = 0;
       for(int i = 0; i < att_info.Code.code_length; i++){
         if(ret >= 0 && !_jump) printf("%s\t" "%03d " BGC(80) FGC(96) "0x%02x:" CLEAR " ", prefix, i, att_info.Code.code[i]);

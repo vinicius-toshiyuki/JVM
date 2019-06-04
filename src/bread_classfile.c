@@ -88,7 +88,6 @@ ClassFile * bread_classfile(FILE *classfile){
 		free(CLASSFILE);
 		exit(ERR_SRC);
 	}
-	free(CLASSFILE);
 
 	if(VERBOSE) printf("Finished reading class\n");
 	return class;
