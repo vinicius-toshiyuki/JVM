@@ -4,46 +4,28 @@
 #include <string.h>
 
 #include "../include/errcodes.h"
-
-enum {
-  OPTION_off = 0,                     
-  OPTION_on = 1,                      
-  OPTION_viewer = 0,                  
-  OPTION_interpreter = 1,
-  OPTION_default = 2
-} OPTION;
-
-enum {
-  ARG_VERBOSE,
-  ARG_CONSTPOOL,                          
-  ARG_MODE,
-  ARG_PATH,
-  ARG_FILE                            
-} ARG;
+#include "../include/initialize.h"
 
 int VERBOSE = OPTION_off;
 int MODE = OPTION_default;
 int CONSTPOOL = OPTION_on;       
 char *PATH = NULL;                    
 char *CLASSFILE = NULL;              
+int IGNORE = OPTION_off;
 
-/*
-   TODO - ordenar
-*/
-#define NOPTIONS 5
+#define NOPTIONS 6
 struct{
   int id;
   char *option1;
   char *option2;
-} OPTIONS[] = {                       
+} ARG_OPTIONS[] = {                       
   {ARG_VERBOSE   , "v" , "verbose"  },
   {ARG_CONSTPOOL , "c" , "constpool"},
   {ARG_MODE      , "m" , "mode"     },
   {ARG_PATH      , "p" , "path"     },
-  {ARG_FILE      , "f" , "file"     } 
+  {ARG_FILE      , "f" , "file"     }, 
+	{ARG_IGNORE    , "i" , "ignore"   }
 };
-
-
 
 /*
 TODO:
@@ -61,33 +43,34 @@ void initialize(int argc, char **argv){
 
   /* Configura os argumentos com flag */
   int i;
-  uint8_t obg = 0x1, obgf = 0x0;
+  uint8_t obg = 0x01, obgf = 0x00;
   for(i = 0; i < opt_qtd; i++){
     /* -f */
     if(*opt_str[i] == '-'){
       int j;
       for(j = 0; j < NOPTIONS; j++){
         if(            /* -file --file*/
-            !strcmp(opt_str[i]+1, OPTIONS[j].option1) ||
+            !strcmp(opt_str[i]+1, ARG_OPTIONS[j].option1) ||
             (
               *(opt_str[i]+1) == '-' &&
-              !strcmp(opt_str[i]+2, OPTIONS[j].option2)
+              !strcmp(opt_str[i]+2, ARG_OPTIONS[j].option2)
             )
           ){
-          switch(OPTIONS[j].id){
+          switch(ARG_OPTIONS[j].id){
             case ARG_VERBOSE: VERBOSE = OPTION_on; break;
             case ARG_CONSTPOOL: CONSTPOOL = OPTION_off; break;
             case ARG_MODE:
-              if(strcmp("viewer", opt_str[i+1]))
-                  MODE = OPTION_interpreter;
-              else if(strcmp("interpreter", opt_str[i+1]))
+              if(!strcmp("viewer", opt_str[i+1]))
                   MODE = OPTION_viewer;
-              else goto invalid_option;
+              if(!strcmp("interpreter", opt_str[i+1]))
+                  MODE = OPTION_interpreter;
+              else {i++; goto invalid_option;}
               i++;
               obgf |= 0x1;
               break;
             case ARG_PATH: PATH = opt_str[++i]; obgf |= 0x2; break;
             case ARG_FILE: CLASSFILE = opt_str[++i]; obgf |= 0x4; break;
+            case ARG_IGNORE: IGNORE = OPTION_on; break;
             invalid_option:
             default:
               fprintf(
@@ -103,13 +86,15 @@ void initialize(int argc, char **argv){
         }else if(j == NOPTIONS - 1) goto invalid_option;
       }
     }else{
-      while(obg & obgf) obg <<= 1;
+			if(!(obgf & 0x1)) obg = 0x1;
+			else if(!(obgf & 0x2)) obg = 0x2;
+			else if(!(obgf & 0x4)) obg = 0x4;
       switch(obg){
         case 0x1:
-          if(strcmp("viewer", opt_str[i+1]))
-            MODE = OPTION_interpreter;
-          else if(strcmp("interpreter", opt_str[i+1]))
+          if(!strcmp("viewer", opt_str[i]))
             MODE = OPTION_viewer;
+          if(!strcmp("interpreter", opt_str[i]))
+            MODE = OPTION_interpreter;
           else goto invalid_option;
           obg <<= 1;
           break;

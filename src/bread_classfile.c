@@ -5,6 +5,7 @@
 extern int VERBOSE;
 extern char *CLASSFILE;
 extern char *java_version[];
+extern int IGNORE;
 
 ClassFile * bread_classfile(FILE *classfile){
 
@@ -23,9 +24,8 @@ ClassFile * bread_classfile(FILE *classfile){
 		/* Minor and major versions */
 	if(bread_minor(class, classfile) > JAVAVERSION){
 		fprintf(stderr, "Minor version superior to %s\n", java_version[JAVAVERSION]);
-		fprintf(stderr, "\'y\': continue anyways\nany other key: stop\n");
-		setbuf(stdin, NULL);
-		if(getchar() != 'y'){
+		//setbuf(stdin, NULL);
+		if(!IGNORE){
 			fclose(classfile);
 			free(class);
 			exit(ERR_MINOR);
@@ -34,9 +34,8 @@ ClassFile * bread_classfile(FILE *classfile){
 	if(VERBOSE) printf("Read minor version\n");
 	if(bread_major(class, classfile) < JAVAVERSION){
 		fprintf(stderr, "Major version inferior to %s\n", java_version[JAVAVERSION]);
-		fprintf(stderr, "\'y\': continue anyways\nany other key: stop\n");
-		setbuf(stdin, NULL);
-		if(getchar() != 'y'){
+		//setbuf(stdin, NULL);
+		if(!IGNORE){
 			fclose(classfile);
 			free(class);
 			exit(ERR_MAJOR);

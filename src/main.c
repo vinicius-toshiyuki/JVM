@@ -8,11 +8,12 @@
 #include "../include/bprint_classfile.h"
 #include "../include/bfree_classfile.h"
 #include "../include/utils.h"
+#include "../include/initialize.h"
 //#include "../include/stack.h"
 
-extern int VERBOSE;
 extern char *CLASSFILE;
-void initialize(int, char **);
+extern int MODE;
+extern int VERBOSE;
 
 int main(int argc, char **argv){
 	initialize(argc, argv);
@@ -29,14 +30,19 @@ int main(int argc, char **argv){
 	}
 
 	if(VERBOSE) printf("File opened\n");
-	
 	ClassFile *class = bread_classfile(classfile);
-
 	if(VERBOSE) printf("File read\n");
 
-	bprint_classfile(class);
+	if(MODE == OPTION_viewer){
 
-	bfree_classfile(class);
+		bprint_classfile(class);
+
+		bfree_classfile(class);
+
+	}else if(MODE == OPTION_interpreter){
+		printf("Mainnnnnnnn\n");
+		
+	}
 
 	fclose(classfile);
 
