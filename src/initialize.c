@@ -64,7 +64,7 @@ void initialize(int argc, char **argv){
                   MODE = OPTION_viewer;
               else if(!strcmp("interpreter", opt_str[i+1]))
                   MODE = OPTION_interpreter;
-              else {i++; goto invalid_option;}
+							if(MODE == OPTION_default) {i++; goto invalid_option;}
               i++;
               obgf |= 0x1;
               break;
