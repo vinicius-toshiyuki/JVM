@@ -62,7 +62,7 @@ void initialize(int argc, char **argv){
             case ARG_MODE:
               if(!strcmp("viewer", opt_str[i+1]))
                   MODE = OPTION_viewer;
-              if(!strcmp("interpreter", opt_str[i+1]))
+              else if(!strcmp("interpreter", opt_str[i+1]))
                   MODE = OPTION_interpreter;
               else {i++; goto invalid_option;}
               i++;
@@ -93,18 +93,18 @@ void initialize(int argc, char **argv){
         case 0x1:
           if(!strcmp("viewer", opt_str[i]))
             MODE = OPTION_viewer;
-          if(!strcmp("interpreter", opt_str[i]))
+          else if(!strcmp("interpreter", opt_str[i]))
             MODE = OPTION_interpreter;
           else goto invalid_option;
-          obg <<= 1;
+          obgf |= 0x1;
           break;
         case 0x2:
           PATH = opt_str[i];
-          obg <<= 1;
+          obgf |= 0x2;
           break;
         case 0x4:
           CLASSFILE = opt_str[i];
-          obg <<= 1;
+          obgf |= 0x4;
           break;
         default:
           break;
