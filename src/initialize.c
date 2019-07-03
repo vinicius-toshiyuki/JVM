@@ -62,9 +62,9 @@ void initialize(int argc, char **argv){
             case ARG_MODE:
               if(!strcmp("viewer", opt_str[i+1]))
                   MODE = OPTION_viewer;
-              if(!strcmp("interpreter", opt_str[i+1]))
+							else if(!strcmp("interpreter", opt_str[i+1]))
                   MODE = OPTION_interpreter;
-              else {i++; goto invalid_option;}
+							if(MODE == OPTION_default) {i++; goto invalid_option;}
               i++;
               obgf |= 0x1;
               break;

@@ -9,6 +9,7 @@
 #include "../include/bfree_classfile.h"
 #include "../include/utils.h"
 #include "../include/initialize.h"
+#include "../include/jvm.h"
 //#include "../include/stack.h"
 
 extern char *CLASSFILE;
@@ -40,8 +41,8 @@ int main(int argc, char **argv){
 		bfree_classfile(class);
 
 	}else if(MODE == OPTION_interpreter){
+		start_jvm();
 		printf("Mainnnnnnnn\n");
-		
 	}
 
 	fclose(classfile);
