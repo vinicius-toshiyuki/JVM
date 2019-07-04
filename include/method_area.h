@@ -1,16 +1,15 @@
-#ifndef method_area
-#define method_area
+#ifndef method_area_h
+#define method_area_h
 
-/* TODO: colocar o include do cp_info */
+#include "classfile.h"
 
-typedef cp_info * constant_pool;
-
-typedef struct method_area {
+typedef struct method_area_t {
 	int count;
-	constant_pool *cpools;
-} method_area;
+	ClassFile **loaded;
+} method_area_t;
 
-method_area * new_method_area(void);
-void destroy_method_area(method_area *);
+method_area_t * new_method_area(void);
+void destroy_method_area(method_area_t *);
+void link_class(ClassFile *class, method_area_t *marea);
 
 #endif

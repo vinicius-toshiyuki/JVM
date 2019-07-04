@@ -10,7 +10,6 @@
 #include "../include/utils.h"
 #include "../include/initialize.h"
 #include "../include/jvm.h"
-//#include "../include/stack.h"
 
 extern char *CLASSFILE;
 extern int MODE;
@@ -23,29 +22,28 @@ int main(int argc, char **argv){
 	  isso faz com que caracteres como 'ç' sejam exibidas no programa caso o SO esteja em pt-br*/
 	setlocale(LC_ALL, "");
 	char *filename = CLASSFILE;
-	FILE *classfile = fopen(filename, "rb");
-
-	if(classfile == NULL){
-		fprintf(stderr, "Failed to open specified file\n");
-		exit(ERR_CANTOPENFILE);
-	}
-
-	if(VERBOSE) printf("File opened\n");
-	ClassFile *class = bread_classfile(classfile);
-	if(VERBOSE) printf("File read\n");
 
 	if(MODE == OPTION_viewer){
+		FILE *classfile = fopen(filename, "rb");
+
+		if(classfile == NULL){
+			fprintf(stderr, "Failed to open specified file\n");
+			exit(ERR_CANTOPENFILE);
+		}
+
+		if(VERBOSE) printf("File opened\n");
+		ClassFile *class = bread_classfile(classfile);
+		if(VERBOSE) printf("File read\n");
 
 		bprint_classfile(class);
-
 		bfree_classfile(class);
-
+		fclose(classfile);
 	}else if(MODE == OPTION_interpreter){
-		start_jvm();
+		jvm_t *jvm = NULL;
+		start_jvm(&jvm);
+		load_class(filename, jvm);
 		printf("Mainnnnnnnn\n");
 	}
-
-	fclose(classfile);
 
 	return 0;
 }
