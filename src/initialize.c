@@ -12,8 +12,10 @@ int CONSTPOOL = OPTION_on;
 char *PATH = NULL;                    
 char *CLASSFILE = NULL;              
 int IGNORE = OPTION_off;
+int JVM_ARGC = 0;
+char **JVM_ARGV = NULL;
 
-#define NOPTIONS 6
+#define NOPTIONS 7
 struct{
   int id;
   char *option1;
@@ -24,7 +26,8 @@ struct{
   {ARG_MODE      , "m" , "mode"     },
   {ARG_PATH      , "p" , "path"     },
   {ARG_FILE      , "f" , "file"     }, 
-	{ARG_IGNORE    , "i" , "ignore"   }
+	{ARG_IGNORE    , "i" , "ignore"   },
+	{ARG_JVM_ARGS  , "a" , "args"     }
 };
 
 /*
@@ -33,6 +36,17 @@ TODO:
   Trata os argumentos passados na execução do programa
   (verificar se PATH é um caminho e se FILE é um arquivo)
 */
+void __invalid__option(char *option){
+	fprintf(
+			stderr,
+			"Unknown option \"%s\"\n",
+			option
+			);
+	/* setbuf(stderr, NULL); */
+	exit(ERR_UNKOPT);
+	return;
+}
+
 void initialize(int argc, char **argv){
   if(argc < 4){
     fprintf(stderr, "Mode, path and file missing!\n");
@@ -64,26 +78,24 @@ void initialize(int argc, char **argv){
                   MODE = OPTION_viewer;
               else if(!strcmp("interpreter", opt_str[i+1]))
                   MODE = OPTION_interpreter;
-							if(MODE == OPTION_default) {i++; goto invalid_option;}
+							if(MODE == OPTION_default) __invalid__option(opt_str[++i]);
               i++;
               obgf |= 0x1;
               break;
             case ARG_PATH: PATH = opt_str[++i]; obgf |= 0x2; break;
             case ARG_FILE: CLASSFILE = opt_str[++i]; obgf |= 0x4; break;
             case ARG_IGNORE: IGNORE = OPTION_on; break;
-            invalid_option:
+						case ARG_JVM_ARGS:
+							/* SE TIVER ESSA FLAG VAI CONSIDERAR TODO O RESTO DOS ARGUMENTOS COMO ARGUMENTOS PARA O INTERPRETADOR */
+							JVM_ARGC = opt_qtd-i-1 < 0 ? 0 : opt_qtd-i-1;
+							JVM_ARGV = &opt_str[i + 1];
+							goto endloop;
             default:
-              fprintf(
-                  stderr,
-                  "Unknown option \"%s\"\n",
-                  opt_str[i]
-              );
-              setbuf(stderr, NULL);
-              exit(ERR_UNKOPT);
+							__invalid__option(opt_str[i]);
               break;
           }
           break;
-        }else if(j == NOPTIONS - 1) goto invalid_option;
+        }else if(j == NOPTIONS - 1) __invalid__option(opt_str[i]);
       }
     }else{
 			if(!(obgf & 0x1)) obg = 0x1;
@@ -95,7 +107,7 @@ void initialize(int argc, char **argv){
             MODE = OPTION_viewer;
           else if(!strcmp("interpreter", opt_str[i]))
             MODE = OPTION_interpreter;
-          else goto invalid_option;
+          else __invalid__option(opt_str[i]);
           obgf |= 0x1;
           break;
         case 0x2:
@@ -107,10 +119,12 @@ void initialize(int argc, char **argv){
           obgf |= 0x4;
           break;
         default:
+					__invalid__option(opt_str[i]);
           break;
       }
     }
   }
+endloop:
   if(MODE == OPTION_default){
     fprintf(stderr, "No mode.\n");
     exit(ERR_ARGMODE);

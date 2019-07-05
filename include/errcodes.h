@@ -13,7 +13,8 @@ enum {
   ERR_INSARG,
   ERR_ARGMODE,
   ERR_ARGPATH,
-  ERR_ARGFILE
+  ERR_ARGFILE,
+	ERR_INDEX
 } Errors;
 
 #endif

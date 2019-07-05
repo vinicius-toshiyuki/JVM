@@ -208,212 +208,213 @@ char * opcode_to_mnemonic[0x100] = {
   [0xaa] = "TABLESWITCH",
   [0xc4] = "WIDE"
 };
-handler opcode_handlers[] = {
-  [0x32] = AALOAD_handler,
-  [0x53] = AASTORE_handler,
-  [0x01] = ACONST_NULL_handler,
-  [0x19] = ALOAD_handler,
-  [0x2a] = ALOAD_0_handler,
-  [0x2b] = ALOAD_1_handler,
-  [0x2c] = ALOAD_2_handler,
-  [0x2d] = ALOAD_3_handler,
-  [0xbd] = ANEWARRAY_handler,
-  [0xb0] = ARETURN_handler,
-  [0xbe] = ARRAYLENGTH_handler,
-  [0x3a] = ASTORE_handler,
-  [0x4b] = ASTORE_0_handler,
-  [0x4c] = ASTORE_1_handler,
-  [0x4d] = ASTORE_2_handler,
-  [0x4e] = ASTORE_3_handler,
-  [0xbf] = ATHROW_handler,
-  [0x33] = BALOAD_handler,
-  [0x54] = BASTORE_handler,
-  [0x10] = BIPUSH_handler,
-  [0xca] = BREAKPOINT_handler,
-  [0x34] = CALOAD_handler,
-  [0x55] = CASTORE_handler,
-  [0xc0] = CHECKCAST_handler,
-  [0x90] = D2F_handler,
-  [0x8e] = D2I_handler,
-  [0x8f] = D2L_handler,
-  [0x63] = DADD_handler,
-  [0x31] = DALOAD_handler,
-  [0x52] = DASTORE_handler,
-  [0x98] = DCMPG_handler,
-  [0x97] = DCMPL_handler,
-  [0x0e] = DCONST_0_handler,
-  [0x0f] = DCONST_1_handler,
-  [0x6f] = DDIV_handler,
-  [0x18] = DLOAD_handler,
-  [0x26] = DLOAD_0_handler,
-  [0x27] = DLOAD_1_handler,
-  [0x28] = DLOAD_2_handler,
-  [0x29] = DLOAD_3_handler,
-  [0x6b] = DMUL_handler,
-  [0x77] = DNEG_handler,
-  [0x73] = DREM_handler,
-  [0xaf] = DRETURN_handler,
-  [0x39] = DSTORE_handler,
-  [0x47] = DSTORE_0_handler,
-  [0x48] = DSTORE_1_handler,
-  [0x49] = DSTORE_2_handler,
-  [0x4a] = DSTORE_3_handler,
-  [0x67] = DSUB_handler,
-  [0x59] = DUP_handler,
-  [0x5a] = DUP_X1_handler,
-  [0x5b] = DUP_X2_handler,
-  [0x5c] = DUP2_handler,
-  [0x5d] = DUP2_X1_handler,
-  [0x5e] = DUP2_X2_handler,
-  [0x8d] = F2D_handler,
-  [0x8b] = F2I_handler,
-  [0x8c] = F2L_handler,
-  [0x62] = FADD_handler,
-  [0x30] = FALOAD_handler,
-  [0x51] = FASTORE_handler,
-  [0x96] = FCMPG_handler,
-  [0x95] = FCMPL_handler,
-  [0x0b] = FCONST_0_handler,
-  [0x0c] = FCONST_1_handler,
-  [0x0d] = FCONST_2_handler,
-  [0x6e] = FDIV_handler,
-  [0x17] = FLOAD_handler,
-  [0x22] = FLOAD_0_handler,
-  [0x23] = FLOAD_1_handler,
-  [0x24] = FLOAD_2_handler,
-  [0x25] = FLOAD_3_handler,
-  [0x6a] = FMUL_handler,
-  [0x76] = FNEG_handler,
-  [0x72] = FREM_handler,
-  [0xae] = FRETURN_handler,
-  [0x38] = FSTORE_handler,
-  [0x43] = FSTORE_0_handler,
-  [0x44] = FSTORE_1_handler,
-  [0x45] = FSTORE_2_handler,
-  [0x46] = FSTORE_3_handler,
-  [0x66] = FSUB_handler,
-  [0xb4] = GETFIELD_handler,
-  [0xb2] = GETSTATIC_handler,
-  [0xa7] = GOTO_handler,
-  [0xc8] = GOTO_W_handler,
-  [0x91] = I2B_handler,
-  [0x92] = I2C_handler,
-  [0x87] = I2D_handler,
-  [0x86] = I2F_handler,
-  [0x85] = I2L_handler,
-  [0x93] = I2S_handler,
-  [0x60] = IADD_handler,
-  [0x2e] = IALOAD_handler,
-  [0x7e] = IAND_handler,
-  [0x4f] = IASTORE_handler,
-  [0x02] = ICONST_M1_handler,
-  [0x03] = ICONST_0_handler,
-  [0x04] = ICONST_1_handler,
-  [0x05] = ICONST_2_handler,
-  [0x06] = ICONST_3_handler,
-  [0x07] = ICONST_4_handler,
-  [0x08] = ICONST_5_handler,
-  [0x6c] = IDIV_handler,
-  [0xa5] = IF_ACMPEQ_handler,
-  [0xa6] = IF_ACMPNE_handler,
-  [0x9f] = IF_ICMPEQ_handler,
-  [0xa2] = IF_ICMPGE_handler,
-  [0xa3] = IF_ICMPGT_handler,
-  [0xa4] = IF_ICMPLE_handler,
-  [0xa1] = IF_ICMPLT_handler,
-  [0xa0] = IF_ICMPNE_handler,
-  [0x99] = IFEQ_handler,
-  [0x9c] = IFGE_handler,
-  [0x9d] = IFGT_handler,
-  [0x9e] = IFLE_handler,
-  [0x9b] = IFLT_handler,
-  [0x9a] = IFNE_handler,
-  [0xc7] = IFNONNULL_handler,
-  [0xc6] = IFNULL_handler,
-  [0x84] = IINC_handler,
-  [0x15] = ILOAD_handler,
-  [0x1a] = ILOAD_0_handler,
-  [0x1b] = ILOAD_1_handler,
-  [0x1c] = ILOAD_2_handler,
-  [0x1d] = ILOAD_3_handler,
-  [0xfe] = IMPDEP1_handler,
-  [0xff] = IMPDEP2_handler,
-  [0x68] = IMUL_handler,
-  [0x74] = INEG_handler,
-  [0xc1] = INSTANCEOF_handler,
-  [0xba] = INVOKEDYNAMIC_handler,
-  [0xb9] = INVOKEINTERFACE_handler,
-  [0xb7] = INVOKESPECIAL_handler,
-  [0xb8] = INVOKESTATIC_handler,
-  [0xb6] = INVOKEVIRTUAL_handler,
-  [0x80] = IOR_handler,
-  [0x70] = IREM_handler,
-  [0xac] = IRETURN_handler,
-  [0x78] = ISHL_handler,
-  [0x7a] = ISHR_handler,
-  [0x36] = ISTORE_handler,
-  [0x3b] = ISTORE_0_handler,
-  [0x3c] = ISTORE_1_handler,
-  [0x3d] = ISTORE_2_handler,
-  [0x3e] = ISTORE_3_handler,
-  [0x64] = ISUB_handler,
-  [0x7c] = IUSHR_handler,
-  [0x82] = IXOR_handler,
-  [0xa8] = JSR_handler,
-  [0xc9] = JSR_W_handler,
-  [0x8a] = L2D_handler,
-  [0x89] = L2F_handler,
-  [0x88] = L2I_handler,
-  [0x61] = LADD_handler,
-  [0x2f] = LALOAD_handler,
-  [0x7f] = LAND_handler,
-  [0x50] = LASTORE_handler,
-  [0x94] = LCMP_handler,
-  [0x09] = LCONST_0_handler,
-  [0x0a] = LCONST_1_handler,
-  [0x12] = LDC_handler,
-  [0x13] = LDC_W_handler,
-  [0x14] = LDC2_W_handler,
-  [0x6d] = LDIV_handler,
-  [0x16] = LLOAD_handler,
-  [0x1e] = LLOAD_0_handler,
-  [0x1f] = LLOAD_1_handler,
-  [0x20] = LLOAD_2_handler,
-  [0x21] = LLOAD_3_handler,
-  [0x69] = LMUL_handler,
-  [0x75] = LNEG_handler,
-  [0xab] = LOOKUPSWITCH_handler,
-  [0x81] = LOR_handler,
-  [0x71] = LREM_handler,
-  [0xad] = LRETURN_handler,
-  [0x79] = LSHL_handler,
-  [0x7b] = LSHR_handler,
-  [0x37] = LSTORE_handler,
-  [0x3f] = LSTORE_0_handler,
-  [0x40] = LSTORE_1_handler,
-  [0x41] = LSTORE_2_handler,
-  [0x42] = LSTORE_3_handler,
-  [0x65] = LSUB_handler,
-  [0x7d] = LUSHR_handler,
-  [0x83] = LXOR_handler,
-  [0xc2] = MONITORENTER_handler,
-  [0xc3] = MONITOREXIT_handler,
-  [0xc5] = MULTIANEWARRAY_handler,
-  [0xbb] = NEW_handler,
-  [0xbc] = NEWARRAY_handler,
-  [0x00] = NOP_handler,
-  [0x57] = POP_handler,
-  [0x58] = POP2_handler,
-  [0xb5] = PUTFIELD_handler,
-  [0xb3] = PUTSTATIC_handler,
-  [0xa9] = RET_handler,
-  [0xb1] = RETURN_handler,
-  [0x35] = SALOAD_handler,
-  [0x56] = SASTORE_handler,
-  [0x11] = SIPUSH_handler,
-  [0x5f] = SWAP_handler,
-  [0xaa] = TABLESWITCH_handler,
-  [0xc4] = WIDE_handler
+
+printer opcode_printers[] = {
+  [0x32] = AALOAD_printer,
+  [0x53] = AASTORE_printer,
+  [0x01] = ACONST_NULL_printer,
+  [0x19] = ALOAD_printer,
+  [0x2a] = ALOAD_0_printer,
+  [0x2b] = ALOAD_1_printer,
+  [0x2c] = ALOAD_2_printer,
+  [0x2d] = ALOAD_3_printer,
+  [0xbd] = ANEWARRAY_printer,
+  [0xb0] = ARETURN_printer,
+  [0xbe] = ARRAYLENGTH_printer,
+  [0x3a] = ASTORE_printer,
+  [0x4b] = ASTORE_0_printer,
+  [0x4c] = ASTORE_1_printer,
+  [0x4d] = ASTORE_2_printer,
+  [0x4e] = ASTORE_3_printer,
+  [0xbf] = ATHROW_printer,
+  [0x33] = BALOAD_printer,
+  [0x54] = BASTORE_printer,
+  [0x10] = BIPUSH_printer,
+  [0xca] = BREAKPOINT_printer,
+  [0x34] = CALOAD_printer,
+  [0x55] = CASTORE_printer,
+  [0xc0] = CHECKCAST_printer,
+  [0x90] = D2F_printer,
+  [0x8e] = D2I_printer,
+  [0x8f] = D2L_printer,
+  [0x63] = DADD_printer,
+  [0x31] = DALOAD_printer,
+  [0x52] = DASTORE_printer,
+  [0x98] = DCMPG_printer,
+  [0x97] = DCMPL_printer,
+  [0x0e] = DCONST_0_printer,
+  [0x0f] = DCONST_1_printer,
+  [0x6f] = DDIV_printer,
+  [0x18] = DLOAD_printer,
+  [0x26] = DLOAD_0_printer,
+  [0x27] = DLOAD_1_printer,
+  [0x28] = DLOAD_2_printer,
+  [0x29] = DLOAD_3_printer,
+  [0x6b] = DMUL_printer,
+  [0x77] = DNEG_printer,
+  [0x73] = DREM_printer,
+  [0xaf] = DRETURN_printer,
+  [0x39] = DSTORE_printer,
+  [0x47] = DSTORE_0_printer,
+  [0x48] = DSTORE_1_printer,
+  [0x49] = DSTORE_2_printer,
+  [0x4a] = DSTORE_3_printer,
+  [0x67] = DSUB_printer,
+  [0x59] = DUP_printer,
+  [0x5a] = DUP_X1_printer,
+  [0x5b] = DUP_X2_printer,
+  [0x5c] = DUP2_printer,
+  [0x5d] = DUP2_X1_printer,
+  [0x5e] = DUP2_X2_printer,
+  [0x8d] = F2D_printer,
+  [0x8b] = F2I_printer,
+  [0x8c] = F2L_printer,
+  [0x62] = FADD_printer,
+  [0x30] = FALOAD_printer,
+  [0x51] = FASTORE_printer,
+  [0x96] = FCMPG_printer,
+  [0x95] = FCMPL_printer,
+  [0x0b] = FCONST_0_printer,
+  [0x0c] = FCONST_1_printer,
+  [0x0d] = FCONST_2_printer,
+  [0x6e] = FDIV_printer,
+  [0x17] = FLOAD_printer,
+  [0x22] = FLOAD_0_printer,
+  [0x23] = FLOAD_1_printer,
+  [0x24] = FLOAD_2_printer,
+  [0x25] = FLOAD_3_printer,
+  [0x6a] = FMUL_printer,
+  [0x76] = FNEG_printer,
+  [0x72] = FREM_printer,
+  [0xae] = FRETURN_printer,
+  [0x38] = FSTORE_printer,
+  [0x43] = FSTORE_0_printer,
+  [0x44] = FSTORE_1_printer,
+  [0x45] = FSTORE_2_printer,
+  [0x46] = FSTORE_3_printer,
+  [0x66] = FSUB_printer,
+  [0xb4] = GETFIELD_printer,
+  [0xb2] = GETSTATIC_printer,
+  [0xa7] = GOTO_printer,
+  [0xc8] = GOTO_W_printer,
+  [0x91] = I2B_printer,
+  [0x92] = I2C_printer,
+  [0x87] = I2D_printer,
+  [0x86] = I2F_printer,
+  [0x85] = I2L_printer,
+  [0x93] = I2S_printer,
+  [0x60] = IADD_printer,
+  [0x2e] = IALOAD_printer,
+  [0x7e] = IAND_printer,
+  [0x4f] = IASTORE_printer,
+  [0x02] = ICONST_M1_printer,
+  [0x03] = ICONST_0_printer,
+  [0x04] = ICONST_1_printer,
+  [0x05] = ICONST_2_printer,
+  [0x06] = ICONST_3_printer,
+  [0x07] = ICONST_4_printer,
+  [0x08] = ICONST_5_printer,
+  [0x6c] = IDIV_printer,
+  [0xa5] = IF_ACMPEQ_printer,
+  [0xa6] = IF_ACMPNE_printer,
+  [0x9f] = IF_ICMPEQ_printer,
+  [0xa2] = IF_ICMPGE_printer,
+  [0xa3] = IF_ICMPGT_printer,
+  [0xa4] = IF_ICMPLE_printer,
+  [0xa1] = IF_ICMPLT_printer,
+  [0xa0] = IF_ICMPNE_printer,
+  [0x99] = IFEQ_printer,
+  [0x9c] = IFGE_printer,
+  [0x9d] = IFGT_printer,
+  [0x9e] = IFLE_printer,
+  [0x9b] = IFLT_printer,
+  [0x9a] = IFNE_printer,
+  [0xc7] = IFNONNULL_printer,
+  [0xc6] = IFNULL_printer,
+  [0x84] = IINC_printer,
+  [0x15] = ILOAD_printer,
+  [0x1a] = ILOAD_0_printer,
+  [0x1b] = ILOAD_1_printer,
+  [0x1c] = ILOAD_2_printer,
+  [0x1d] = ILOAD_3_printer,
+  [0xfe] = IMPDEP1_printer,
+  [0xff] = IMPDEP2_printer,
+  [0x68] = IMUL_printer,
+  [0x74] = INEG_printer,
+  [0xc1] = INSTANCEOF_printer,
+  [0xba] = INVOKEDYNAMIC_printer,
+  [0xb9] = INVOKEINTERFACE_printer,
+  [0xb7] = INVOKESPECIAL_printer,
+  [0xb8] = INVOKESTATIC_printer,
+  [0xb6] = INVOKEVIRTUAL_printer,
+  [0x80] = IOR_printer,
+  [0x70] = IREM_printer,
+  [0xac] = IRETURN_printer,
+  [0x78] = ISHL_printer,
+  [0x7a] = ISHR_printer,
+  [0x36] = ISTORE_printer,
+  [0x3b] = ISTORE_0_printer,
+  [0x3c] = ISTORE_1_printer,
+  [0x3d] = ISTORE_2_printer,
+  [0x3e] = ISTORE_3_printer,
+  [0x64] = ISUB_printer,
+  [0x7c] = IUSHR_printer,
+  [0x82] = IXOR_printer,
+  [0xa8] = JSR_printer,
+  [0xc9] = JSR_W_printer,
+  [0x8a] = L2D_printer,
+  [0x89] = L2F_printer,
+  [0x88] = L2I_printer,
+  [0x61] = LADD_printer,
+  [0x2f] = LALOAD_printer,
+  [0x7f] = LAND_printer,
+  [0x50] = LASTORE_printer,
+  [0x94] = LCMP_printer,
+  [0x09] = LCONST_0_printer,
+  [0x0a] = LCONST_1_printer,
+  [0x12] = LDC_printer,
+  [0x13] = LDC_W_printer,
+  [0x14] = LDC2_W_printer,
+  [0x6d] = LDIV_printer,
+  [0x16] = LLOAD_printer,
+  [0x1e] = LLOAD_0_printer,
+  [0x1f] = LLOAD_1_printer,
+  [0x20] = LLOAD_2_printer,
+  [0x21] = LLOAD_3_printer,
+  [0x69] = LMUL_printer,
+  [0x75] = LNEG_printer,
+  [0xab] = LOOKUPSWITCH_printer,
+  [0x81] = LOR_printer,
+  [0x71] = LREM_printer,
+  [0xad] = LRETURN_printer,
+  [0x79] = LSHL_printer,
+  [0x7b] = LSHR_printer,
+  [0x37] = LSTORE_printer,
+  [0x3f] = LSTORE_0_printer,
+  [0x40] = LSTORE_1_printer,
+  [0x41] = LSTORE_2_printer,
+  [0x42] = LSTORE_3_printer,
+  [0x65] = LSUB_printer,
+  [0x7d] = LUSHR_printer,
+  [0x83] = LXOR_printer,
+  [0xc2] = MONITORENTER_printer,
+  [0xc3] = MONITOREXIT_printer,
+  [0xc5] = MULTIANEWARRAY_printer,
+  [0xbb] = NEW_printer,
+  [0xbc] = NEWARRAY_printer,
+  [0x00] = NOP_printer,
+  [0x57] = POP_printer,
+  [0x58] = POP2_printer,
+  [0xb5] = PUTFIELD_printer,
+  [0xb3] = PUTSTATIC_printer,
+  [0xa9] = RET_printer,
+  [0xb1] = RETURN_printer,
+  [0x35] = SALOAD_printer,
+  [0x56] = SASTORE_printer,
+  [0x11] = SIPUSH_printer,
+  [0x5f] = SWAP_printer,
+  [0xaa] = TABLESWITCH_printer,
+  [0xc4] = WIDE_printer
 };
 
 int _wide_index = 0;
@@ -426,20 +427,20 @@ struct {
   u4 **pairs;
 } lookup_result;
 
-int AALOAD_handler(u1 *bytestream){
+int AALOAD_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int AASTORE_handler(u1 *bytestream){
+int AASTORE_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int ACONST_NULL_handler(u1 *bytestream){
+int ACONST_NULL_printer(u1 *bytestream){
   /* Push a NULL reference */
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int ALOAD_handler(u1 *bytestream){
+int ALOAD_printer(u1 *bytestream){
 	if(!_wide_index){
 	  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
  		return 1;
@@ -451,23 +452,23 @@ int ALOAD_handler(u1 *bytestream){
 		return 2;
 	}
 }
-int ALOAD_0_handler(u1 *bytestream){
+int ALOAD_0_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int ALOAD_1_handler(u1 *bytestream){
+int ALOAD_1_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int ALOAD_2_handler(u1 *bytestream){
+int ALOAD_2_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int ALOAD_3_handler(u1 *bytestream){
+int ALOAD_3_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int ANEWARRAY_handler(u1 *bytestream){
+int ANEWARRAY_printer(u1 *bytestream){
 	if(_constant_print--){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		u2 index = (u2) (bytestream[1] << 8 | bytestream[2]);
@@ -477,15 +478,15 @@ int ANEWARRAY_handler(u1 *bytestream){
 	_constant_print += 2;
   return 2;
 }
-int ARETURN_handler(u1 *bytestream){
+int ARETURN_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int ARRAYLENGTH_handler(u1 *bytestream){
+int ARRAYLENGTH_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int ASTORE_handler(u1 *bytestream){
+int ASTORE_printer(u1 *bytestream){
 	if(!_wide_index){
 	  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
  		return 1;
@@ -497,51 +498,51 @@ int ASTORE_handler(u1 *bytestream){
 		return 2;
 	}
 }
-int ASTORE_0_handler(u1 *bytestream){
+int ASTORE_0_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int ASTORE_1_handler(u1 *bytestream){
+int ASTORE_1_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int ASTORE_2_handler(u1 *bytestream){
+int ASTORE_2_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int ASTORE_3_handler(u1 *bytestream){
+int ASTORE_3_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int ATHROW_handler(u1 *bytestream){
+int ATHROW_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int BALOAD_handler(u1 *bytestream){
+int BALOAD_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int BASTORE_handler(u1 *bytestream){
+int BASTORE_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int BIPUSH_handler(u1 *bytestream){
+int BIPUSH_printer(u1 *bytestream){
   printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
   return 1;
 }
-int BREAKPOINT_handler(u1 *bytestream){
+int BREAKPOINT_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int CALOAD_handler(u1 *bytestream){
+int CALOAD_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int CASTORE_handler(u1 *bytestream){
+int CASTORE_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int CHECKCAST_handler(u1 *bytestream){
+int CHECKCAST_printer(u1 *bytestream){
 	if(_constant_print--){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		u2 index = (u2) (bytestream[1] << 8 | bytestream[2]);
@@ -551,51 +552,51 @@ int CHECKCAST_handler(u1 *bytestream){
 	_constant_print += 2;
   return 2;
 }
-int D2F_handler(u1 *bytestream){
+int D2F_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int D2I_handler(u1 *bytestream){
+int D2I_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int D2L_handler(u1 *bytestream){
+int D2L_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int DADD_handler(u1 *bytestream){
+int DADD_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int DALOAD_handler(u1 *bytestream){
+int DALOAD_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int DASTORE_handler(u1 *bytestream){
+int DASTORE_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int DCMPG_handler(u1 *bytestream){
+int DCMPG_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int DCMPL_handler(u1 *bytestream){
+int DCMPL_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int DCONST_0_handler(u1 *bytestream){
+int DCONST_0_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int DCONST_1_handler(u1 *bytestream){
+int DCONST_1_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int DDIV_handler(u1 *bytestream){
+int DDIV_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int DLOAD_handler(u1 *bytestream){
+int DLOAD_printer(u1 *bytestream){
 	if(!_wide_index){
 	  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
  		return 1;
@@ -607,39 +608,39 @@ int DLOAD_handler(u1 *bytestream){
 		return 2;
 	}
 }
-int DLOAD_0_handler(u1 *bytestream){
+int DLOAD_0_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int DLOAD_1_handler(u1 *bytestream){
+int DLOAD_1_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int DLOAD_2_handler(u1 *bytestream){
+int DLOAD_2_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int DLOAD_3_handler(u1 *bytestream){
+int DLOAD_3_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int DMUL_handler(u1 *bytestream){
+int DMUL_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int DNEG_handler(u1 *bytestream){
+int DNEG_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int DREM_handler(u1 *bytestream){
+int DREM_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int DRETURN_handler(u1 *bytestream){
+int DRETURN_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int DSTORE_handler(u1 *bytestream){
+int DSTORE_printer(u1 *bytestream){
 	if(!_wide_index){
 	  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
  		return 1;
@@ -651,99 +652,99 @@ int DSTORE_handler(u1 *bytestream){
 		return 2;
 	}
 }
-int DSTORE_0_handler(u1 *bytestream){
+int DSTORE_0_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int DSTORE_1_handler(u1 *bytestream){
+int DSTORE_1_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int DSTORE_2_handler(u1 *bytestream){
+int DSTORE_2_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int DSTORE_3_handler(u1 *bytestream){
+int DSTORE_3_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int DSUB_handler(u1 *bytestream){
+int DSUB_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int DUP_handler(u1 *bytestream){
+int DUP_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int DUP_X1_handler(u1 *bytestream){
+int DUP_X1_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int DUP_X2_handler(u1 *bytestream){
+int DUP_X2_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int DUP2_handler(u1 *bytestream){
+int DUP2_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int DUP2_X1_handler(u1 *bytestream){
+int DUP2_X1_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int DUP2_X2_handler(u1 *bytestream){
+int DUP2_X2_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int F2D_handler(u1 *bytestream){
+int F2D_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int F2I_handler(u1 *bytestream){
+int F2I_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int F2L_handler(u1 *bytestream){
+int F2L_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int FADD_handler(u1 *bytestream){
+int FADD_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int FALOAD_handler(u1 *bytestream){
+int FALOAD_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int FASTORE_handler(u1 *bytestream){
+int FASTORE_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int FCMPG_handler(u1 *bytestream){
+int FCMPG_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int FCMPL_handler(u1 *bytestream){
+int FCMPL_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int FCONST_0_handler(u1 *bytestream){
+int FCONST_0_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int FCONST_1_handler(u1 *bytestream){
+int FCONST_1_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int FCONST_2_handler(u1 *bytestream){
+int FCONST_2_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int FDIV_handler(u1 *bytestream){
+int FDIV_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int FLOAD_handler(u1 *bytestream){
+int FLOAD_printer(u1 *bytestream){
 	if(!_wide_index){
 	  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
  		return 1;
@@ -755,39 +756,39 @@ int FLOAD_handler(u1 *bytestream){
 		return 2;
 	}
 }
-int FLOAD_0_handler(u1 *bytestream){
+int FLOAD_0_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int FLOAD_1_handler(u1 *bytestream){
+int FLOAD_1_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int FLOAD_2_handler(u1 *bytestream){
+int FLOAD_2_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int FLOAD_3_handler(u1 *bytestream){
+int FLOAD_3_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int FMUL_handler(u1 *bytestream){
+int FMUL_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int FNEG_handler(u1 *bytestream){
+int FNEG_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int FREM_handler(u1 *bytestream){
+int FREM_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int FRETURN_handler(u1 *bytestream){
+int FRETURN_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int FSTORE_handler(u1 *bytestream){
+int FSTORE_printer(u1 *bytestream){
 	if(!_wide_index){
 	  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
  		return 1;
@@ -799,27 +800,27 @@ int FSTORE_handler(u1 *bytestream){
 		return 2;
 	}
 }
-int FSTORE_0_handler(u1 *bytestream){
+int FSTORE_0_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int FSTORE_1_handler(u1 *bytestream){
+int FSTORE_1_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int FSTORE_2_handler(u1 *bytestream){
+int FSTORE_2_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int FSTORE_3_handler(u1 *bytestream){
+int FSTORE_3_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int FSUB_handler(u1 *bytestream){
+int FSUB_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int GETFIELD_handler(u1 *bytestream){
+int GETFIELD_printer(u1 *bytestream){
 	if(_constant_print--){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		u2 index = (u2) (bytestream[1] << 8 | bytestream[2]);
@@ -829,7 +830,7 @@ int GETFIELD_handler(u1 *bytestream){
 	_constant_print += 2;
   return 2;
 }
-int GETSTATIC_handler(u1 *bytestream){
+int GETSTATIC_printer(u1 *bytestream){
 	if(_constant_print--){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		u2 index = (u2) (bytestream[1] << 8 | bytestream[2]);
@@ -839,7 +840,7 @@ int GETSTATIC_handler(u1 *bytestream){
 	_constant_print += 2;
   return 2;
 }
-int GOTO_handler(u1 *bytestream){
+int GOTO_printer(u1 *bytestream){
 	if(!_jump++){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		int16_t branchoffset = bytestream[1] << 8 | bytestream[2];
@@ -849,7 +850,7 @@ int GOTO_handler(u1 *bytestream){
 	_jump += -2;
   return 2;
 }
-int GOTO_W_handler(u1 *bytestream){
+int GOTO_W_printer(u1 *bytestream){
 	if(!_jump++){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		int32_t branchoffset = bytestream[1] << 24 | bytestream[2] << 16 | bytestream[3] << 8 | bytestream[4];
@@ -859,79 +860,79 @@ int GOTO_W_handler(u1 *bytestream){
 	_jump += -2;
   return 4;
 }
-int I2B_handler(u1 *bytestream){
+int I2B_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int I2C_handler(u1 *bytestream){
+int I2C_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int I2D_handler(u1 *bytestream){
+int I2D_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int I2F_handler(u1 *bytestream){
+int I2F_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int I2L_handler(u1 *bytestream){
+int I2L_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int I2S_handler(u1 *bytestream){
+int I2S_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int IADD_handler(u1 *bytestream){
+int IADD_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int IALOAD_handler(u1 *bytestream){
+int IALOAD_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int IAND_handler(u1 *bytestream){
+int IAND_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int IASTORE_handler(u1 *bytestream){
+int IASTORE_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int ICONST_M1_handler(u1 *bytestream){
+int ICONST_M1_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int ICONST_0_handler(u1 *bytestream){
+int ICONST_0_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int ICONST_1_handler(u1 *bytestream){
+int ICONST_1_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int ICONST_2_handler(u1 *bytestream){
+int ICONST_2_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int ICONST_3_handler(u1 *bytestream){
+int ICONST_3_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int ICONST_4_handler(u1 *bytestream){
+int ICONST_4_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int ICONST_5_handler(u1 *bytestream){
+int ICONST_5_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int IDIV_handler(u1 *bytestream){
+int IDIV_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int IF_ACMPEQ_handler(u1 *bytestream){
+int IF_ACMPEQ_printer(u1 *bytestream){
 	if(!_jump++){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		int16_t branchoffset = bytestream[1] << 8 | bytestream[2];
@@ -941,7 +942,7 @@ int IF_ACMPEQ_handler(u1 *bytestream){
 	_jump += -2;
   return 2;
 }
-int IF_ACMPNE_handler(u1 *bytestream){
+int IF_ACMPNE_printer(u1 *bytestream){
 	if(!_jump++){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		int16_t branchoffset = bytestream[1] << 8 | bytestream[2];
@@ -951,7 +952,7 @@ int IF_ACMPNE_handler(u1 *bytestream){
 	_jump += -2;
   return 2;
 }
-int IF_ICMPEQ_handler(u1 *bytestream){
+int IF_ICMPEQ_printer(u1 *bytestream){
 	if(!_jump++){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		int16_t branchoffset = bytestream[1] << 8 | bytestream[2];
@@ -961,7 +962,7 @@ int IF_ICMPEQ_handler(u1 *bytestream){
 	_jump += -2;
   return 2;
 }
-int IF_ICMPGE_handler(u1 *bytestream){
+int IF_ICMPGE_printer(u1 *bytestream){
 	if(!_jump++){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		int16_t branchoffset = bytestream[1] << 8 | bytestream[2];
@@ -971,7 +972,7 @@ int IF_ICMPGE_handler(u1 *bytestream){
 	_jump += -2;
   return 2;
 }
-int IF_ICMPGT_handler(u1 *bytestream){
+int IF_ICMPGT_printer(u1 *bytestream){
 	if(!_jump++){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		int16_t branchoffset = bytestream[1] << 8 | bytestream[2];
@@ -981,7 +982,7 @@ int IF_ICMPGT_handler(u1 *bytestream){
 	_jump += -2;
   return 2;
 }
-int IF_ICMPLE_handler(u1 *bytestream){
+int IF_ICMPLE_printer(u1 *bytestream){
 	if(!_jump++){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		int16_t branchoffset = bytestream[1] << 8 | bytestream[2];
@@ -991,7 +992,7 @@ int IF_ICMPLE_handler(u1 *bytestream){
 	_jump += -2;
   return 2;
 }
-int IF_ICMPLT_handler(u1 *bytestream){
+int IF_ICMPLT_printer(u1 *bytestream){
 	if(!_jump++){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		int16_t branchoffset = bytestream[1] << 8 | bytestream[2];
@@ -1001,7 +1002,7 @@ int IF_ICMPLT_handler(u1 *bytestream){
 	_jump += -2;
   return 2;
 }
-int IF_ICMPNE_handler(u1 *bytestream){
+int IF_ICMPNE_printer(u1 *bytestream){
 	if(!_jump++){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		int16_t branchoffset = bytestream[1] << 8 | bytestream[2];
@@ -1011,7 +1012,7 @@ int IF_ICMPNE_handler(u1 *bytestream){
 	_jump += -2;
   return 2;
 }
-int IFEQ_handler(u1 *bytestream){
+int IFEQ_printer(u1 *bytestream){
 	if(!_jump++){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		int16_t branchoffset = bytestream[1] << 8 | bytestream[2];
@@ -1021,7 +1022,7 @@ int IFEQ_handler(u1 *bytestream){
 	_jump += -2;
   return 2;
 }
-int IFGE_handler(u1 *bytestream){
+int IFGE_printer(u1 *bytestream){
 	if(!_jump++){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		int16_t branchoffset = bytestream[1] << 8 | bytestream[2];
@@ -1031,7 +1032,7 @@ int IFGE_handler(u1 *bytestream){
 	_jump += -2;
   return 2;
 }
-int IFGT_handler(u1 *bytestream){
+int IFGT_printer(u1 *bytestream){
 	if(!_jump++){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		int16_t branchoffset = bytestream[1] << 8 | bytestream[2];
@@ -1041,7 +1042,7 @@ int IFGT_handler(u1 *bytestream){
 	_jump += -2;
   return 2;
 }
-int IFLE_handler(u1 *bytestream){
+int IFLE_printer(u1 *bytestream){
 	if(!_jump++){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		int16_t branchoffset = bytestream[1] << 8 | bytestream[2];
@@ -1051,7 +1052,7 @@ int IFLE_handler(u1 *bytestream){
 	_jump += -2;
   return 2;
 }
-int IFLT_handler(u1 *bytestream){
+int IFLT_printer(u1 *bytestream){
 	if(!_jump++){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		int16_t branchoffset = bytestream[1] << 8 | bytestream[2];
@@ -1061,7 +1062,7 @@ int IFLT_handler(u1 *bytestream){
 	_jump += -2;
   return 2;
 }
-int IFNE_handler(u1 *bytestream){
+int IFNE_printer(u1 *bytestream){
 	if(!_jump++){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		int16_t branchoffset = bytestream[1] << 8 | bytestream[2];
@@ -1071,7 +1072,7 @@ int IFNE_handler(u1 *bytestream){
 	_jump += -2;
   return 2;
 }
-int IFNONNULL_handler(u1 *bytestream){
+int IFNONNULL_printer(u1 *bytestream){
 	if(!_jump++){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		int16_t branchoffset = bytestream[1] << 8 | bytestream[2];
@@ -1081,7 +1082,7 @@ int IFNONNULL_handler(u1 *bytestream){
 	_jump += -2;
   return 2;
 }
-int IFNULL_handler(u1 *bytestream){
+int IFNULL_printer(u1 *bytestream){
 	if(!_jump++){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		int16_t branchoffset = bytestream[1] << 8 | bytestream[2];
@@ -1091,7 +1092,7 @@ int IFNULL_handler(u1 *bytestream){
 	_jump += -2;
   return 2;
 }
-int IINC_handler(u1 *bytestream){
+int IINC_printer(u1 *bytestream){
 	if(!_wide_index){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		for(int i = 0; i < 2; i++)
@@ -1106,7 +1107,7 @@ int IINC_handler(u1 *bytestream){
 		return 4;
 	}
 }
-int ILOAD_handler(u1 *bytestream){
+int ILOAD_printer(u1 *bytestream){
 	if(!_wide_index){
 	  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
  		return 1;
@@ -1118,39 +1119,39 @@ int ILOAD_handler(u1 *bytestream){
 		return 2;
 	}
 }
-int ILOAD_0_handler(u1 *bytestream){
+int ILOAD_0_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int ILOAD_1_handler(u1 *bytestream){
+int ILOAD_1_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int ILOAD_2_handler(u1 *bytestream){
+int ILOAD_2_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int ILOAD_3_handler(u1 *bytestream){
+int ILOAD_3_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int IMPDEP1_handler(u1 *bytestream){
+int IMPDEP1_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int IMPDEP2_handler(u1 *bytestream){
+int IMPDEP2_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int IMUL_handler(u1 *bytestream){
+int IMUL_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int INEG_handler(u1 *bytestream){
+int INEG_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int INSTANCEOF_handler(u1 *bytestream){
+int INSTANCEOF_printer(u1 *bytestream){
 	if(_constant_print--){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		u2 index = (u2) (bytestream[1] << 8 | bytestream[2]);
@@ -1160,7 +1161,7 @@ int INSTANCEOF_handler(u1 *bytestream){
 	_constant_print += 2;
   return 2;
 }
-int INVOKEDYNAMIC_handler(u1 *bytestream){
+int INVOKEDYNAMIC_printer(u1 *bytestream){
 	if(_constant_print--){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		u2 index = (u2) (bytestream[1] << 8 | bytestream[2]);
@@ -1170,7 +1171,7 @@ int INVOKEDYNAMIC_handler(u1 *bytestream){
 	_constant_print += 2;
   return 4;
 }
-int INVOKEINTERFACE_handler(u1 *bytestream){
+int INVOKEINTERFACE_printer(u1 *bytestream){
 	if(_constant_print--){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		u2 index = (u2) (bytestream[1] << 8 | bytestream[2]);
@@ -1180,7 +1181,7 @@ int INVOKEINTERFACE_handler(u1 *bytestream){
 	_constant_print += 2;
   return 4;
 }
-int INVOKESPECIAL_handler(u1 *bytestream){
+int INVOKESPECIAL_printer(u1 *bytestream){
 	if(_constant_print--){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		u2 index = (u2) (bytestream[1] << 8 | bytestream[2]);
@@ -1190,7 +1191,7 @@ int INVOKESPECIAL_handler(u1 *bytestream){
 	_constant_print += 2;
   return 2;
 }
-int INVOKESTATIC_handler(u1 *bytestream){
+int INVOKESTATIC_printer(u1 *bytestream){
 	if(_constant_print--){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		u2 index = (u2) (bytestream[1] << 8 | bytestream[2]);
@@ -1200,7 +1201,7 @@ int INVOKESTATIC_handler(u1 *bytestream){
 	_constant_print += 2;
   return 2;
 }
-int INVOKEVIRTUAL_handler(u1 *bytestream){
+int INVOKEVIRTUAL_printer(u1 *bytestream){
 	if(_constant_print--){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		u2 index = (u2) (bytestream[1] << 8 | bytestream[2]);
@@ -1210,27 +1211,27 @@ int INVOKEVIRTUAL_handler(u1 *bytestream){
 	_constant_print += 2;
   return 2;
 }
-int IOR_handler(u1 *bytestream){
+int IOR_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int IREM_handler(u1 *bytestream){
+int IREM_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int IRETURN_handler(u1 *bytestream){
+int IRETURN_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int ISHL_handler(u1 *bytestream){
+int ISHL_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int ISHR_handler(u1 *bytestream){
+int ISHR_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int ISTORE_handler(u1 *bytestream){
+int ISTORE_printer(u1 *bytestream){
 	if(!_wide_index){
 	  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
  		return 1;
@@ -1242,35 +1243,35 @@ int ISTORE_handler(u1 *bytestream){
 		return 2;
 	}
 }
-int ISTORE_0_handler(u1 *bytestream){
+int ISTORE_0_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int ISTORE_1_handler(u1 *bytestream){
+int ISTORE_1_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int ISTORE_2_handler(u1 *bytestream){
+int ISTORE_2_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int ISTORE_3_handler(u1 *bytestream){
+int ISTORE_3_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int ISUB_handler(u1 *bytestream){
+int ISUB_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int IUSHR_handler(u1 *bytestream){
+int IUSHR_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int IXOR_handler(u1 *bytestream){
+int IXOR_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int JSR_handler(u1 *bytestream){
+int JSR_printer(u1 *bytestream){
 	if(!_jump++){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		int16_t branchoffset = bytestream[1] << 8 | bytestream[2];
@@ -1280,7 +1281,7 @@ int JSR_handler(u1 *bytestream){
 	_jump += -2;
   return 2;
 }
-int JSR_W_handler(u1 *bytestream){
+int JSR_W_printer(u1 *bytestream){
 	if(!_jump++){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		int32_t branchoffset = bytestream[1] << 24 | bytestream[2] << 16 | bytestream[3] << 8 | bytestream[4];
@@ -1290,47 +1291,47 @@ int JSR_W_handler(u1 *bytestream){
 	_jump += -2;
   return 4;
 }
-int L2D_handler(u1 *bytestream){
+int L2D_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int L2F_handler(u1 *bytestream){
+int L2F_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int L2I_handler(u1 *bytestream){
+int L2I_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int LADD_handler(u1 *bytestream){
+int LADD_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int LALOAD_handler(u1 *bytestream){
+int LALOAD_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int LAND_handler(u1 *bytestream){
+int LAND_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int LASTORE_handler(u1 *bytestream){
+int LASTORE_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int LCMP_handler(u1 *bytestream){
+int LCMP_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int LCONST_0_handler(u1 *bytestream){
+int LCONST_0_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int LCONST_1_handler(u1 *bytestream){
+int LCONST_1_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int LDC_handler(u1 *bytestream){
+int LDC_printer(u1 *bytestream){
 	if(_constant_print--){
 	  printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		u1 index = bytestream[1];
@@ -1340,7 +1341,7 @@ int LDC_handler(u1 *bytestream){
 	_constant_print += 2;
   return 1;
 }
-int LDC_W_handler(u1 *bytestream){
+int LDC_W_printer(u1 *bytestream){
 	if(_constant_print--){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		u2 index = (u2) (bytestream[1] << 8 | bytestream[2]);
@@ -1350,7 +1351,7 @@ int LDC_W_handler(u1 *bytestream){
 	_constant_print += 2;
   return 2;
 }
-int LDC2_W_handler(u1 *bytestream){
+int LDC2_W_printer(u1 *bytestream){
 	if(_constant_print--){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		u2 index = (u2) (bytestream[1] << 8 | bytestream[2]);
@@ -1360,11 +1361,11 @@ int LDC2_W_handler(u1 *bytestream){
 	_constant_print += 2;
   return 2;
 }
-int LDIV_handler(u1 *bytestream){
+int LDIV_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int LLOAD_handler(u1 *bytestream){
+int LLOAD_printer(u1 *bytestream){
 	if(!_wide_index){
 	  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
  		return 1;
@@ -1376,31 +1377,31 @@ int LLOAD_handler(u1 *bytestream){
 		return 2;
 	}
 }
-int LLOAD_0_handler(u1 *bytestream){
+int LLOAD_0_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int LLOAD_1_handler(u1 *bytestream){
+int LLOAD_1_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int LLOAD_2_handler(u1 *bytestream){
+int LLOAD_2_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int LLOAD_3_handler(u1 *bytestream){
+int LLOAD_3_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int LMUL_handler(u1 *bytestream){
+int LMUL_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int LNEG_handler(u1 *bytestream){
+int LNEG_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int LOOKUPSWITCH_handler(u1 *bytestream){
+int LOOKUPSWITCH_printer(u1 *bytestream){
 	static int state = 0;
 	if(!state){
 		state = 1;
@@ -1440,27 +1441,27 @@ int LOOKUPSWITCH_handler(u1 *bytestream){
   }
 	return pad + 8 + npairs * 8;
 }
-int LOR_handler(u1 *bytestream){
+int LOR_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
 	return 0;
 }
-int LREM_handler(u1 *bytestream){
+int LREM_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
 	return 0;
 }
-int LRETURN_handler(u1 *bytestream){
+int LRETURN_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
 	return 0;
 }
-int LSHL_handler(u1 *bytestream){
+int LSHL_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
 	return 0;
 }
-int LSHR_handler(u1 *bytestream){
+int LSHR_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
 	return 0;
 }
-int LSTORE_handler(u1 *bytestream){
+int LSTORE_printer(u1 *bytestream){
 	if(!_wide_index){
 	  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
  		return 1;
@@ -1472,43 +1473,43 @@ int LSTORE_handler(u1 *bytestream){
 		return 2;
 	}
 }
-int LSTORE_0_handler(u1 *bytestream){
+int LSTORE_0_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
 	return 0;
 }
-int LSTORE_1_handler(u1 *bytestream){
+int LSTORE_1_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
 	return 0;
 }
-int LSTORE_2_handler(u1 *bytestream){
+int LSTORE_2_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
 	return 0;
 }
-int LSTORE_3_handler(u1 *bytestream){
+int LSTORE_3_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
 	return 0;
 }
-int LSUB_handler(u1 *bytestream){
+int LSUB_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
 	return 0;
 }
-int LUSHR_handler(u1 *bytestream){
+int LUSHR_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
 	return 0;
 }
-int LXOR_handler(u1 *bytestream){
+int LXOR_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
 	return 0;
 }
-int MONITORENTER_handler(u1 *bytestream){
+int MONITORENTER_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
 	return 0;
 }
-int MONITOREXIT_handler(u1 *bytestream){
+int MONITOREXIT_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
 	return 0;
 }
-int MULTIANEWARRAY_handler(u1 *bytestream){
+int MULTIANEWARRAY_printer(u1 *bytestream){
 	if(_constant_print--){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		u2 index = (u2) (bytestream[1] << 8 | bytestream[2]);
@@ -1518,7 +1519,7 @@ int MULTIANEWARRAY_handler(u1 *bytestream){
 	_constant_print += 2;
 	return 3;
 }
-int NEW_handler(u1 *bytestream){
+int NEW_printer(u1 *bytestream){
 	if(_constant_print--){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		u2 index = (u2) (bytestream[1] << 8 | bytestream[2]);
@@ -1528,23 +1529,23 @@ int NEW_handler(u1 *bytestream){
 	_constant_print += 2;
 	return 2;
 }
-int NEWARRAY_handler(u1 *bytestream){
+int NEWARRAY_printer(u1 *bytestream){
   printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
 	return 1;
 }
-int NOP_handler(u1 *bytestream){
+int NOP_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
 	return 0;
 }
-int POP_handler(u1 *bytestream){
+int POP_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
 	return 0;
 }
-int POP2_handler(u1 *bytestream){
+int POP2_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
 	return 0;
 }
-int PUTFIELD_handler(u1 *bytestream){
+int PUTFIELD_printer(u1 *bytestream){
 	if(_constant_print--){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		u2 index = (u2) (bytestream[1] << 8 | bytestream[2]);
@@ -1554,7 +1555,7 @@ int PUTFIELD_handler(u1 *bytestream){
 	_constant_print += 2;
   return 2;
 }
-int PUTSTATIC_handler(u1 *bytestream){
+int PUTSTATIC_printer(u1 *bytestream){
 	if(_constant_print--){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		u2 index = (u2) (bytestream[1] << 8 | bytestream[2]);
@@ -1564,7 +1565,7 @@ int PUTSTATIC_handler(u1 *bytestream){
 	_constant_print += 2;
   return 2;
 }
-int RET_handler(u1 *bytestream){
+int RET_printer(u1 *bytestream){
 	if(!_wide_index){
 	  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
  		return 1;
@@ -1576,30 +1577,30 @@ int RET_handler(u1 *bytestream){
 		return 2;
 	}
 }
-int RETURN_handler(u1 *bytestream){
+int RETURN_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
   return 0;
 }
-int SALOAD_handler(u1 *bytestream){
+int SALOAD_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
 	return 0;
 }
-int SASTORE_handler(u1 *bytestream){
+int SASTORE_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
 	return 0;
 }
-int SIPUSH_handler(u1 *bytestream){
+int SIPUSH_printer(u1 *bytestream){
   printf("%s ", opcode_to_mnemonic[bytestream[0]]);
   for(int i = 0; i < 2; i++)
     printf("0x%02x ", bytestream[i + 1]);
   printf("\b\n");
 	return 2;
 }
-int SWAP_handler(u1 *bytestream){
+int SWAP_printer(u1 *bytestream){
   printf("%s\n", opcode_to_mnemonic[bytestream[0]]);
 	return 0;
 }
-int TABLESWITCH_handler(u1 *bytestream){
+int TABLESWITCH_printer(u1 *bytestream){
 	static int state = 0;
 	if(state == 0){
 		state = 1;
@@ -1646,10 +1647,10 @@ int TABLESWITCH_handler(u1 *bytestream){
 	}
 	return pad + 12 + x * 4;
 }
-int WIDE_handler(u1 *bytestream){
+int WIDE_printer(u1 *bytestream){
   printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 	_wide_index = 1;
-  int ret = (opcode_handlers[bytestream[1]])(bytestream + 1);
+  int ret = (opcode_printers[bytestream[1]])(bytestream + 1);
 	_wide_index = 0;
 	return ret + 1; // index bytes + bytestream[1] opcode
 }
