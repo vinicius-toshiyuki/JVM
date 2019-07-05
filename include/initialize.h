@@ -15,7 +15,8 @@ typedef enum {
   ARG_MODE,
   ARG_PATH,
   ARG_FILE,
-	ARG_IGNORE
+	ARG_IGNORE,
+	ARG_JVM_ARGS
 } ARG;
 
 /*
@@ -23,5 +24,6 @@ typedef enum {
 */
 
 void initialize(int, char **);
+void __invalid__option(char *);
 
 #endif

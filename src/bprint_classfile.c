@@ -4,7 +4,7 @@
 #include <wchar.h>
 
 extern int VERBOSE, CONSTPOOL;
-extern handler opcode_handlers[];
+extern printer opcode_printers[];
 extern char * opcode_to_mnemonic[0x100];
 
 char *constant_name[] = {
@@ -182,8 +182,8 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
       );
 			int ret = 0;
       for(int i = 0; i < att_info.Code.code_length; i++){
-        if(ret >= 0 && !_jump) printf("%s\t" "%03d " BGC(80) FGC(96) "0x%02x:" CLEAR " ", prefix, i, att_info.Code.code[i]);
-        ret = (opcode_handlers[att_info.Code.code[i]])(att_info.Code.code + i);
+        if(ret >= 0 && !_jump) printf("%s\t" "%03d :", prefix, i);
+        ret = (opcode_printers[att_info.Code.code[i]])(att_info.Code.code + i);
         if(lookup){
           printf("%sNpairs: %d\n", new_prefix, lookup_result.npairs);
           int j; for(j = 0; j < lookup_result.npairs; j++){
@@ -209,7 +209,8 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
           lookup = 1;
 					i--;
 				}else if(ret < -1){
-					printf("%s", new_prefix);
+					/* acho que fica com uns tabs estranhos */
+					/* printf("%s", new_prefix); */
 					bprint_info(class, -++ret - 1, new_prefix, 1);
 					i--;
 				}else{
@@ -271,7 +272,6 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
         );
 				bprint_info(class, att_info.Exceptions.exception_index_table[i] - 1, new_prefix, 1);
 			}
-      break;
     case NUMBER_LineNumberTable:
       u1_to_LineNumberTable(att_info.LineNumberTable, u1_stream);
       printf(

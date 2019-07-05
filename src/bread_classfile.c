@@ -68,14 +68,16 @@ ClassFile * bread_classfile(FILE *classfile){
 	if(VERBOSE) printf("Read attributes\n");
 
 	int len = strlen(CLASSFILE);
-	char *novo;
+	char *novo = (char *) calloc(len + 5, sizeof(char));
+	char *base = novo;
+	strcpy(novo, CLASSFILE);
 	/* ./class/novo = {double_aritimetica}\0class */
 	for(int i = 0; i < len;  i++){
-		if(CLASSFILE[len - i] == '.'){
-			CLASSFILE[len - i] = '\0';
+		if(novo[len - i] == '.'){
+			novo[len - i] = '\0';
 		}
-		if(CLASSFILE[len - i] == '/' || CLASSFILE[len - i] == '\\'){
-			novo = CLASSFILE + len - i + 1;
+		if(novo[len - i] == '/' || novo[len - i] == '\\'){
+			novo += len - i + 1;
 			break;
 		}
 	}
@@ -84,10 +86,10 @@ ClassFile * bread_classfile(FILE *classfile){
 		fprintf(stderr, "Source file name not equal\n");
 		fclose(classfile);
 		free(class);
-		free(CLASSFILE);
+		free(novo);
 		exit(ERR_SRC);
 	}
-
+	free(base);
 	if(VERBOSE) printf("Finished reading class\n");
 	return class;
 }

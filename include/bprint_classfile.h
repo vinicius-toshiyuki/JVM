@@ -189,8 +189,10 @@ static inline void bprint_access_flags(u2 af){
 #define u1_to_Exceptions(__exceptions, __u1_stream) \
 { \
   u1 *__stream = __u1_stream; \
+	printf("Parado antes do memcpy\n");\
   memcpy(&__exceptions.number_of_exceptions, __stream, 2), __stream += 2; \
   u2_flip(__exceptions.number_of_exceptions); \
+	__exceptions.exception_index_table =  (u2 *) malloc(sizeof(u2) * __exceptions.number_of_exceptions);\
   for(int i = 0; i < __exceptions.number_of_exceptions; i++){ \
     memcpy(&__exceptions.exception_index_table[i], __stream, 2), __stream += 2; \
     u2_flip(__exceptions.exception_index_table[i]); \

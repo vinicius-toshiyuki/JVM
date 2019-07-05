@@ -1,10 +1,7 @@
-#ifndef cstack
-#define cstack
+#ifndef cstack_h
+#define cstack_h
 
-typedef struct celement_t {
-	struct celement_t *next;
-	void *value;
-} celement_t;
+#include "../include/celement.h"
 
 typedef struct cstack_t {
 	int size;
@@ -15,7 +12,4 @@ cstack_t * new_cstack(void);
 void destroy_cstack(cstack_t *);
 void cpush(cstack_t *, void *);
 void * cpop(cstack_t *);
-
-celement_t * new_celement(void *);
-void destroy_celement(celement_t *);
 #endif
