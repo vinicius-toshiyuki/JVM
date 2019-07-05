@@ -293,7 +293,11 @@ void FSTORE_2_handler(jvm_t *jvm, u1 *args){}
 void FSTORE_3_handler(jvm_t *jvm, u1 *args){}
 void FSUB_handler(jvm_t *jvm, u1 *args){}
 void GETFIELD_handler(jvm_t *jvm, u1 *args){}
-void GETSTATIC_handler(jvm_t *jvm, u1 *args){}
+void GETSTATIC_handler(jvm_t *jvm, u1 *args){
+	u2 cp_index = args[0] << 8 | args[1];
+	void *value = getConstantPoolEntry(cp_index);
+	return;
+}
 void GOTO_handler(jvm_t *jvm, u1 *args){}
 void GOTO_W_handler(jvm_t *jvm, u1 *args){}
 void I2B_handler(jvm_t *jvm, u1 *args){}
@@ -373,7 +377,12 @@ void LCONST_0_handler(jvm_t *jvm, u1 *args){}
 void LCONST_1_handler(jvm_t *jvm, u1 *args){}
 void LDC_handler(jvm_t *jvm, u1 *args){}
 void LDC_W_handler(jvm_t *jvm, u1 *args){}
-void LDC2_W_handler(jvm_t *jvm, u1 *args){}
+void LDC2_W_handler(jvm_t *jvm, u1 *args){
+	u2 cp_index = args[0] << 8 | args[1];
+	double value = *((double *) getConstantPoolEntry(cp_index));
+	cpush(getCurrentFrame(jvm)->operands_stack, value);
+	return;
+}
 void LDIV_handler(jvm_t *jvm, u1 *args){}
 void LLOAD_handler(jvm_t *jvm, u1 *args){}
 void LLOAD_0_handler(jvm_t *jvm, u1 *args){}
