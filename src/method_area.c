@@ -22,6 +22,6 @@ void link_class(ClassFile *class, method_area_t *marea){
 	free(marea->loaded);
 	marea->loaded = aux;
 	marea->loaded[marea->count - 1] = class;
-	initialize_class(class);
+	/*initialize_class(class);*/
 	return;
 }
