@@ -86,7 +86,7 @@ ClassFile * bread_classfile(FILE *classfile){
 		fprintf(stderr, "Source file name not equal\n");
 		fclose(classfile);
 		free(class);
-		free(novo);
+		free(base);
 		exit(ERR_SRC);
 	}
 	free(base);
