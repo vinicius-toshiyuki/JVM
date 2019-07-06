@@ -12,6 +12,6 @@ void bread_fields(ClassFile *class, FILE *classfile){
 
     class->fields[i].attributes = (attribute_info *) malloc(sizeof(attribute_info) * class->fields[i].attributes_count);
 
-    bread_attributes(class->fields[i].attributes, class->fields[i].attributes_count, classfile);
+    bread_attributes(class->fields[i].attributes, class->fields[i].attributes_count, classfile, class);
   }
 }

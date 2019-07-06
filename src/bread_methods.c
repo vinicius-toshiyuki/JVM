@@ -20,7 +20,8 @@ void bread_methods(ClassFile *class, FILE *classfile){
     bread_attributes(
         class->methods[i].attributes,
         class->methods[i].attributes_count,
-        classfile
+        classfile,
+				class
     );
   }
 

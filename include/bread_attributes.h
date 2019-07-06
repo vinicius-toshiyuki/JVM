@@ -4,7 +4,8 @@
 #include "breads.h"
 #include <string.h>
 
-void bread_attributes(attribute_info *atts, int atts_count, FILE *classfile);
+void bread_attributes(attribute_info *atts, int atts_count, FILE *classfile, ClassFile *);
+void bread_att_info(u1 *, int, ClassFile);
 
 #define bread_attributes_count(__class, __classfile) \
 { \

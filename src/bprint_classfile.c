@@ -147,7 +147,15 @@ extern struct {
   u4 **pairs;
 } lookup_result;
 void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char prefix[]){
-  static char attributes_types[ATT_C][ATT_M_S] = {"Code", "ConstantValue", "Deprecated", "Exceptions", "LineNumberTable", "LocalVariableTable", "SourceFile"}, att_type_value_assign = 1;
+  static char attributes_types[ATT_C][ATT_M_S] = {
+		"Code",
+		"ConstantValue",
+		"Deprecated",
+		"Exceptions",
+		"LineNumberTable",
+		"LocalVariableTable",
+		"SourceFile"
+	}, att_type_value_assign = 1;
   static int lookup = 0;
   if(att_type_value_assign){
     att_type_value_assign = 0;
@@ -156,10 +164,10 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
       attributes_types[i][ATT_M_S - 1] = i;
     if(VERBOSE) printf(BGC(127) FGC(83) "%sSetting attributes array" CLEARN, prefix);
   }
-  // Busca nome do atributo com o name_index na constant_pool
   
+  /* Busca nome do atributo com o name_index na constant_pool */
   char *str_name = (char *) calloc(ATT_M_S - 1, sizeof(char));
-  memcpy(str_name, class->constant_pool[name_index - 1].info->Utf8.bytes  /*Bytes do nome do atributo*/, class->constant_pool[name_index - 1].info->Utf8.length);
+  memcpy(str_name, class->constant_pool[name_index - 1].info->Utf8.bytes, class->constant_pool[name_index - 1].info->Utf8.length);
   void *bsearch_result = bsearch(str_name, attributes_types, ATT_C, ATT_M_S, (int (*)(const void *, const void *)) strcmp);
   int number_code = bsearch_result != NULL ? ((char *) bsearch_result)[ATT_M_S - 1] : NUMBER_Invalid;
 
@@ -169,9 +177,8 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
 	char *new_prefix = (char *) calloc(strlen(prefix) + 3, sizeof(char));
 	strcpy(new_prefix, prefix); strcat(new_prefix, "\t\t");
   Attributes att_info;
-  switch(number_code){ // Vou para o código correto para imprimir o atributo
+  switch(number_code){ /* Vou para o código correto para imprimir o atributo */
     case NUMBER_Code:
-      u1_to_Code(att_info.Code, u1_stream);
       printf(
           "%s\tMax stack: %d\n"
           "%s\tMax locals: %d\n"
@@ -245,21 +252,14 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
       for(int i = 0; i < att_info.Code.attributes_count; i++)
         bprint_att_info(att_info.Code.attributes[i].info, att_info.Code.attributes[i].attribute_name_index, class, att_prefix);
       free(att_prefix);
-			free(att_info.Code.code);
-			free(att_info.Code.exception_table);
-			int i; for(i = 0; i < att_info.Code.attributes_count; i++)
-				free(att_info.Code.attributes[i].info);
-			free(att_info.Code.attributes);
       break;
     case NUMBER_ConstantValue:
-      u1_to_ConstantValue(att_info.ConstantValue, u1_stream);
       printf("%s\tConstant value index: %d\n%s", prefix, att_info.ConstantValue.constantvalue_index, new_prefix);
 			bprint_info(class, att_info.ConstantValue.constantvalue_index - 1, new_prefix, 1);
       break;
     case NUMBER_Deprecated: /* Tem nada */
       break;
     case NUMBER_Exceptions:
-      u1_to_Exceptions(att_info.Exceptions, u1_stream);
       printf(
           "%s\tNumber of exceptions: %d\n"
           "%s\tException index table:\n",
@@ -273,7 +273,6 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
 				bprint_info(class, att_info.Exceptions.exception_index_table[i] - 1, new_prefix, 1);
 			}
     case NUMBER_LineNumberTable:
-      u1_to_LineNumberTable(att_info.LineNumberTable, u1_stream);
       printf(
           "%s\tLine number table length: %d\n"
           "%s\tLine number table:\n",
@@ -288,10 +287,8 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
             prefix, att_info.LineNumberTable.line_number_table[i].start_pc,
             prefix, att_info.LineNumberTable.line_number_table[i].line_number
         );
-			free(att_info.LineNumberTable.line_number_table);
       break;
     case NUMBER_LocalVariableTable:
-      u1_to_LocalVariableTable(att_info.LocalVariableTable, u1_stream);
       printf(
           "%s\tLocal variable table length: %d\n"
           "%s\tLocal variable table:\n",
@@ -319,10 +316,8 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
             prefix, att_info.LocalVariableTable.local_variable_table[i].index
         );
 			}
-			free(att_info.LocalVariableTable.local_variable_table);
       break;
     case NUMBER_SourceFile:
-      u1_to_SourceFile(att_info.SourceFile, u1_stream);
       printf("%s\tSource file index: %d\n", prefix, att_info.SourceFile.sourcefile_index);
 			printf("%s", new_prefix);
 			bprint_info(class, att_info.SourceFile.sourcefile_index - 1, new_prefix, 1);
