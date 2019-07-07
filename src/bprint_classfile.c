@@ -176,7 +176,10 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
 
 	char *new_prefix = (char *) calloc(strlen(prefix) + 3, sizeof(char));
 	strcpy(new_prefix, prefix); strcat(new_prefix, "\t\t");
+
   Attributes att_info;
+	get_attribute_from_info(u1_stream, &att_info, name_index, class);
+
   switch(number_code){ /* Vou para o código correto para imprimir o atributo */
     case NUMBER_Code:
       printf(
@@ -267,11 +270,12 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
       );
       for(int i = 0; i < att_info.Exceptions.number_of_exceptions; i++){
         printf(
-            "%s\t\tException %d: %d\n%s",
-            prefix, i, att_info.Exceptions.exception_index_table[i], new_prefix
+            "%s\t\tException %d: %d\n",
+            prefix, i, att_info.Exceptions.exception_index_table[i]
         );
 				bprint_info(class, att_info.Exceptions.exception_index_table[i] - 1, new_prefix, 1);
 			}
+			break;
     case NUMBER_LineNumberTable:
       printf(
           "%s\tLine number table length: %d\n"
@@ -319,7 +323,6 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
       break;
     case NUMBER_SourceFile:
       printf("%s\tSource file index: %d\n", prefix, att_info.SourceFile.sourcefile_index);
-			printf("%s", new_prefix);
 			bprint_info(class, att_info.SourceFile.sourcefile_index - 1, new_prefix, 1);
       break;
     default:

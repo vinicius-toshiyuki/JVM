@@ -64,7 +64,8 @@ ClassFile * bread_classfile(FILE *classfile){
 		/* Attributes */
 	bread_attributes_count(class, classfile);
 	if(VERBOSE) printf("Read attributes count\n");
-	bread_attributes(class, class->attributes_count, classfile);
+	class->attributes = (attribute_info *) calloc(class->attributes_count, sizeof(attribute_info));
+	bread_attributes(class->attributes, class->attributes_count, classfile);
 	if(VERBOSE) printf("Read attributes\n");
 
 	int len = strlen(CLASSFILE);
