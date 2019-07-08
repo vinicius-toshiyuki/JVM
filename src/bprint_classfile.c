@@ -85,13 +85,13 @@ int bprint_info(ClassFile *class, int index, const char *prefix, int inner){
     case CONSTANT_Methodref:
     case CONSTANT_InterfaceMethodref:
       if(!inner) printf("%sClass index: %d\n", prefix, cp->info->Fieldref.class_index);
-			bprint_info(class, cp->info->Fieldref.class_index - 1, new_prefix, 1);
+			bprint_info(class, cp->info->Fieldref.class_index - 1, inner ? new_prefix : prefix, 1);
 			if(!inner) printf("%sName and type index: %d\n",	prefix, cp->info->Fieldref.name_and_type_index);
-			bprint_info(class, cp->info->Fieldref.name_and_type_index - 1, new_prefix, 1);			
+			bprint_info(class, cp->info->Fieldref.name_and_type_index - 1, inner ? new_prefix : prefix, 1);			
 			break;
 		case CONSTANT_String:
 			if(!inner) printf("%sString index: %d\n",	prefix, cp->info->String.string_index);
-			bprint_info(class, cp->info->String.string_index - 1, new_prefix, 1);
+			bprint_info(class, cp->info->String.string_index - 1, inner ? new_prefix : prefix, 1);
       break;
     case CONSTANT_Integer:
       printf("%sBytes: 0x%04x\n%sValue: %d\n", prefix, cp->info->Integer.bytes, prefix, cp->info->Integer.bytes);
@@ -103,9 +103,9 @@ int bprint_info(ClassFile *class, int index, const char *prefix, int inner){
 			break;
     case CONSTANT_NameAndType:
       if(!inner) printf("%sName index: %d\n", prefix, cp->info->NameAndType.name_index);
-			bprint_info(class, cp->info->NameAndType.name_index - 1, new_prefix, 1);
+			bprint_info(class, cp->info->NameAndType.name_index - 1, inner ? new_prefix : prefix, 1);
       if(!inner) printf("%sDescripitor index: %d\n", prefix, cp->info->NameAndType.descriptor_index);
-			bprint_info(class, cp->info->NameAndType.descriptor_index - 1, new_prefix, 1);
+			bprint_info(class, cp->info->NameAndType.descriptor_index - 1, inner ? new_prefix : prefix, 1);
       break;
     case CONSTANT_Utf8:;
 			static char escapes[7][4] = {"\aa", "\bb", "\tt", "\nn", "\vv", "\ff", "\rr"};
