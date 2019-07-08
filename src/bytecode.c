@@ -1,5 +1,6 @@
-#include "../include/mnemonic.h"
 #include <stdio.h>
+#include "../include/mnemonic.h"
+#include "../include/bytecode.h"
 
 handler bytecode_handlers[] = {
   [0x32] = AALOAD_handler,
