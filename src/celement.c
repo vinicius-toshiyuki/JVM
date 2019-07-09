@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 celement_t * new_celement(void *value){
-	celement_t *new = (celement_t *) malloc(sizeof(celement_t));
+	celement_t *new = (celement_t *) calloc(1, sizeof(celement_t));
 	new->next = NULL;
 	new->value = value;
 	return new;

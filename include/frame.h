@@ -3,14 +3,16 @@
 
 #include "clist.h"
 #include "cstack.h"
+#include "classfile.h"
 
-typedef struct frame {
+typedef struct frame_t {
 	int size;
 	clist_t *local_variables;
 	cstack_t *operands_stack;
-} frame;
+	cp_info *constant_pool;
+} frame_t;
 
-frame * new_frame(void);
-void destroy_frame(frame *);
+frame_t * new_frame(void);
+void destroy_frame(frame_t *);
 
 #endif

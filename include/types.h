@@ -6,6 +6,7 @@
 typedef uint8_t u1;
 typedef uint16_t u2;
 typedef uint32_t u4;
+typedef uint64_t u8;
 
 #define u1_read(buffer, file) { fread(&buffer, sizeof(u1), 1, file); }
 /* Por algum motivo não funciona com um for em algum caso: zera o valor de buffer ao final ou até deu segmentation fault */

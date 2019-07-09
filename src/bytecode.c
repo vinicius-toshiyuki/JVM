@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "../include/mnemonic.h"
 #include "../include/bytecode.h"
+#include "../include/constant_pool.h"
 
 handler bytecode_handlers[] = {
   [0x32] = AALOAD_handler,
@@ -210,217 +211,230 @@ handler bytecode_handlers[] = {
   [0xc4] = WIDE_handler
 };
 
-void AALOAD_handler(jvm_t *jvm, u1 *args){}
-void AASTORE_handler(jvm_t *jvm, u1 *args){}
-void ACONST_NULL_handler(jvm_t *jvm, u1 *args){}
-void ALOAD_handler(jvm_t *jvm, u1 *args){}
-void ALOAD_0_handler(jvm_t *jvm, u1 *args){}
-void ALOAD_1_handler(jvm_t *jvm, u1 *args){}
-void ALOAD_2_handler(jvm_t *jvm, u1 *args){}
-void ALOAD_3_handler(jvm_t *jvm, u1 *args){}
-void ANEWARRAY_handler(jvm_t *jvm, u1 *args){}
-void ARETURN_handler(jvm_t *jvm, u1 *args){}
-void ARRAYLENGTH_handler(jvm_t *jvm, u1 *args){}
-void ASTORE_handler(jvm_t *jvm, u1 *args){}
-void ASTORE_0_handler(jvm_t *jvm, u1 *args){}
-void ASTORE_1_handler(jvm_t *jvm, u1 *args){}
-void ASTORE_2_handler(jvm_t *jvm, u1 *args){}
-void ASTORE_3_handler(jvm_t *jvm, u1 *args){}
-void ATHROW_handler(jvm_t *jvm, u1 *args){}
-void BALOAD_handler(jvm_t *jvm, u1 *args){}
-void BASTORE_handler(jvm_t *jvm, u1 *args){}
-void BIPUSH_handler(jvm_t *jvm, u1 *args){}
-void BREAKPOINT_handler(jvm_t *jvm, u1 *args){}
-void CALOAD_handler(jvm_t *jvm, u1 *args){}
-void CASTORE_handler(jvm_t *jvm, u1 *args){}
-void CHECKCAST_handler(jvm_t *jvm, u1 *args){}
-void D2F_handler(jvm_t *jvm, u1 *args){}
-void D2I_handler(jvm_t *jvm, u1 *args){}
-void D2L_handler(jvm_t *jvm, u1 *args){}
-void DADD_handler(jvm_t *jvm, u1 *args){}
-void DALOAD_handler(jvm_t *jvm, u1 *args){}
-void DASTORE_handler(jvm_t *jvm, u1 *args){}
-void DCMPG_handler(jvm_t *jvm, u1 *args){}
-void DCMPL_handler(jvm_t *jvm, u1 *args){}
-void DCONST_0_handler(jvm_t *jvm, u1 *args){}
-void DCONST_1_handler(jvm_t *jvm, u1 *args){}
-void DDIV_handler(jvm_t *jvm, u1 *args){}
-void DLOAD_handler(jvm_t *jvm, u1 *args){}
-void DLOAD_0_handler(jvm_t *jvm, u1 *args){}
-void DLOAD_1_handler(jvm_t *jvm, u1 *args){}
-void DLOAD_2_handler(jvm_t *jvm, u1 *args){}
-void DLOAD_3_handler(jvm_t *jvm, u1 *args){}
-void DMUL_handler(jvm_t *jvm, u1 *args){}
-void DNEG_handler(jvm_t *jvm, u1 *args){}
-void DREM_handler(jvm_t *jvm, u1 *args){}
-void DRETURN_handler(jvm_t *jvm, u1 *args){}
-void DSTORE_handler(jvm_t *jvm, u1 *args){}
-void DSTORE_0_handler(jvm_t *jvm, u1 *args){}
-void DSTORE_1_handler(jvm_t *jvm, u1 *args){}
-void DSTORE_2_handler(jvm_t *jvm, u1 *args){}
-void DSTORE_3_handler(jvm_t *jvm, u1 *args){}
-void DSUB_handler(jvm_t *jvm, u1 *args){}
-void DUP_handler(jvm_t *jvm, u1 *args){}
-void DUP_X1_handler(jvm_t *jvm, u1 *args){}
-void DUP_X2_handler(jvm_t *jvm, u1 *args){}
-void DUP2_handler(jvm_t *jvm, u1 *args){}
-void DUP2_X1_handler(jvm_t *jvm, u1 *args){}
-void DUP2_X2_handler(jvm_t *jvm, u1 *args){}
-void F2D_handler(jvm_t *jvm, u1 *args){}
-void F2I_handler(jvm_t *jvm, u1 *args){}
-void F2L_handler(jvm_t *jvm, u1 *args){}
-void FADD_handler(jvm_t *jvm, u1 *args){}
-void FALOAD_handler(jvm_t *jvm, u1 *args){}
-void FASTORE_handler(jvm_t *jvm, u1 *args){}
-void FCMPG_handler(jvm_t *jvm, u1 *args){}
-void FCMPL_handler(jvm_t *jvm, u1 *args){}
-void FCONST_0_handler(jvm_t *jvm, u1 *args){}
-void FCONST_1_handler(jvm_t *jvm, u1 *args){}
-void FCONST_2_handler(jvm_t *jvm, u1 *args){}
-void FDIV_handler(jvm_t *jvm, u1 *args){}
-void FLOAD_handler(jvm_t *jvm, u1 *args){}
-void FLOAD_0_handler(jvm_t *jvm, u1 *args){}
-void FLOAD_1_handler(jvm_t *jvm, u1 *args){}
-void FLOAD_2_handler(jvm_t *jvm, u1 *args){}
-void FLOAD_3_handler(jvm_t *jvm, u1 *args){}
-void FMUL_handler(jvm_t *jvm, u1 *args){}
-void FNEG_handler(jvm_t *jvm, u1 *args){}
-void FREM_handler(jvm_t *jvm, u1 *args){}
-void FRETURN_handler(jvm_t *jvm, u1 *args){}
-void FSTORE_handler(jvm_t *jvm, u1 *args){}
-void FSTORE_0_handler(jvm_t *jvm, u1 *args){}
-void FSTORE_1_handler(jvm_t *jvm, u1 *args){}
-void FSTORE_2_handler(jvm_t *jvm, u1 *args){}
-void FSTORE_3_handler(jvm_t *jvm, u1 *args){}
-void FSUB_handler(jvm_t *jvm, u1 *args){}
-void GETFIELD_handler(jvm_t *jvm, u1 *args){}
-void GETSTATIC_handler(jvm_t *jvm, u1 *args){
-	u2 cp_index = args[0] << 8 | args[1];
-	void *value = getConstantPoolEntry(cp_index);
+void AALOAD_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void AASTORE_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ACONST_NULL_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ALOAD_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ALOAD_0_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ALOAD_1_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ALOAD_2_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ALOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ANEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ARETURN_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ARRAYLENGTH_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ASTORE_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ASTORE_0_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ASTORE_1_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ASTORE_2_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ASTORE_3_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ATHROW_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void BALOAD_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void BASTORE_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void BIPUSH_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void BREAKPOINT_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void CALOAD_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void CASTORE_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void CHECKCAST_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void D2F_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void D2I_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void D2L_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void DADD_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void DALOAD_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void DASTORE_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void DCMPG_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void DCMPL_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void DCONST_0_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void DCONST_1_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void DDIV_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void DLOAD_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void DLOAD_0_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void DLOAD_1_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void DLOAD_2_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void DLOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void DMUL_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void DNEG_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void DREM_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void DRETURN_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void DSTORE_handler(u1 **pc, u1 *bp, frame_t *frame){
+
+  return;
+}
+void DSTORE_0_handler(u1 **pc, u1 *bp, frame_t *frame){}
+
+void DSTORE_1_handler(u1 **pc, u1 *bp, frame_t *frame){
+  printf("Passou por aqui\n");
+  fpurge(stdout);
+  return;
+}
+void DSTORE_2_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void DSTORE_3_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void DSUB_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void DUP_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void DUP_X1_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void DUP_X2_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void DUP2_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void DUP2_X1_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void DUP2_X2_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void F2D_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void F2I_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void F2L_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void FADD_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void FALOAD_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void FASTORE_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void FCMPG_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void FCMPL_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void FCONST_0_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void FCONST_1_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void FCONST_2_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void FDIV_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void FLOAD_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void FLOAD_0_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void FLOAD_1_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void FLOAD_2_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void FLOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void FMUL_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void FNEG_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void FREM_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void FRETURN_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void FSTORE_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void FSTORE_0_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void FSTORE_1_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void FSTORE_2_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void FSTORE_3_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void FSUB_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void GETFIELD_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void GETSTATIC_handler(u1 **pc, u1 *bp, frame_t *frame){
+	// u2 cp_index = args[0] << 8 | args[1];
+	// void *value = getConstantPoolEntry(cp_index);
+	// return;
+}
+void GOTO_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void GOTO_W_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void I2B_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void I2C_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void I2D_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void I2F_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void I2L_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void I2S_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void IADD_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void IALOAD_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void IAND_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void IASTORE_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ICONST_M1_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ICONST_0_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ICONST_1_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ICONST_2_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ICONST_3_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ICONST_4_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ICONST_5_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void IDIV_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void IF_ACMPEQ_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void IF_ACMPNE_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void IF_ICMPEQ_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void IF_ICMPGE_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void IF_ICMPGT_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void IF_ICMPLE_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void IF_ICMPLT_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void IF_ICMPNE_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void IFEQ_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void IFGE_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void IFGT_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void IFLE_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void IFLT_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void IFNE_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void IFNONNULL_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void IFNULL_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void IINC_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ILOAD_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ILOAD_0_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ILOAD_1_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ILOAD_2_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ILOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void IMPDEP1_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void IMPDEP2_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void IMUL_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void INEG_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void INSTANCEOF_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void INVOKEDYNAMIC_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void INVOKEINTERFACE_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void INVOKESPECIAL_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void INVOKESTATIC_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void INVOKEVIRTUAL_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void IOR_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void IREM_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void IRETURN_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ISHL_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ISHR_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ISTORE_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ISTORE_0_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ISTORE_1_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ISTORE_2_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ISTORE_3_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ISUB_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void IUSHR_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void IXOR_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void JSR_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void JSR_W_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void L2D_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void L2F_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void L2I_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void LADD_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void LALOAD_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void LAND_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void LASTORE_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void LCMP_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void LCONST_0_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void LCONST_1_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void LDC_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void LDC_W_handler(u1 **pc, u1 *bp, frame_t *frame){}
+
+void LDC2_W_handler(u1 **pc, u1 *bp, frame_t *frame){
+  /* index na constant pool do valor cat 2 que queremos pôr na pilha */
+	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc = *pc + 2;
+  info_t *cp_entry = getConstantPoolEntry(frame, cp_index);
+  u8 *value = (u8 *) calloc(1, sizeof(u8));
+	*value = ((u8) cp_entry->Double.high_bytes) << 32 | cp_entry->Double.low_bytes;
+	cpush(frame->operands_stack, value);
 	return;
 }
-void GOTO_handler(jvm_t *jvm, u1 *args){}
-void GOTO_W_handler(jvm_t *jvm, u1 *args){}
-void I2B_handler(jvm_t *jvm, u1 *args){}
-void I2C_handler(jvm_t *jvm, u1 *args){}
-void I2D_handler(jvm_t *jvm, u1 *args){}
-void I2F_handler(jvm_t *jvm, u1 *args){}
-void I2L_handler(jvm_t *jvm, u1 *args){}
-void I2S_handler(jvm_t *jvm, u1 *args){}
-void IADD_handler(jvm_t *jvm, u1 *args){}
-void IALOAD_handler(jvm_t *jvm, u1 *args){}
-void IAND_handler(jvm_t *jvm, u1 *args){}
-void IASTORE_handler(jvm_t *jvm, u1 *args){}
-void ICONST_M1_handler(jvm_t *jvm, u1 *args){}
-void ICONST_0_handler(jvm_t *jvm, u1 *args){}
-void ICONST_1_handler(jvm_t *jvm, u1 *args){}
-void ICONST_2_handler(jvm_t *jvm, u1 *args){}
-void ICONST_3_handler(jvm_t *jvm, u1 *args){}
-void ICONST_4_handler(jvm_t *jvm, u1 *args){}
-void ICONST_5_handler(jvm_t *jvm, u1 *args){}
-void IDIV_handler(jvm_t *jvm, u1 *args){}
-void IF_ACMPEQ_handler(jvm_t *jvm, u1 *args){}
-void IF_ACMPNE_handler(jvm_t *jvm, u1 *args){}
-void IF_ICMPEQ_handler(jvm_t *jvm, u1 *args){}
-void IF_ICMPGE_handler(jvm_t *jvm, u1 *args){}
-void IF_ICMPGT_handler(jvm_t *jvm, u1 *args){}
-void IF_ICMPLE_handler(jvm_t *jvm, u1 *args){}
-void IF_ICMPLT_handler(jvm_t *jvm, u1 *args){}
-void IF_ICMPNE_handler(jvm_t *jvm, u1 *args){}
-void IFEQ_handler(jvm_t *jvm, u1 *args){}
-void IFGE_handler(jvm_t *jvm, u1 *args){}
-void IFGT_handler(jvm_t *jvm, u1 *args){}
-void IFLE_handler(jvm_t *jvm, u1 *args){}
-void IFLT_handler(jvm_t *jvm, u1 *args){}
-void IFNE_handler(jvm_t *jvm, u1 *args){}
-void IFNONNULL_handler(jvm_t *jvm, u1 *args){}
-void IFNULL_handler(jvm_t *jvm, u1 *args){}
-void IINC_handler(jvm_t *jvm, u1 *args){}
-void ILOAD_handler(jvm_t *jvm, u1 *args){}
-void ILOAD_0_handler(jvm_t *jvm, u1 *args){}
-void ILOAD_1_handler(jvm_t *jvm, u1 *args){}
-void ILOAD_2_handler(jvm_t *jvm, u1 *args){}
-void ILOAD_3_handler(jvm_t *jvm, u1 *args){}
-void IMPDEP1_handler(jvm_t *jvm, u1 *args){}
-void IMPDEP2_handler(jvm_t *jvm, u1 *args){}
-void IMUL_handler(jvm_t *jvm, u1 *args){}
-void INEG_handler(jvm_t *jvm, u1 *args){}
-void INSTANCEOF_handler(jvm_t *jvm, u1 *args){}
-void INVOKEDYNAMIC_handler(jvm_t *jvm, u1 *args){}
-void INVOKEINTERFACE_handler(jvm_t *jvm, u1 *args){}
-void INVOKESPECIAL_handler(jvm_t *jvm, u1 *args){}
-void INVOKESTATIC_handler(jvm_t *jvm, u1 *args){}
-void INVOKEVIRTUAL_handler(jvm_t *jvm, u1 *args){}
-void IOR_handler(jvm_t *jvm, u1 *args){}
-void IREM_handler(jvm_t *jvm, u1 *args){}
-void IRETURN_handler(jvm_t *jvm, u1 *args){}
-void ISHL_handler(jvm_t *jvm, u1 *args){}
-void ISHR_handler(jvm_t *jvm, u1 *args){}
-void ISTORE_handler(jvm_t *jvm, u1 *args){}
-void ISTORE_0_handler(jvm_t *jvm, u1 *args){}
-void ISTORE_1_handler(jvm_t *jvm, u1 *args){}
-void ISTORE_2_handler(jvm_t *jvm, u1 *args){}
-void ISTORE_3_handler(jvm_t *jvm, u1 *args){}
-void ISUB_handler(jvm_t *jvm, u1 *args){}
-void IUSHR_handler(jvm_t *jvm, u1 *args){}
-void IXOR_handler(jvm_t *jvm, u1 *args){}
-void JSR_handler(jvm_t *jvm, u1 *args){}
-void JSR_W_handler(jvm_t *jvm, u1 *args){}
-void L2D_handler(jvm_t *jvm, u1 *args){}
-void L2F_handler(jvm_t *jvm, u1 *args){}
-void L2I_handler(jvm_t *jvm, u1 *args){}
-void LADD_handler(jvm_t *jvm, u1 *args){}
-void LALOAD_handler(jvm_t *jvm, u1 *args){}
-void LAND_handler(jvm_t *jvm, u1 *args){}
-void LASTORE_handler(jvm_t *jvm, u1 *args){}
-void LCMP_handler(jvm_t *jvm, u1 *args){}
-void LCONST_0_handler(jvm_t *jvm, u1 *args){}
-void LCONST_1_handler(jvm_t *jvm, u1 *args){}
-void LDC_handler(jvm_t *jvm, u1 *args){}
-void LDC_W_handler(jvm_t *jvm, u1 *args){}
-void LDC2_W_handler(jvm_t *jvm, u1 *args){
-	u2 cp_index = args[0] << 8 | args[1];
-	double value = *((double *) getConstantPoolEntry(cp_index));
-	cpush(getCurrentFrame(jvm)->operands_stack, value);
-	return;
-}
-void LDIV_handler(jvm_t *jvm, u1 *args){}
-void LLOAD_handler(jvm_t *jvm, u1 *args){}
-void LLOAD_0_handler(jvm_t *jvm, u1 *args){}
-void LLOAD_1_handler(jvm_t *jvm, u1 *args){}
-void LLOAD_2_handler(jvm_t *jvm, u1 *args){}
-void LLOAD_3_handler(jvm_t *jvm, u1 *args){}
-void LMUL_handler(jvm_t *jvm, u1 *args){}
-void LNEG_handler(jvm_t *jvm, u1 *args){}
-void LOOKUPSWITCH_handler(jvm_t *jvm, u1 *args){}
-void LOR_handler(jvm_t *jvm, u1 *args){}
-void LREM_handler(jvm_t *jvm, u1 *args){}
-void LRETURN_handler(jvm_t *jvm, u1 *args){}
-void LSHL_handler(jvm_t *jvm, u1 *args){}
-void LSHR_handler(jvm_t *jvm, u1 *args){}
-void LSTORE_handler(jvm_t *jvm, u1 *args){}
-void LSTORE_0_handler(jvm_t *jvm, u1 *args){}
-void LSTORE_1_handler(jvm_t *jvm, u1 *args){}
-void LSTORE_2_handler(jvm_t *jvm, u1 *args){}
-void LSTORE_3_handler(jvm_t *jvm, u1 *args){}
-void LSUB_handler(jvm_t *jvm, u1 *args){}
-void LUSHR_handler(jvm_t *jvm, u1 *args){}
-void LXOR_handler(jvm_t *jvm, u1 *args){}
-void MONITORENTER_handler(jvm_t *jvm, u1 *args){}
-void MONITOREXIT_handler(jvm_t *jvm, u1 *args){}
-void MULTIANEWARRAY_handler(jvm_t *jvm, u1 *args){}
-void NEW_handler(jvm_t *jvm, u1 *args){}
-void NEWARRAY_handler(jvm_t *jvm, u1 *args){}
-void NOP_handler(jvm_t *jvm, u1 *args){}
-void POP_handler(jvm_t *jvm, u1 *args){}
-void POP2_handler(jvm_t *jvm, u1 *args){}
-void PUTFIELD_handler(jvm_t *jvm, u1 *args){}
-void PUTSTATIC_handler(jvm_t *jvm, u1 *args){}
-void RET_handler(jvm_t *jvm, u1 *args){}
-void RETURN_handler(jvm_t *jvm, u1 *args){}
-void SALOAD_handler(jvm_t *jvm, u1 *args){}
-void SASTORE_handler(jvm_t *jvm, u1 *args){}
-void SIPUSH_handler(jvm_t *jvm, u1 *args){}
-void SWAP_handler(jvm_t *jvm, u1 *args){}
-void TABLESWITCH_handler(jvm_t *jvm, u1 *args){}
-void WIDE_handler(jvm_t *jvm, u1 *args){}
+
+void LDIV_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void LLOAD_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void LLOAD_0_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void LLOAD_1_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void LLOAD_2_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void LLOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void LMUL_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void LNEG_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void LOOKUPSWITCH_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void LOR_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void LREM_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void LRETURN_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void LSHL_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void LSHR_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void LSTORE_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void LSTORE_0_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void LSTORE_1_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void LSTORE_2_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void LSTORE_3_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void LSUB_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void LUSHR_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void LXOR_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void MONITORENTER_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void MONITOREXIT_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void MULTIANEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void NEW_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void NEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void NOP_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void POP_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void POP2_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void PUTFIELD_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void PUTSTATIC_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void RET_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void RETURN_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void SALOAD_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void SASTORE_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void SIPUSH_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void SWAP_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void TABLESWITCH_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void WIDE_handler(u1 **pc, u1 *bp, frame_t *frame){}

@@ -13,6 +13,5 @@ typedef struct jvm_t {
 
 jvm_t * new_jvm(void);
 void start_jvm(jvm_t **, ClassFile *);
-void load_class(char *pathtoclass, jvm_t *jvm);
 
 #endif

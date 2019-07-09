@@ -193,16 +193,17 @@ void get_attribute_from_info(u1 *, Attributes *, u2, ClassFile *);
       break; \
 		case CONSTANT_Long: \
       printf( \
-          "%sHigh bytes: 0x%08x\n%sLow bytes: 0x%08x\n", \
-          prefix, cp->info->Long.high_bytes, \
-          prefix, cp->info->Long.low_bytes \
+          "%sValue: %ld\n", \
+          prefix, ((u8) cp->info->Long.high_bytes << 32 | cp->info->Long.low_bytes) \
       ); \
       break; \
-		case CONSTANT_Double: \
+		case CONSTANT_Double:; \
+      u8 v = (((u8) cp->info->Double.high_bytes) << 32 | cp->info->Double.low_bytes); \
+      double d; \
+      memcpy(&d, &v, 8); \
       printf( \
-          "%sHigh bytes: 0x%08x\n%sLow bytes: 0x%08x\n", \
-          prefix, cp->info->Long.high_bytes, \
-          prefix, cp->info->Long.low_bytes \
+          "%sValue: %lf\n", \
+          prefix, d \
       ); \
       break; \
 	} \

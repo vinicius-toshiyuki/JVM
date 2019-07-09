@@ -7,12 +7,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "../include/breads.h"
+#include "../include/engine.h"
 
 extern int JVM_ARGC;
 extern char **JVM_ARGV;
 
 jvm_t * new_jvm(void){
-	jvm_t *new = (jvm_t *) malloc(sizeof(jvm_t));
+	jvm_t *new = (jvm_t *) calloc(1, sizeof(jvm_t));
 	new->heap = new_cstack();
 	new->marea = new_method_area();
 	new->frame_stack = new_cstack();
@@ -21,21 +22,18 @@ jvm_t * new_jvm(void){
 
 void start_jvm(jvm_t **_jvm, ClassFile *entry){
 	jvm_t *jvm = *_jvm;
-	cpush(jvm->frame_stack, new_frame());
-	frame *top_frame = (frame *) jvm->frame_stack->top->value;
+	frame_t *nf = new_frame();
+	nf->constant_pool = entry->constant_pool;
+	cpush(jvm->frame_stack, nf);
+	frame_t *top_frame = (frame_t *) jvm->frame_stack->top->value;
+	/*
 	int i;
 	for(i = 0; i < JVM_ARGC; i++)
 		cappend(top_frame->local_variables, JVM_ARGV[i]);
+	*/
+	link_class(jvm->marea, entry);
+	Method main = get_method_by_name(entry, "main");
+	run_method(top_frame, &main);
 	return;
 }
 
-void load_class(char *pathtoclass, jvm_t *jvm){
-	FILE *classfile = fopen(pathtoclass, "rb");
-	if(!classfile){
-		fprintf(stderr, "Can not open specified file.\n");
-		exit(ERR_CANTOPENFILE);
-	}
-	ClassFile *class = bread_classfile(classfile);
-	link_class(class, jvm->marea);
-	return;
-}

@@ -1,12 +1,12 @@
 #include "../include/method_area.h"
-#include "../include/classfile.h"
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 method_area_t * new_method_area(void){
 	method_area_t *new = (method_area_t *) malloc(sizeof(method_area_t));
 	new->count = 0;
-	new->loaded = NULL;
+	new->loaded = new_clist();
 	return new;
 }
 
@@ -15,13 +15,21 @@ void destroy_method_area(method_area_t *ma){
 	return;
 }
 
+void load_class(method_area_t *marea, char *pathtoclass){
+	FILE *classfile = fopen(pathtoclass, "rb");
+	if(!classfile){
+		fprintf(stderr, "Can not open specified file.\n");
+		exit(ERR_CANTOPENFILE);
+	}
+	ClassFile *class = bread_classfile(classfile);
+	link_class(marea, class);
+	return;
+}
+
 #include <stdio.h>
-void link_class(ClassFile *class, method_area_t *marea){
-	ClassFile **aux = (ClassFile **) malloc(sizeof(ClassFile) * ++marea->count);
-	memcpy(aux, marea->loaded, sizeof(ClassFile *) * (marea->count - 1));
-	free(marea->loaded);
-	marea->loaded = aux;
-	marea->loaded[marea->count - 1] = class;
+void link_class(method_area_t *marea, ClassFile *class){
+	cappend(marea->loaded, class);
+	marea->count = marea->loaded->size;
 	/* initialize_class(class); */
 	return;
 }
