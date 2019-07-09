@@ -214,19 +214,41 @@ handler bytecode_handlers[] = {
 void AALOAD_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void AASTORE_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void ACONST_NULL_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void ALOAD_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void ALOAD_0_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void ALOAD_1_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void ALOAD_2_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void ALOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ALOAD_handler(u1 **pc, u1 *bp, frame_t *frame){
+	u1 lv_index = (*pc + 1)[0]; ++*pc;
+	cpush(frame->operands_stack, cat(frame->local_variables, lv_index));
+}
+void ALOAD_0_handler(u1 **pc, u1 *bp, frame_t *frame){
+	cpush(frame->operands_stack, cat(frame->local_variables, 0));
+}
+void ALOAD_1_handler(u1 **pc, u1 *bp, frame_t *frame){
+	cpush(frame->operands_stack, cat(frame->local_variables, 1));
+}
+void ALOAD_2_handler(u1 **pc, u1 *bp, frame_t *frame){
+	cpush(frame->operands_stack, cat(frame->local_variables, 2));
+}
+void ALOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame){
+	cpush(frame->operands_stack, cat(frame->local_variables, 3));
+}
 void ANEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void ARETURN_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void ARRAYLENGTH_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void ASTORE_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void ASTORE_0_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void ASTORE_1_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void ASTORE_2_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void ASTORE_3_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ASTORE_handler(u1 **pc, u1 *bp, frame_t *frame){
+	u1 lv_index = (*pc + 1)[0]; ++*pc;
+	cinsert(frame->local_variables, lv_index, cpop(frame->operands_stack));
+}
+void ASTORE_0_handler(u1 **pc, u1 *bp, frame_t *frame){
+	cinsert(frame->local_variables, 0, cpop(frame->operands_stack));
+}
+void ASTORE_1_handler(u1 **pc, u1 *bp, frame_t *frame){
+	cinsert(frame->local_variables, 1, cpop(frame->operands_stack));
+}
+void ASTORE_2_handler(u1 **pc, u1 *bp, frame_t *frame){
+	cinsert(frame->local_variables, 2, cpop(frame->operands_stack));
+}
+void ASTORE_3_handler(u1 **pc, u1 *bp, frame_t *frame){
+	cinsert(frame->local_variables, 3, cpop(frame->operands_stack));
+}
 void ATHROW_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void BALOAD_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void BASTORE_handler(u1 **pc, u1 *bp, frame_t *frame){}
@@ -246,28 +268,72 @@ void DCMPL_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void DCONST_0_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void DCONST_1_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void DDIV_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void DLOAD_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void DLOAD_0_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void DLOAD_1_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void DLOAD_2_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void DLOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void DLOAD_handler(u1 **pc, u1 *bp, frame_t *frame){
+	u1 lv_index = (*pc + 1)[0]; ++*pc;
+	u4 *dvalue_high = (u4 *) cat(frame->local_variables, lv_index++);
+	u4 *dvalue_low = (u4 *) cat(frame->local_variables, lv_index);
+	cpush(frame->operands_stack, dvalue_high);
+	cpush(frame->operands_stack, dvalue_low);
+}
+void DLOAD_0_handler(u1 **pc, u1 *bp, frame_t *frame){
+	u4 *dvalue_high = (u4 *) cat(frame->local_variables, 0);
+	u4 *dvalue_low = (u4 *) cat(frame->local_variables, 1);
+	cpush(frame->operands_stack, dvalue_high);
+	cpush(frame->operands_stack, dvalue_low);
+}
+void DLOAD_1_handler(u1 **pc, u1 *bp, frame_t *frame){
+	u4 *dvalue_high = (u4 *) cat(frame->local_variables, 1);
+	u4 *dvalue_low = (u4 *) cat(frame->local_variables, 2);
+	cpush(frame->operands_stack, dvalue_high);
+	cpush(frame->operands_stack, dvalue_low);
+}
+void DLOAD_2_handler(u1 **pc, u1 *bp, frame_t *frame){
+	u4 *dvalue_high = (u4 *) cat(frame->local_variables, 2);
+	u4 *dvalue_low = (u4 *) cat(frame->local_variables, 3);
+	cpush(frame->operands_stack, dvalue_high);
+	cpush(frame->operands_stack, dvalue_low);
+}
+void DLOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame){
+	u4 *dvalue_high = (u4 *) cat(frame->local_variables, 3);
+	u4 *dvalue_low = (u4 *) cat(frame->local_variables, 4);
+	cpush(frame->operands_stack, dvalue_high);
+	cpush(frame->operands_stack, dvalue_low);
+}
 void DMUL_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void DNEG_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void DREM_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void DRETURN_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void DSTORE_handler(u1 **pc, u1 *bp, frame_t *frame){
-
-  return;
+	u1 lv_index = (*pc + 1)[0]; ++*pc;
+	u4 *dvalue_low = (u4 *) cpop(frame->operands_stack);
+	u4 *dvalue_high = (u4 *) cpop(frame->operands_stack);
+	cinsert(frame->local_variables, lv_index++, dvalue_high);
+	cinsert(frame->local_variables, lv_index, dvalue_low);
 }
-void DSTORE_0_handler(u1 **pc, u1 *bp, frame_t *frame){}
-
+void DSTORE_0_handler(u1 **pc, u1 *bp, frame_t *frame){
+	u4 *dvalue_low = (u4 *) cpop(frame->operands_stack);
+	u4 *dvalue_high = (u4 *) cpop(frame->operands_stack);
+	cinsert(frame->local_variables, 0, dvalue_high);
+	cinsert(frame->local_variables, 1, dvalue_low);
+}
 void DSTORE_1_handler(u1 **pc, u1 *bp, frame_t *frame){
-  printf("Passou por aqui\n");
-  fpurge(stdout);
-  return;
+	u4 *dvalue_low = (u4 *) cpop(frame->operands_stack);
+	u4 *dvalue_high = (u4 *) cpop(frame->operands_stack);
+	cinsert(frame->local_variables, 1, dvalue_high);
+	cinsert(frame->local_variables, 2, dvalue_low);
 }
-void DSTORE_2_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void DSTORE_3_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void DSTORE_2_handler(u1 **pc, u1 *bp, frame_t *frame){
+	u4 *dvalue_low = (u4 *) cpop(frame->operands_stack);
+	u4 *dvalue_high = (u4 *) cpop(frame->operands_stack);
+	cinsert(frame->local_variables, 2, dvalue_high);
+	cinsert(frame->local_variables, 3, dvalue_low);
+}
+void DSTORE_3_handler(u1 **pc, u1 *bp, frame_t *frame){
+	u4 *dvalue_low = (u4 *) cpop(frame->operands_stack);
+	u4 *dvalue_high = (u4 *) cpop(frame->operands_stack);
+	cinsert(frame->local_variables, 3, dvalue_high);
+	cinsert(frame->local_variables, 4, dvalue_low);
+}
 void DSUB_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void DUP_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void DUP_X1_handler(u1 **pc, u1 *bp, frame_t *frame){}
@@ -287,26 +353,57 @@ void FCONST_0_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void FCONST_1_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void FCONST_2_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void FDIV_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void FLOAD_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void FLOAD_0_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void FLOAD_1_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void FLOAD_2_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void FLOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void FLOAD_handler(u1 **pc, u1 *bp, frame_t *frame){
+	u1 lv_index = (*pc + 1)[0]; ++*pc;
+	u8 *fvalue = (u8 *) cat(frame->local_variables, lv_index);
+	cpush(frame->operands_stack, fvalue);
+}
+void FLOAD_0_handler(u1 **pc, u1 *bp, frame_t *frame){
+	u8 *fvalue = (u8 *) cat(frame->local_variables, 0);
+	cpush(frame->operands_stack, fvalue);
+}
+void FLOAD_1_handler(u1 **pc, u1 *bp, frame_t *frame){
+	u8 *fvalue = (u8 *) cat(frame->local_variables, 1);
+	cpush(frame->operands_stack, fvalue);
+}
+void FLOAD_2_handler(u1 **pc, u1 *bp, frame_t *frame){
+	u8 *fvalue = (u8 *) cat(frame->local_variables, 2);
+	cpush(frame->operands_stack, fvalue);
+}
+void FLOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame){
+	u8 *fvalue = (u8 *) cat(frame->local_variables, 3);
+	cpush(frame->operands_stack, fvalue);
+}
 void FMUL_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void FNEG_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void FREM_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void FRETURN_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void FSTORE_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void FSTORE_0_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void FSTORE_1_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void FSTORE_2_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void FSTORE_3_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void FSTORE_handler(u1 **pc, u1 *bp, frame_t *frame){
+	u1 lv_index = (*pc + 1)[0]; ++*pc;
+	float *fvalue = (float *) cpop(frame->operands_stack);
+	cinsert(frame->local_variables, lv_index, fvalue);
+}
+void FSTORE_0_handler(u1 **pc, u1 *bp, frame_t *frame){
+	float *fvalue = (float *) cpop(frame->operands_stack);
+	cinsert(frame->local_variables, 0, fvalue);
+}
+void FSTORE_1_handler(u1 **pc, u1 *bp, frame_t *frame){
+	float *fvalue = (float *) cpop(frame->operands_stack);
+	cinsert(frame->local_variables, 1, fvalue);
+}
+void FSTORE_2_handler(u1 **pc, u1 *bp, frame_t *frame){
+	float *fvalue = (float *) cpop(frame->operands_stack);
+	cinsert(frame->local_variables, 2, fvalue);
+}
+void FSTORE_3_handler(u1 **pc, u1 *bp, frame_t *frame){
+	float *fvalue = (float *) cpop(frame->operands_stack);
+	cinsert(frame->local_variables, 3, fvalue);
+}
 void FSUB_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void GETFIELD_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void GETSTATIC_handler(u1 **pc, u1 *bp, frame_t *frame){
 	// u2 cp_index = args[0] << 8 | args[1];
-	// void *value = getConstantPoolEntry(cp_index);
-	// return;
+	// void *value = get_constant_pool_entry(cp_index);
 }
 void GOTO_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void GOTO_W_handler(u1 **pc, u1 *bp, frame_t *frame){}
@@ -345,11 +442,27 @@ void IFNE_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void IFNONNULL_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void IFNULL_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void IINC_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void ILOAD_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void ILOAD_0_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void ILOAD_1_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void ILOAD_2_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void ILOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ILOAD_handler(u1 **pc, u1 *bp, frame_t *frame){
+	u1 lv_index = (*pc + 1)[0]; ++*pc;
+	u4 *ivalue = (u4 *) cat(frame->local_variables, lv_index);
+	cpush(frame->operands_stack, ivalue);
+}
+void ILOAD_0_handler(u1 **pc, u1 *bp, frame_t *frame){
+	u4 *ivalue = (u4 *) cat(frame->local_variables, 0);
+	cpush(frame->operands_stack, ivalue);
+}
+void ILOAD_1_handler(u1 **pc, u1 *bp, frame_t *frame){
+	u4 *ivalue = (u4 *) cat(frame->local_variables, 1);
+	cpush(frame->operands_stack, ivalue);
+}
+void ILOAD_2_handler(u1 **pc, u1 *bp, frame_t *frame){
+	u4 *ivalue = (u4 *) cat(frame->local_variables, 2);
+	cpush(frame->operands_stack, ivalue);
+}
+void ILOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame){
+	u4 *ivalue = (u4 *) cat(frame->local_variables, 3);
+	cpush(frame->operands_stack, ivalue);
+}
 void IMPDEP1_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void IMPDEP2_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void IMUL_handler(u1 **pc, u1 *bp, frame_t *frame){}
@@ -365,11 +478,27 @@ void IREM_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void IRETURN_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void ISHL_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void ISHR_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void ISTORE_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void ISTORE_0_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void ISTORE_1_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void ISTORE_2_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void ISTORE_3_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void ISTORE_handler(u1 **pc, u1 *bp, frame_t *frame){
+	u1 lv_index = (*pc + 1)[0]; ++*pc;
+	int *ivalue = (int *) cpop(frame->operands_stack);
+	cinsert(frame->local_variables, lv_index, ivalue);
+}
+void ISTORE_0_handler(u1 **pc, u1 *bp, frame_t *frame){
+	int *ivalue = (int *) cpop(frame->operands_stack);
+	cinsert(frame->local_variables, 0, ivalue);
+}
+void ISTORE_1_handler(u1 **pc, u1 *bp, frame_t *frame){
+	int *ivalue = (int *) cpop(frame->operands_stack);
+	cinsert(frame->local_variables, 1, ivalue);
+}
+void ISTORE_2_handler(u1 **pc, u1 *bp, frame_t *frame){
+	int *ivalue = (int *) cpop(frame->operands_stack);
+	cinsert(frame->local_variables, 2, ivalue);
+}
+void ISTORE_3_handler(u1 **pc, u1 *bp, frame_t *frame){
+	int *ivalue = (int *) cpop(frame->operands_stack);
+	cinsert(frame->local_variables, 3, ivalue);
+}
 void ISUB_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void IUSHR_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void IXOR_handler(u1 **pc, u1 *bp, frame_t *frame){}
@@ -393,23 +522,93 @@ void LCONST_1_handler(u1 **pc, u1 *bp, frame_t *frame){
 	*value = 1;
 	cpush(frame->operands_stack, value);
 }
-void LDC_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void LDC_W_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void LDC_handler(u1 **pc, u1 *bp, frame_t *frame){
+	u2 cp_index = (*pc + 1)[0]; ++*pc;
+
+	info_t *cp_entry = get_constant_pool_entry(frame, cp_index);
+	u4 *value = (u4 *) calloc(1, sizeof(u4));
+
+	int tag = get_constant_pool_tag(frame, cp_index);
+	switch(tag){
+		case CONSTANT_Class:
+			*value = cp_entry->Class.name_index;
+			break;
+		case CONSTANT_String:
+			*value = cp_entry->String.string_index;
+			break;
+		case CONSTANT_Integer:
+		case CONSTANT_Float:
+			*value = cp_entry->Integer.bytes;
+			break;
+		default:
+			/* TODO: será que eu deveria pushar o negócio sem tratar? */
+			break;
+	}
+	cpush(frame->operands_stack, value);
+}
+void LDC_W_handler(u1 **pc, u1 *bp, frame_t *frame){
+	u4 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
+
+	info_t *cp_entry = get_constant_pool_entry(frame, cp_index);
+	u4 *value = (u4 *) calloc(1, sizeof(u4));
+
+	int tag = get_constant_pool_tag(frame, cp_index);
+	switch(tag){
+		case CONSTANT_Class:
+			*value = cp_entry->Class.name_index;
+			break;
+		case CONSTANT_String:
+			*value = cp_entry->String.string_index;
+			break;
+		case CONSTANT_Integer:
+		case CONSTANT_Float:
+			*value = cp_entry->Integer.bytes;
+			break;
+		default:
+			/* TODO: será que eu deveria pushar o negócio sem tratar? */
+			break;
+	}
+	cpush(frame->operands_stack, value);
+}
 void LDC2_W_handler(u1 **pc, u1 *bp, frame_t *frame){
-  /* index na constant pool do valor cat 2 que queremos pôr na pilha */
-	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc = *pc + 2;
-  info_t *cp_entry = getConstantPoolEntry(frame, cp_index);
+	u4 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc = *pc + 2;
+  info_t *cp_entry = get_constant_pool_entry(frame, cp_index);
   u8 *value = (u8 *) calloc(1, sizeof(u8));
 	*value = ((u8) cp_entry->Double.high_bytes) << 32 | cp_entry->Double.low_bytes;
 	cpush(frame->operands_stack, value);
-	return;
 }
 void LDIV_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void LLOAD_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void LLOAD_0_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void LLOAD_1_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void LLOAD_2_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void LLOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void LLOAD_handler(u1 **pc, u1 *bp, frame_t *frame){
+	u1 lv_index = (*pc + 1)[0]; ++*pc;
+	u4 *lvalue_high = (u4 *) cat(frame->local_variables, lv_index++);
+	u4 *lvalue_low = (u4 *) cat(frame->local_variables, lv_index);
+	cpush(frame->operands_stack, lvalue_high);
+	cpush(frame->operands_stack, lvalue_low);
+}
+void LLOAD_0_handler(u1 **pc, u1 *bp, frame_t *frame){
+	u4 *lvalue_high = (u4 *) cat(frame->local_variables, 0);
+	u4 *lvalue_low = (u4 *) cat(frame->local_variables, 1);
+	cpush(frame->operands_stack, lvalue_high);
+	cpush(frame->operands_stack, lvalue_low);
+}
+void LLOAD_1_handler(u1 **pc, u1 *bp, frame_t *frame){
+	u4 *lvalue_high = (u4 *) cat(frame->local_variables, 1);
+	u4 *lvalue_low = (u4 *) cat(frame->local_variables, 2);
+	cpush(frame->operands_stack, lvalue_high);
+	cpush(frame->operands_stack, lvalue_low);
+}
+void LLOAD_2_handler(u1 **pc, u1 *bp, frame_t *frame){
+	u4 *lvalue_high = (u4 *) cat(frame->local_variables, 2);
+	u4 *lvalue_low = (u4 *) cat(frame->local_variables, 3);
+	cpush(frame->operands_stack, lvalue_high);
+	cpush(frame->operands_stack, lvalue_low);
+}
+void LLOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame){
+	u4 *lvalue_high = (u4 *) cat(frame->local_variables, 3);
+	u4 *lvalue_low = (u4 *) cat(frame->local_variables, 4);
+	cpush(frame->operands_stack, lvalue_high);
+	cpush(frame->operands_stack, lvalue_low);
+}
 void LMUL_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void LNEG_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void LOOKUPSWITCH_handler(u1 **pc, u1 *bp, frame_t *frame){}
@@ -418,11 +617,37 @@ void LREM_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void LRETURN_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void LSHL_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void LSHR_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void LSTORE_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void LSTORE_0_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void LSTORE_1_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void LSTORE_2_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void LSTORE_3_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void LSTORE_handler(u1 **pc, u1 *bp, frame_t *frame){
+	u1 lv_index = (*pc + 1)[0]; ++*pc;
+	u4 *lvalue_low = (u4 *) cpop(frame->operands_stack);
+	u4 *lvalue_high = (u4 *) cpop(frame->operands_stack);
+	cinsert(frame->local_variables, lv_index++, lvalue_high);
+	cinsert(frame->local_variables, lv_index, lvalue_low);
+}
+void LSTORE_0_handler(u1 **pc, u1 *bp, frame_t *frame){
+	u4 *lvalue_low = (u4 *) cpop(frame->operands_stack);
+	u4 *lvalue_high = (u4 *) cpop(frame->operands_stack);
+	cinsert(frame->local_variables, 0, lvalue_high);
+	cinsert(frame->local_variables, 1, lvalue_low);
+}
+void LSTORE_1_handler(u1 **pc, u1 *bp, frame_t *frame){
+	u4 *lvalue_low = (u4 *) cpop(frame->operands_stack);
+	u4 *lvalue_high = (u4 *) cpop(frame->operands_stack);
+	cinsert(frame->local_variables, 1, lvalue_high);
+	cinsert(frame->local_variables, 2, lvalue_low);
+}
+void LSTORE_2_handler(u1 **pc, u1 *bp, frame_t *frame){
+	u4 *lvalue_low = (u4 *) cpop(frame->operands_stack);
+	u4 *lvalue_high = (u4 *) cpop(frame->operands_stack);
+	cinsert(frame->local_variables, 2, lvalue_high);
+	cinsert(frame->local_variables, 3, lvalue_low);
+}
+void LSTORE_3_handler(u1 **pc, u1 *bp, frame_t *frame){
+	u4 *lvalue_low = (u4 *) cpop(frame->operands_stack);
+	u4 *lvalue_high = (u4 *) cpop(frame->operands_stack);
+	cinsert(frame->local_variables, 3, lvalue_high);
+	cinsert(frame->local_variables, 4, lvalue_low);
+}
 void LSUB_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void LUSHR_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void LXOR_handler(u1 **pc, u1 *bp, frame_t *frame){}
@@ -432,7 +657,7 @@ void MULTIANEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void NEW_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void NEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void NOP_handler(u1 **pc, u1 *bp, frame_t *frame){
-  return;
+	return;
 }
 void POP_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void POP2_handler(u1 **pc, u1 *bp, frame_t *frame){}

@@ -26,14 +26,15 @@ void start_jvm(jvm_t **_jvm, ClassFile *entry){
 	nf->constant_pool = entry->constant_pool;
 	cpush(jvm->frame_stack, nf);
 	frame_t *top_frame = (frame_t *) jvm->frame_stack->top->value;
+	cappend(top_frame->local_variables, &entry->this_class);
 	/*
 	int i;
 	for(i = 0; i < JVM_ARGC; i++)
 		cappend(top_frame->local_variables, JVM_ARGV[i]);
 	*/
 	link_class(jvm->marea, entry);
-	Method main = get_method_by_name(entry, "main");
-	run_method(top_frame, &main);
+	Method main_method = get_method_by_name(entry, "main");
+	run_method(top_frame, &main_method);
 	return;
 }
 
