@@ -383,11 +383,18 @@ void LALOAD_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void LAND_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void LASTORE_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void LCMP_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void LCONST_0_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void LCONST_1_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void LCONST_0_handler(u1 **pc, u1 *bp, frame_t *frame){
+  u8 *value = (u8 *) calloc(1, sizeof(u8));
+	*value = 0;
+	cpush(frame->operands_stack, value);
+}
+void LCONST_1_handler(u1 **pc, u1 *bp, frame_t *frame){
+  u8 *value = (u8 *) calloc(1, sizeof(u8));
+	*value = 1;
+	cpush(frame->operands_stack, value);
+}
 void LDC_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void LDC_W_handler(u1 **pc, u1 *bp, frame_t *frame){}
-
 void LDC2_W_handler(u1 **pc, u1 *bp, frame_t *frame){
   /* index na constant pool do valor cat 2 que queremos pôr na pilha */
 	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc = *pc + 2;
@@ -397,7 +404,6 @@ void LDC2_W_handler(u1 **pc, u1 *bp, frame_t *frame){
 	cpush(frame->operands_stack, value);
 	return;
 }
-
 void LDIV_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void LLOAD_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void LLOAD_0_handler(u1 **pc, u1 *bp, frame_t *frame){}
@@ -425,7 +431,9 @@ void MONITOREXIT_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void MULTIANEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void NEW_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void NEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void NOP_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void NOP_handler(u1 **pc, u1 *bp, frame_t *frame){
+  return;
+}
 void POP_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void POP2_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void PUTFIELD_handler(u1 **pc, u1 *bp, frame_t *frame){}
