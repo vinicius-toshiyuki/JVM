@@ -12,7 +12,9 @@ saida
 *.c~
 *.pdf
 *.pptx
+*.stackdump
 
 .vscode/
 infer-out/
 Apresentacao_slides/
+java_src/

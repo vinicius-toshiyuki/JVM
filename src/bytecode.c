@@ -477,8 +477,8 @@ void GETSTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	free(classname);
 	/* TODO: falta resolver a referência e entender como fazer o tal do println */
 	/*
-		É basicamente ver se o campo existe e se a classe atual tem permissão de acesso (vamos assumir que sim ;p)
-		VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
+		É basicamente ver se o campo existe e se a classe atual tem  (vamos assumir que sim ;p)
+		VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVpermissão de acessoVV
 		When resolving a field reference, field resolution first attempts to look up the referenced field in C and its superclasses:
 			If C declares a field with the name and descriptor specified by the field reference, field lookup succeeds. The declared field is the result of the field lookup.
 			Otherwise, field lookup is applied recursively to the direct superinterfaces of the specified class or interface C.
@@ -588,7 +588,102 @@ void INVOKEDYNAMIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void INVOKEINTERFACE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void INVOKESPECIAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void INVOKESTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void INVOKEVIRTUAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+/*
+Na programação orientada a objetos uma função virtual ou método virtual é 
+uma função ou método cujo comportamento pode ser 
+sobrescrito em uma classe herdeira por uma função com a 
+mesma assinatura. 
+Esse conceito é uma parte 
+muito importante do polimorfismo em 
+programação orientada a objetos (OOP). */
+void INVOKEVIRTUAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  /* se for print só imprime */
+  /* java/lang/System.class tem o field out */
+  /* System.out.println() */
+  /* out é um campo do tipo PrintStream */
+  /* O que está sendo chamado é o método println (D)V do objeto out */
+  /* ou faz um if aqui dentro ou faz um método nativo */
+  
+/*
+The unsigned indexbyte1 and indexbyte2 are used to construct an index into the run-time constant pool of the current class (§2.6), where the value of the index is (indexbyte1 << 8) | indexbyte2. The run-time constant pool item at that index must be a symbolic reference to a method (§5.1), which gives the name and descriptor (§4.3.3) of the method as well as a symbolic reference to the class in which the method is to be found. The named method is resolved (§5.4.3.3). The resolved method must not be an instance initialization method (§2.9) or the class or interface initialization method (§2.9). Finally, if the resolved method is protected (§4.6), and it is a member of a superclass of the current class, and the method is not declared in the same run-time package (§5.3) as the current class, then the class of objectref must be either the current class or a subclass of the current class.
+If the resolved method is not signature polymorphic (§2.9), then the invokevirtual instruction proceeds as follows.
+Let C = System be the class of objectref = out. The actual method = println to be invoked is selected by the following lookup procedure:
+    If C contains a declaration for an instance method m that overrides (§5.4.5) the resolved method, then m is the method to be invoked, and the lookup procedure terminates.
+    Otherwise, if C has a superclass, this same lookup procedure is performed recursively using the direct superclass of C; the method to be invoked is the result of the recursive invocation of this lookup procedure.
+If the method is not native, the nargs argument values and objectref are popped from the operand stack. A new frame is created on the Java Virtual Machine stack for the method being invoked. The objectref and the argument values are consecutively made the values of local variables of the new frame, with objectref in local variable 0, arg1 in local variable 1 (or, if arg1 is of type long or double, in local variables 1 and 2), and so on. Any argument value that is of a floating-point type undergoes value set conversion (§2.8.3) prior to being stored in a local variable. The new frame is then made current, and the Java Virtual Machine pc is set to the opcode of the first instruction of the method to be invoked. Execution continues with the first instruction of the method.
+If the method is native and the platform-dependent code that implements it has not yet been bound (§5.6) into the Java Virtual Machine, that is done. The nargs argument values and objectref are popped from the operand stack and are passed as parameters to the code that implements the method. Any argument value that is of a floating-point type undergoes value set conversion (§2.8.3) prior to being passed as a parameter. The parameters are passed and the code is invoked in an implementation-dependent manner. When the platform-dependent code returns, the following take place:
+    If the native method is synchronized, the monitor associated with objectref is updated and possibly exited as if by execution of a monitorexit instruction (§monitorexit) in the current thread.
+    If the native method returns a value, the return value of the platform-dependent code is converted in an implementation-dependent way to the return type of the native method and pushed onto the operand stack.
+If the resolved method is signature polymorphic (§2.9), then the invokevirtual instruction proceeds as follows.
+First, a reference to an instance of java.lang.invoke.MethodType is obtained as if by resolution of a symbolic reference to a method type (§5.4.3.5) with the same parameter and return types as the descriptor of the method referenced by the invokevirtual instruction.
+    If the named method is invokeExact, the instance of java.lang.invoke.MethodType must be semantically equal to the type descriptor of the receiving method handle objectref. The method handle to be invoked is objectref.
+    If the named method is invoke, and the instance of java.lang.invoke.MethodType is semantically equal to the type descriptor of the receiving method handle objectref, then the method handle to be invoked is objectref.
+    If the named method is invoke, and the instance of java.lang.invoke.MethodType is not semantically equal to the type descriptor of the receiving method handle objectref, then the Java Virtual Machine attempts to adjust the type descriptor of the receiving method handle, as if by a call to java.lang.invoke.MethodHandle.asType, to obtain an exactly invokable method handle m. The method handle to be invoked is m.
+The objectref must be followed on the operand stack by nargs argument values, where the number, type, and order of the values must be consistent with the type descriptor of the method handle to be invoked. (This type descriptor will correspond to the method descriptor appropriate for the kind of the method handle to be invoked, as specified in §5.4.3.5.)
+Then, if the method handle to be invoked has bytecode behavior, the Java Virtual Machine invokes the method handle as if by execution of the bytecode behavior associated with the method handle's kind. If the kind is 5 (REF_invokeVirtual), 6 (REF_invokeStatic), 7 (REF_invokeSpecial), 8 (REF_newInvokeSpecial), or 9 (REF_invokeInterface), then a frame will be created and made current in the course of executing the bytecode behavior; when the method invoked by the bytecode behavior completes (normally or abruptly), the frame of its invoker is considered to be the frame for the method containing this invokevirtual instruction.
+The frame in which the bytecode behavior itself executes is not visible.
+Otherwise, if the method handle to be invoked has no bytecode behavior, the Java Virtual Machine invokes it in an implementation-dependent manner. 
+ */
+  u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
+  info_t *methodref = get_constant_pool_entry(frame, cp_index);
+  
+  info_t *method_name_utf8 = get_constant_pool_entry(frame, get_constant_pool_entry(frame, methodref->Methodref.name_and_type_index)->NameAndType.name_index);
+  char *method_name = (char *) calloc(method_name_utf8->Utf8.length + 1, sizeof(char));
+  memcpy(method_name, method_name_utf8->Utf8.bytes, method_name_utf8->Utf8.length);
+  /* Se o método for println, entra no if */
+  if(!strcmp(method_name, "println")){
+    /* Descobre o que é que é pra imprimir (int, float, bool etc.) */
+    info_t *method_descriptor_utf8 = get_constant_pool_entry(frame, get_constant_pool_entry(frame, methodref->Methodref.name_and_type_index)->NameAndType.descriptor_index);
+    char method_descriptor = method_descriptor_utf8->Utf8.bytes[1];
+    switch(method_descriptor){
+      case 'D':;
+        u4 *dvalue_low = cpop(frame->operands_stack);
+        u4 *dvalue_high = cpop(frame->operands_stack);
+        u8 value = ((u8) *dvalue_high) << 32 | *dvalue_low;
+        double dvalue;
+	      memcpy(&dvalue, &value, 8);
+        printf("%lf\n", dvalue);
+        break;
+      case 'J':;
+        u4 *lvalue_low = cpop(frame->operands_stack);
+        u4 *lvalue_high = cpop(frame->operands_stack);
+        u8 value_l = ((u8) *lvalue_high) << 32 | *lvalue_low;
+        long lvalue;
+        memcpy(&lvalue, &value_l, 8);
+        printf("%ld\n", lvalue);
+        break;
+      case 'I':;
+        int ivalue;
+        memcpy(&ivalue, cpop(frame->operands_stack), 4);
+        printf("%d\n", ivalue);
+        break;
+      case 'Z':
+        printf("%s\n", *((u4 *) cpop(frame->operands_stack)) ? "True" : "False");
+        break;
+      case 'B':;
+        int8_t bvalue;
+        memcpy(&bvalue, cpop(frame->operands_stack), 1);
+        printf("%hhx\n", bvalue);
+        break;
+      case 'C':;
+        int8_t cvalue;
+        memcpy(&cvalue, cpop(frame->operands_stack), 1);
+        printf("%d\n", cvalue);
+        break;
+      case 'F':;
+        float fvalue;
+        memcpy(&fvalue, cpop(frame->operands_stack), 4);
+      case 'S':;
+        int16_t svalue;
+        memcpy(&svalue, cpop(frame->operands_stack), 2);
+        break;
+      default:
+        exit(ERR_UNKTYPE);
+    }
+    /*pilha antesh= objectref, [arg1, arg2, ...] -> pilha depois = result*/
+  }
+
+}
 void IOR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void IREM_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void IRETURN_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}

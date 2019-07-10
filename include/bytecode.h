@@ -4,6 +4,7 @@
 #include "types.h"
 #include "frame.h"
 #include "jvm.h"
+#include "constant_pool.h"
 
 typedef void (*handler)(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm);
 
