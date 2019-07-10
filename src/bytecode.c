@@ -266,14 +266,20 @@ void DASTORE_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void DCMPG_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void DCMPL_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void DCONST_0_handler(u1 **pc, u1 *bp, frame_t *frame){
-  u8 *ivalue = (u8 *) calloc(1, sizeof(u8));
-  *ivalue = 0x0000000000000000; /* 0.0 IEEE-754 Double */
-  cpush(frame->operands_stack, ivalue);
+  u4 *dvalue_high = (u4 *) calloc(1, sizeof(u4));
+  u4 *dvalue_low = (u4 *) calloc(1, sizeof(u4));
+  *dvalue_high = 0x00000000; /* 0.0 IEEE-754 Double */
+  *dvalue_low = 0x00000000;
+  cpush(frame->operands_stack, dvalue_high);
+  cpush(frame->operands_stack, dvalue_low);
 }
 void DCONST_1_handler(u1 **pc, u1 *bp, frame_t *frame){
-  u8 *ivalue = (u8 *) calloc(1, sizeof(u8));
-  *ivalue = 0x3FF0000000000000; /* 1.0 IEEE-754 Double */
-  cpush(frame->operands_stack, ivalue);
+  u4 *dvalue_high = (u4 *) calloc(1, sizeof(u4));
+  u4 *dvalue_low = (u4 *) calloc(1, sizeof(u4));
+  *dvalue_high = 0x3FF00000;
+  *dvalue_low = 0x00000000; /* 1.0 IEEE-754 Double */
+  cpush(frame->operands_stack, dvalue_high);
+  cpush(frame->operands_stack, dvalue_low);
 }
 void DDIV_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void DLOAD_handler(u1 **pc, u1 *bp, frame_t *frame){
@@ -564,14 +570,20 @@ void LAND_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void LASTORE_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void LCMP_handler(u1 **pc, u1 *bp, frame_t *frame){}
 void LCONST_0_handler(u1 **pc, u1 *bp, frame_t *frame){
-  u8 *value = (u8 *) calloc(1, sizeof(u8));
-	*value = 0;
-	cpush(frame->operands_stack, value);
+  u4 *lvalue_high = (u4 *) calloc(1, sizeof(u4));
+  u4 *lvalue_low = (u4 *) calloc(1, sizeof(u4));
+	*lvalue_high = 0x00000000;
+  *lvalue_low = 0x00000000;
+	cpush(frame->operands_stack, lvalue_high);
+  cpush(frame->operands_stack, lvalue_low);
 }
 void LCONST_1_handler(u1 **pc, u1 *bp, frame_t *frame){
-  u8 *value = (u8 *) calloc(1, sizeof(u8));
-	*value = 1;
-	cpush(frame->operands_stack, value);
+  u4 *lvalue_high = (u4 *) calloc(1, sizeof(u4));
+  u4 *lvalue_low = (u4 *) calloc(1, sizeof(u4));
+	*lvalue_high = 0x00000000;
+  *lvalue_low = 0x00000001;
+	cpush(frame->operands_stack, lvalue_high);
+  cpush(frame->operands_stack, lvalue_low);
 }
 void LDC_handler(u1 **pc, u1 *bp, frame_t *frame){
 	u2 cp_index = (*pc + 1)[0]; ++*pc;
