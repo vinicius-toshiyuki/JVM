@@ -4,6 +4,7 @@
 #include "types.h"
 #include "classfile.h"
 #include "frame.h"
+#include "jvm.h"
 
 typedef struct Method {
     u2 length;
@@ -11,6 +12,6 @@ typedef struct Method {
 } Method;
 
 Method get_method_by_name(ClassFile *, char *);
-void run_method(frame_t *, Method *);
+void run_method(frame_t *, Method *, jvm_t *);
 
 #endif

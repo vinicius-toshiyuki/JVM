@@ -2,6 +2,9 @@
 #include "../include/mnemonic.h"
 #include "../include/bytecode.h"
 #include "../include/constant_pool.h"
+#include "../include/method_area.h"
+#include "../include/jvm.h"
+#include "../include/info.h"
 
 handler bytecode_handlers[] = {
   [0x32] = AALOAD_handler,
@@ -211,318 +214,333 @@ handler bytecode_handlers[] = {
   [0xc4] = WIDE_handler
 };
 
-void AALOAD_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void AASTORE_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void ACONST_NULL_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void ALOAD_handler(u1 **pc, u1 *bp, frame_t *frame){
+void AALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void AASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void ACONST_NULL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void ALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u1 lv_index = (*pc + 1)[0]; ++*pc;
 	cpush(frame->operands_stack, cat(frame->local_variables, lv_index));
 }
-void ALOAD_0_handler(u1 **pc, u1 *bp, frame_t *frame){
+void ALOAD_0_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cpush(frame->operands_stack, cat(frame->local_variables, 0));
 }
-void ALOAD_1_handler(u1 **pc, u1 *bp, frame_t *frame){
+void ALOAD_1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cpush(frame->operands_stack, cat(frame->local_variables, 1));
 }
-void ALOAD_2_handler(u1 **pc, u1 *bp, frame_t *frame){
+void ALOAD_2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cpush(frame->operands_stack, cat(frame->local_variables, 2));
 }
-void ALOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame){
+void ALOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cpush(frame->operands_stack, cat(frame->local_variables, 3));
 }
-void ANEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void ARETURN_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void ARRAYLENGTH_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void ASTORE_handler(u1 **pc, u1 *bp, frame_t *frame){
+void ANEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void ARETURN_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void ARRAYLENGTH_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void ASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u1 lv_index = (*pc + 1)[0]; ++*pc;
 	cinsert(frame->local_variables, lv_index, cpop(frame->operands_stack));
 }
-void ASTORE_0_handler(u1 **pc, u1 *bp, frame_t *frame){
+void ASTORE_0_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cinsert(frame->local_variables, 0, cpop(frame->operands_stack));
 }
-void ASTORE_1_handler(u1 **pc, u1 *bp, frame_t *frame){
+void ASTORE_1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cinsert(frame->local_variables, 1, cpop(frame->operands_stack));
 }
-void ASTORE_2_handler(u1 **pc, u1 *bp, frame_t *frame){
+void ASTORE_2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cinsert(frame->local_variables, 2, cpop(frame->operands_stack));
 }
-void ASTORE_3_handler(u1 **pc, u1 *bp, frame_t *frame){
+void ASTORE_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cinsert(frame->local_variables, 3, cpop(frame->operands_stack));
 }
-void ATHROW_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void BALOAD_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void BASTORE_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void BIPUSH_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void BREAKPOINT_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void CALOAD_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void CASTORE_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void CHECKCAST_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void D2F_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void D2I_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void D2L_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void DADD_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void DALOAD_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void DASTORE_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void DCMPG_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void DCMPL_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void DCONST_0_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void DCONST_1_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void DDIV_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void DLOAD_handler(u1 **pc, u1 *bp, frame_t *frame){
+void ATHROW_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void BALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void BASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void BIPUSH_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void BREAKPOINT_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void CALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void CASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void CHECKCAST_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void D2F_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void D2I_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void D2L_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void DADD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void DALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void DASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void DCMPG_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void DCMPL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void DCONST_0_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void DCONST_1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void DDIV_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void DLOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u1 lv_index = (*pc + 1)[0]; ++*pc;
 	u4 *dvalue_high = (u4 *) cat(frame->local_variables, lv_index++);
 	u4 *dvalue_low = (u4 *) cat(frame->local_variables, lv_index);
 	cpush(frame->operands_stack, dvalue_high);
 	cpush(frame->operands_stack, dvalue_low);
 }
-void DLOAD_0_handler(u1 **pc, u1 *bp, frame_t *frame){
+void DLOAD_0_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *dvalue_high = (u4 *) cat(frame->local_variables, 0);
 	u4 *dvalue_low = (u4 *) cat(frame->local_variables, 1);
 	cpush(frame->operands_stack, dvalue_high);
 	cpush(frame->operands_stack, dvalue_low);
 }
-void DLOAD_1_handler(u1 **pc, u1 *bp, frame_t *frame){
+void DLOAD_1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *dvalue_high = (u4 *) cat(frame->local_variables, 1);
 	u4 *dvalue_low = (u4 *) cat(frame->local_variables, 2);
 	cpush(frame->operands_stack, dvalue_high);
 	cpush(frame->operands_stack, dvalue_low);
 }
-void DLOAD_2_handler(u1 **pc, u1 *bp, frame_t *frame){
+void DLOAD_2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *dvalue_high = (u4 *) cat(frame->local_variables, 2);
 	u4 *dvalue_low = (u4 *) cat(frame->local_variables, 3);
 	cpush(frame->operands_stack, dvalue_high);
 	cpush(frame->operands_stack, dvalue_low);
 }
-void DLOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame){
+void DLOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *dvalue_high = (u4 *) cat(frame->local_variables, 3);
 	u4 *dvalue_low = (u4 *) cat(frame->local_variables, 4);
 	cpush(frame->operands_stack, dvalue_high);
 	cpush(frame->operands_stack, dvalue_low);
 }
-void DMUL_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void DNEG_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void DREM_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void DRETURN_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void DSTORE_handler(u1 **pc, u1 *bp, frame_t *frame){
+void DMUL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void DNEG_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void DREM_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void DRETURN_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void DSTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u1 lv_index = (*pc + 1)[0]; ++*pc;
 	u4 *dvalue_low = (u4 *) cpop(frame->operands_stack);
 	u4 *dvalue_high = (u4 *) cpop(frame->operands_stack);
 	cinsert(frame->local_variables, lv_index++, dvalue_high);
 	cinsert(frame->local_variables, lv_index, dvalue_low);
 }
-void DSTORE_0_handler(u1 **pc, u1 *bp, frame_t *frame){
+void DSTORE_0_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *dvalue_low = (u4 *) cpop(frame->operands_stack);
 	u4 *dvalue_high = (u4 *) cpop(frame->operands_stack);
 	cinsert(frame->local_variables, 0, dvalue_high);
 	cinsert(frame->local_variables, 1, dvalue_low);
 }
-void DSTORE_1_handler(u1 **pc, u1 *bp, frame_t *frame){
+void DSTORE_1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *dvalue_low = (u4 *) cpop(frame->operands_stack);
 	u4 *dvalue_high = (u4 *) cpop(frame->operands_stack);
 	cinsert(frame->local_variables, 1, dvalue_high);
 	cinsert(frame->local_variables, 2, dvalue_low);
 }
-void DSTORE_2_handler(u1 **pc, u1 *bp, frame_t *frame){
+void DSTORE_2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *dvalue_low = (u4 *) cpop(frame->operands_stack);
 	u4 *dvalue_high = (u4 *) cpop(frame->operands_stack);
 	cinsert(frame->local_variables, 2, dvalue_high);
 	cinsert(frame->local_variables, 3, dvalue_low);
 }
-void DSTORE_3_handler(u1 **pc, u1 *bp, frame_t *frame){
+void DSTORE_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *dvalue_low = (u4 *) cpop(frame->operands_stack);
 	u4 *dvalue_high = (u4 *) cpop(frame->operands_stack);
 	cinsert(frame->local_variables, 3, dvalue_high);
 	cinsert(frame->local_variables, 4, dvalue_low);
 }
-void DSUB_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void DUP_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void DUP_X1_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void DUP_X2_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void DUP2_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void DUP2_X1_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void DUP2_X2_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void F2D_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void F2I_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void F2L_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void FADD_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void FALOAD_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void FASTORE_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void FCMPG_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void FCMPL_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void FCONST_0_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void FCONST_1_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void FCONST_2_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void FDIV_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void FLOAD_handler(u1 **pc, u1 *bp, frame_t *frame){
+void DSUB_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void DUP_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void DUP_X1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void DUP_X2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void DUP2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void DUP2_X1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void DUP2_X2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void F2D_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void F2I_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void F2L_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void FADD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void FALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void FASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void FCMPG_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void FCMPL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void FCONST_0_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void FCONST_1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void FCONST_2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void FDIV_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void FLOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u1 lv_index = (*pc + 1)[0]; ++*pc;
 	u8 *fvalue = (u8 *) cat(frame->local_variables, lv_index);
 	cpush(frame->operands_stack, fvalue);
 }
-void FLOAD_0_handler(u1 **pc, u1 *bp, frame_t *frame){
+void FLOAD_0_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u8 *fvalue = (u8 *) cat(frame->local_variables, 0);
 	cpush(frame->operands_stack, fvalue);
 }
-void FLOAD_1_handler(u1 **pc, u1 *bp, frame_t *frame){
+void FLOAD_1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u8 *fvalue = (u8 *) cat(frame->local_variables, 1);
 	cpush(frame->operands_stack, fvalue);
 }
-void FLOAD_2_handler(u1 **pc, u1 *bp, frame_t *frame){
+void FLOAD_2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u8 *fvalue = (u8 *) cat(frame->local_variables, 2);
 	cpush(frame->operands_stack, fvalue);
 }
-void FLOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame){
+void FLOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u8 *fvalue = (u8 *) cat(frame->local_variables, 3);
 	cpush(frame->operands_stack, fvalue);
 }
-void FMUL_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void FNEG_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void FREM_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void FRETURN_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void FSTORE_handler(u1 **pc, u1 *bp, frame_t *frame){
+void FMUL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void FNEG_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void FREM_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void FRETURN_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void FSTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u1 lv_index = (*pc + 1)[0]; ++*pc;
 	float *fvalue = (float *) cpop(frame->operands_stack);
 	cinsert(frame->local_variables, lv_index, fvalue);
 }
-void FSTORE_0_handler(u1 **pc, u1 *bp, frame_t *frame){
+void FSTORE_0_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	float *fvalue = (float *) cpop(frame->operands_stack);
 	cinsert(frame->local_variables, 0, fvalue);
 }
-void FSTORE_1_handler(u1 **pc, u1 *bp, frame_t *frame){
+void FSTORE_1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	float *fvalue = (float *) cpop(frame->operands_stack);
 	cinsert(frame->local_variables, 1, fvalue);
 }
-void FSTORE_2_handler(u1 **pc, u1 *bp, frame_t *frame){
+void FSTORE_2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	float *fvalue = (float *) cpop(frame->operands_stack);
 	cinsert(frame->local_variables, 2, fvalue);
 }
-void FSTORE_3_handler(u1 **pc, u1 *bp, frame_t *frame){
+void FSTORE_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	float *fvalue = (float *) cpop(frame->operands_stack);
 	cinsert(frame->local_variables, 3, fvalue);
 }
-void FSUB_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void GETFIELD_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void GETSTATIC_handler(u1 **pc, u1 *bp, frame_t *frame){
-	// u2 cp_index = args[0] << 8 | args[1];
-	// void *value = get_constant_pool_entry(cp_index);
+void FSUB_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void GETFIELD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void GETSTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
+	/* objectref aqui é uma referência simbólica para um field, que é um Fieldref */
+	CONSTANT_Fieldref_info *value = (CONSTANT_Fieldref_info *) get_constant_pool_entry(frame, cp_index);
+	/* tem que resolver a referência */
+	info_t *class_info = get_constant_pool_entry(frame, get_constant_pool_entry(frame, value->class_index)->Class.name_index);
+	char *classname = (char *) calloc(class_info->Utf8.length + 1, sizeof(char));
+	memcpy(classname, class_info->Utf8.bytes, class_info->Utf8.length);
+	if(!is_loaded(jvm->marea, classname)){
+		char *classfilename = (char *) calloc(strlen(classname) + 8, sizeof(char));
+		strcpy(classfilename, "./");
+		strcat(classfilename, classname);
+		strcat(classfilename, ".class");
+		load_class(jvm->marea, classfilename);
+	}
+	free(classname);
+	/* TODO: falta resolver a referência e entender como fazer o tal do println */
+	cpush(frame->operands_stack, value);
 }
-void GOTO_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void GOTO_W_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void I2B_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void I2C_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void I2D_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void I2F_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void I2L_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void I2S_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void IADD_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void IALOAD_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void IAND_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void IASTORE_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void ICONST_M1_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void ICONST_0_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void ICONST_1_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void ICONST_2_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void ICONST_3_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void ICONST_4_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void ICONST_5_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void IDIV_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void IF_ACMPEQ_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void IF_ACMPNE_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void IF_ICMPEQ_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void IF_ICMPGE_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void IF_ICMPGT_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void IF_ICMPLE_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void IF_ICMPLT_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void IF_ICMPNE_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void IFEQ_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void IFGE_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void IFGT_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void IFLE_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void IFLT_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void IFNE_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void IFNONNULL_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void IFNULL_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void IINC_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void ILOAD_handler(u1 **pc, u1 *bp, frame_t *frame){
+void GOTO_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void GOTO_W_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void I2B_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void I2C_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void I2D_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void I2F_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void I2L_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void I2S_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IADD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IAND_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void ICONST_M1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void ICONST_0_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void ICONST_1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void ICONST_2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void ICONST_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void ICONST_4_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void ICONST_5_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IDIV_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IF_ACMPEQ_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IF_ACMPNE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IF_ICMPEQ_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IF_ICMPGE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IF_ICMPGT_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IF_ICMPLE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IF_ICMPLT_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IF_ICMPNE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IFEQ_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IFGE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IFGT_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IFLE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IFLT_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IFNE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IFNONNULL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IFNULL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IINC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void ILOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u1 lv_index = (*pc + 1)[0]; ++*pc;
 	u4 *ivalue = (u4 *) cat(frame->local_variables, lv_index);
 	cpush(frame->operands_stack, ivalue);
 }
-void ILOAD_0_handler(u1 **pc, u1 *bp, frame_t *frame){
+void ILOAD_0_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *ivalue = (u4 *) cat(frame->local_variables, 0);
 	cpush(frame->operands_stack, ivalue);
 }
-void ILOAD_1_handler(u1 **pc, u1 *bp, frame_t *frame){
+void ILOAD_1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *ivalue = (u4 *) cat(frame->local_variables, 1);
 	cpush(frame->operands_stack, ivalue);
 }
-void ILOAD_2_handler(u1 **pc, u1 *bp, frame_t *frame){
+void ILOAD_2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *ivalue = (u4 *) cat(frame->local_variables, 2);
 	cpush(frame->operands_stack, ivalue);
 }
-void ILOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame){
+void ILOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *ivalue = (u4 *) cat(frame->local_variables, 3);
 	cpush(frame->operands_stack, ivalue);
 }
-void IMPDEP1_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void IMPDEP2_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void IMUL_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void INEG_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void INSTANCEOF_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void INVOKEDYNAMIC_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void INVOKEINTERFACE_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void INVOKESPECIAL_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void INVOKESTATIC_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void INVOKEVIRTUAL_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void IOR_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void IREM_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void IRETURN_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void ISHL_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void ISHR_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void ISTORE_handler(u1 **pc, u1 *bp, frame_t *frame){
+void IMPDEP1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IMPDEP2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IMUL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void INEG_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void INSTANCEOF_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void INVOKEDYNAMIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void INVOKEINTERFACE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void INVOKESPECIAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void INVOKESTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void INVOKEVIRTUAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IOR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IREM_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IRETURN_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void ISHL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void ISHR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void ISTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u1 lv_index = (*pc + 1)[0]; ++*pc;
 	int *ivalue = (int *) cpop(frame->operands_stack);
 	cinsert(frame->local_variables, lv_index, ivalue);
 }
-void ISTORE_0_handler(u1 **pc, u1 *bp, frame_t *frame){
+void ISTORE_0_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	int *ivalue = (int *) cpop(frame->operands_stack);
 	cinsert(frame->local_variables, 0, ivalue);
 }
-void ISTORE_1_handler(u1 **pc, u1 *bp, frame_t *frame){
+void ISTORE_1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	int *ivalue = (int *) cpop(frame->operands_stack);
 	cinsert(frame->local_variables, 1, ivalue);
 }
-void ISTORE_2_handler(u1 **pc, u1 *bp, frame_t *frame){
+void ISTORE_2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	int *ivalue = (int *) cpop(frame->operands_stack);
 	cinsert(frame->local_variables, 2, ivalue);
 }
-void ISTORE_3_handler(u1 **pc, u1 *bp, frame_t *frame){
+void ISTORE_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	int *ivalue = (int *) cpop(frame->operands_stack);
 	cinsert(frame->local_variables, 3, ivalue);
 }
-void ISUB_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void IUSHR_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void IXOR_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void JSR_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void JSR_W_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void L2D_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void L2F_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void L2I_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void LADD_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void LALOAD_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void LAND_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void LASTORE_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void LCMP_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void LCONST_0_handler(u1 **pc, u1 *bp, frame_t *frame){
+void ISUB_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IUSHR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IXOR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void JSR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void JSR_W_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void L2D_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void L2F_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void L2I_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void LADD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void LALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void LAND_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void LASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void LCMP_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void LCONST_0_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
   u8 *value = (u8 *) calloc(1, sizeof(u8));
 	*value = 0;
 	cpush(frame->operands_stack, value);
 }
-void LCONST_1_handler(u1 **pc, u1 *bp, frame_t *frame){
+void LCONST_1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
   u8 *value = (u8 *) calloc(1, sizeof(u8));
 	*value = 1;
 	cpush(frame->operands_stack, value);
 }
-void LDC_handler(u1 **pc, u1 *bp, frame_t *frame){
+void LDC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u2 cp_index = (*pc + 1)[0]; ++*pc;
 
 	info_t *cp_entry = get_constant_pool_entry(frame, cp_index);
@@ -546,7 +564,7 @@ void LDC_handler(u1 **pc, u1 *bp, frame_t *frame){
 	}
 	cpush(frame->operands_stack, value);
 }
-void LDC_W_handler(u1 **pc, u1 *bp, frame_t *frame){
+void LDC_W_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
 
 	info_t *cp_entry = get_constant_pool_entry(frame, cp_index);
@@ -570,104 +588,104 @@ void LDC_W_handler(u1 **pc, u1 *bp, frame_t *frame){
 	}
 	cpush(frame->operands_stack, value);
 }
-void LDC2_W_handler(u1 **pc, u1 *bp, frame_t *frame){
+void LDC2_W_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc = *pc + 2;
   info_t *cp_entry = get_constant_pool_entry(frame, cp_index);
   u8 *value = (u8 *) calloc(1, sizeof(u8));
 	*value = ((u8) cp_entry->Double.high_bytes) << 32 | cp_entry->Double.low_bytes;
 	cpush(frame->operands_stack, value);
 }
-void LDIV_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void LLOAD_handler(u1 **pc, u1 *bp, frame_t *frame){
+void LDIV_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void LLOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u1 lv_index = (*pc + 1)[0]; ++*pc;
 	u4 *lvalue_high = (u4 *) cat(frame->local_variables, lv_index++);
 	u4 *lvalue_low = (u4 *) cat(frame->local_variables, lv_index);
 	cpush(frame->operands_stack, lvalue_high);
 	cpush(frame->operands_stack, lvalue_low);
 }
-void LLOAD_0_handler(u1 **pc, u1 *bp, frame_t *frame){
+void LLOAD_0_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *lvalue_high = (u4 *) cat(frame->local_variables, 0);
 	u4 *lvalue_low = (u4 *) cat(frame->local_variables, 1);
 	cpush(frame->operands_stack, lvalue_high);
 	cpush(frame->operands_stack, lvalue_low);
 }
-void LLOAD_1_handler(u1 **pc, u1 *bp, frame_t *frame){
+void LLOAD_1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *lvalue_high = (u4 *) cat(frame->local_variables, 1);
 	u4 *lvalue_low = (u4 *) cat(frame->local_variables, 2);
 	cpush(frame->operands_stack, lvalue_high);
 	cpush(frame->operands_stack, lvalue_low);
 }
-void LLOAD_2_handler(u1 **pc, u1 *bp, frame_t *frame){
+void LLOAD_2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *lvalue_high = (u4 *) cat(frame->local_variables, 2);
 	u4 *lvalue_low = (u4 *) cat(frame->local_variables, 3);
 	cpush(frame->operands_stack, lvalue_high);
 	cpush(frame->operands_stack, lvalue_low);
 }
-void LLOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame){
+void LLOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *lvalue_high = (u4 *) cat(frame->local_variables, 3);
 	u4 *lvalue_low = (u4 *) cat(frame->local_variables, 4);
 	cpush(frame->operands_stack, lvalue_high);
 	cpush(frame->operands_stack, lvalue_low);
 }
-void LMUL_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void LNEG_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void LOOKUPSWITCH_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void LOR_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void LREM_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void LRETURN_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void LSHL_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void LSHR_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void LSTORE_handler(u1 **pc, u1 *bp, frame_t *frame){
+void LMUL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void LNEG_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void LOOKUPSWITCH_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void LOR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void LREM_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void LRETURN_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void LSHL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void LSHR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void LSTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u1 lv_index = (*pc + 1)[0]; ++*pc;
 	u4 *lvalue_low = (u4 *) cpop(frame->operands_stack);
 	u4 *lvalue_high = (u4 *) cpop(frame->operands_stack);
 	cinsert(frame->local_variables, lv_index++, lvalue_high);
 	cinsert(frame->local_variables, lv_index, lvalue_low);
 }
-void LSTORE_0_handler(u1 **pc, u1 *bp, frame_t *frame){
+void LSTORE_0_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *lvalue_low = (u4 *) cpop(frame->operands_stack);
 	u4 *lvalue_high = (u4 *) cpop(frame->operands_stack);
 	cinsert(frame->local_variables, 0, lvalue_high);
 	cinsert(frame->local_variables, 1, lvalue_low);
 }
-void LSTORE_1_handler(u1 **pc, u1 *bp, frame_t *frame){
+void LSTORE_1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *lvalue_low = (u4 *) cpop(frame->operands_stack);
 	u4 *lvalue_high = (u4 *) cpop(frame->operands_stack);
 	cinsert(frame->local_variables, 1, lvalue_high);
 	cinsert(frame->local_variables, 2, lvalue_low);
 }
-void LSTORE_2_handler(u1 **pc, u1 *bp, frame_t *frame){
+void LSTORE_2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *lvalue_low = (u4 *) cpop(frame->operands_stack);
 	u4 *lvalue_high = (u4 *) cpop(frame->operands_stack);
 	cinsert(frame->local_variables, 2, lvalue_high);
 	cinsert(frame->local_variables, 3, lvalue_low);
 }
-void LSTORE_3_handler(u1 **pc, u1 *bp, frame_t *frame){
+void LSTORE_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *lvalue_low = (u4 *) cpop(frame->operands_stack);
 	u4 *lvalue_high = (u4 *) cpop(frame->operands_stack);
 	cinsert(frame->local_variables, 3, lvalue_high);
 	cinsert(frame->local_variables, 4, lvalue_low);
 }
-void LSUB_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void LUSHR_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void LXOR_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void MONITORENTER_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void MONITOREXIT_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void MULTIANEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void NEW_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void NEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void NOP_handler(u1 **pc, u1 *bp, frame_t *frame){
+void LSUB_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void LUSHR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void LXOR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void MONITORENTER_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void MONITOREXIT_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void MULTIANEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void NEW_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void NEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void NOP_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	return;
 }
-void POP_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void POP2_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void PUTFIELD_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void PUTSTATIC_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void RET_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void RETURN_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void SALOAD_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void SASTORE_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void SIPUSH_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void SWAP_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void TABLESWITCH_handler(u1 **pc, u1 *bp, frame_t *frame){}
-void WIDE_handler(u1 **pc, u1 *bp, frame_t *frame){}
+void POP_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void POP2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void PUTFIELD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void PUTSTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void RET_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void RETURN_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void SALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void SASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void SIPUSH_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void SWAP_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void TABLESWITCH_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void WIDE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}

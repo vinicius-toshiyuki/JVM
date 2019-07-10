@@ -18,4 +18,6 @@ void load_class(method_area_t *, char *);
 void link_class(method_area_t *, ClassFile *);
 void initialize_class(method_area_t *, ClassFile *);
 
+int is_loaded(method_area_t *, char *);
+
 #endif

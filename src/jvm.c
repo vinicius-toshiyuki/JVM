@@ -34,7 +34,7 @@ void start_jvm(jvm_t **_jvm, ClassFile *entry){
 	*/
 	link_class(jvm->marea, entry);
 	Method main_method = get_method_by_name(entry, "main");
-	run_method(top_frame, &main_method);
+	run_method(top_frame, &main_method, jvm);
 	return;
 }
 
