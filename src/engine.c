@@ -35,5 +35,4 @@ void run_method(frame_t *frame, Method *method, jvm_t *jvm){
     u2 i;
     for(i = 0; i < method->length; i++, (*pc)++)
         bytecode_handlers[(*pc)[0]](pc, method->code, frame, jvm);
-    return;
 }

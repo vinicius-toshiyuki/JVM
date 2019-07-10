@@ -3,6 +3,6 @@
 
 #include "breads.h"
 
-ClassFile * bread_classfile(FILE *classfile);
+ClassFile * bread_classfile(FILE *classfile, char *filename);
 
 #endif

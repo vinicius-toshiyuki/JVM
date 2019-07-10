@@ -27,6 +27,8 @@ void cinsert(clist_t *list, int index, void *value){
 	celement_t *element = new_celement(value);
 	if(!list->size){
 		list->head = list->tail = element;
+	}else if(!index){
+		element->next = list->head;
 	}else{
 		celement_t *iter = list->head;
 		int i;
@@ -46,7 +48,7 @@ void cinsert(clist_t *list, int index, void *value){
 }
 
 void cappend(clist_t *list, void *value){
-	cinsert(list, 0, value);
+	cinsert(list, list->size, value);
 	return;
 }
 

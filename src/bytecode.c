@@ -263,7 +263,33 @@ void CHECKCAST_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void D2F_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void D2I_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void D2L_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void DADD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void DADD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	u4 *dvalue_low1 = NULL, *dvalue_high1 = NULL, *dvalue_low2 = NULL, *dvalue_high2 = NULL;
+	double dvalue1, dvalue2, dresult;
+	u8 value1 = 0x000000000000000, value2 = 0x000000000000000;
+
+	dvalue_low1 = cpop(frame->operands_stack);
+	dvalue_high1 = cpop(frame->operands_stack);
+	dvalue_low2 = cpop(frame->operands_stack);
+	dvalue_high2 = cpop(frame->operands_stack);
+
+	value1 = ((u8) *dvalue_high1) << 32 | *dvalue_low1;
+	memcpy(&dvalue1, &value1, 8);
+
+	value2 = ((u8) *dvalue_high2) << 32 | *dvalue_low2;
+	memcpy(&dvalue2, &value2, 8);
+
+	dresult = dvalue1 + dvalue2;
+	memcpy(&value1, &dresult, 8);
+
+	u4 *dresult_low = (u4 *) calloc(1, sizeof(u4));
+	u4 *dresult_high = (u4 *) calloc(1, sizeof(u4));
+	memcpy(dresult_low, &value1, 4);
+	value1 >>= 32;
+	memcpy(dresult_high, &value1, 4);
+	cpush(frame->operands_stack, dresult_high);
+	cpush(frame->operands_stack, dresult_low);
+}
 void DALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void DASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void DCMPG_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
@@ -442,7 +468,7 @@ void GETSTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	char *classname = (char *) calloc(class_info->Utf8.length + 1, sizeof(char));
 	memcpy(classname, class_info->Utf8.bytes, class_info->Utf8.length);
 	if(!is_loaded(jvm->marea, classname)){
-		char *classfilename = (char *) calloc(strlen(classname) + 8, sizeof(char));
+		char *classfilename = (char *) calloc(strlen(classname) + 9 /* './' e '.class\0' */, sizeof(char));
 		strcpy(classfilename, "./");
 		strcat(classfilename, classname);
 		strcat(classfilename, ".class");
@@ -450,6 +476,21 @@ void GETSTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	}
 	free(classname);
 	/* TODO: falta resolver a referência e entender como fazer o tal do println */
+	/*
+		É basicamente ver se o campo existe e se a classe atual tem permissão de acesso (vamos assumir que sim ;p)
+		VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
+		When resolving a field reference, field resolution first attempts to look up the referenced field in C and its superclasses:
+			If C declares a field with the name and descriptor specified by the field reference, field lookup succeeds. The declared field is the result of the field lookup.
+			Otherwise, field lookup is applied recursively to the direct superinterfaces of the specified class or interface C.
+			Otherwise, if C has a superclass S, field lookup is applied recursively to S.
+			Otherwise, field lookup fails.
+		Then:
+			If field lookup fails, field resolution throws a NoSuchFieldError.
+			Otherwise, if field lookup succeeds but the referenced field is not accessible (§5.4.4) to D, field resolution throws an IllegalAccessError.
+			Otherwise, let <E, L1> be the class or interface in which the referenced field is actually declared and let L2 be the defining loader of D.
+			Given that the type of the referenced field is Tf, let T be Tf if Tf is not an array type, and let T be the element type (§2.4) of Tf otherwise.
+			The Java Virtual Machine must impose the loading constraint that TL1 = TL2 (§5.3.4).
+	*/
 	cpush(frame->operands_stack, value);
 }
 void GOTO_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
@@ -654,9 +695,8 @@ void LDC_W_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 void LDC2_W_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc = *pc + 2;
   info_t *cp_entry = get_constant_pool_entry(frame, cp_index);
-  u8 *value = (u8 *) calloc(1, sizeof(u8));
-	*value = ((u8) cp_entry->Double.high_bytes) << 32 | cp_entry->Double.low_bytes;
-	cpush(frame->operands_stack, value);
+	cpush(frame->operands_stack, &cp_entry->Double.high_bytes);
+	cpush(frame->operands_stack, &cp_entry->Double.low_bytes);
 }
 void LDIV_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void LLOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){

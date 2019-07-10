@@ -3,11 +3,10 @@
 #define JAVAVERSION 0x34
 
 extern int VERBOSE;
-extern char *CLASSFILE;
 extern char *java_version[];
 extern int IGNORE;
 
-ClassFile * bread_classfile(FILE *classfile){
+ClassFile * bread_classfile(FILE *classfile, char *filename){
 
 	ClassFile *class = (ClassFile *) calloc(1, sizeof(ClassFile));
 	if(VERBOSE) printf("Alloc'd memory for ClassFile\n");
@@ -68,10 +67,10 @@ ClassFile * bread_classfile(FILE *classfile){
 	bread_attributes(class->attributes, class->attributes_count, classfile);
 	if(VERBOSE) printf("Read attributes\n");
 
-	int len = strlen(CLASSFILE);
+	int len = strlen(filename);
 	char *novo = (char *) calloc(len + 5, sizeof(char));
 	char *base = novo;
-	strcpy(novo, CLASSFILE);
+	strcpy(novo, filename);
 	/* ./class/novo = {double_aritimetica}\0class */
 	for(int i = 0; i < len;  i++){
 		if(novo[len - i] == '.'){

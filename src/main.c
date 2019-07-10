@@ -29,7 +29,7 @@ int main(int argc, char **argv){
 	}
 	if(VERBOSE) printf("File opened\n");
 
-	ClassFile *class = bread_classfile(classfile);
+	ClassFile *class = bread_classfile(classfile, filename);
 	if(VERBOSE) printf("File read\n");
 
 	if(MODE == OPTION_viewer){

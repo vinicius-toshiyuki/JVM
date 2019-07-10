@@ -22,7 +22,7 @@ void load_class(method_area_t *marea, char *pathtoclass){
 		fprintf(stderr, "Can not open specified file.\n");
 		exit(ERR_CANTOPENFILE);
 	}
-	ClassFile *class = bread_classfile(classfile);
+	ClassFile *class = bread_classfile(classfile, pathtoclass);
 	link_class(marea, class);
 	return;
 }
@@ -38,8 +38,14 @@ int is_loaded(method_area_t *marea, char *classname){
 	int i, is = 0;
 	celement_t *iter = marea->loaded->head;
 	char *javaclassname = (char *) calloc(strlen(classname) + 6 /* .java\0 */, sizeof(char));
+	char *jcn = javaclassname;
 	strcpy(javaclassname, classname);
 	strcat(javaclassname, ".java");
+	for(i = 0; i < strlen(javaclassname); i++)
+		if(javaclassname[strlen(javaclassname) - i] == '/'){
+			jcn = javaclassname + strlen(javaclassname) - i + 1;
+			break;
+		}
 	Attributes att;
 	for(i = 0; i < marea->count; i++, iter = iter->next){
 		ClassFile *class = (ClassFile *) iter->value;
@@ -47,7 +53,7 @@ int is_loaded(method_area_t *marea, char *classname){
 		get_attribute_from_info(att_info[0].info, &att, att_info[0].attribute_name_index, class);
 		char *curr_name = (char *) calloc(class->constant_pool[att.SourceFile.sourcefile_index - 1].info->Utf8.length + 1, sizeof(char));
 		memcpy(curr_name, class->constant_pool[att.SourceFile.sourcefile_index - 1].info->Utf8.bytes, class->constant_pool[att.SourceFile.sourcefile_index - 1].info->Utf8.length);
-		if(!strcmp(curr_name, javaclassname)){
+		if(!strcmp(curr_name, jcn)){
 			free(curr_name);
 			is = 1;
 			break;
