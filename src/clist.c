@@ -44,10 +44,12 @@ void cinsert(clist_t *list, int index, void *value){
 	list->size++;
 	return;
 }
+
 void cappend(clist_t *list, void *value){
 	cinsert(list, 0, value);
 	return;
 }
+
 void * cremove(clist_t *list, int index){
 	if(index > list->size - 1 || index < 0){
 		fprintf(stderr, "Index out of range\n");
@@ -68,6 +70,7 @@ void * cremove(clist_t *list, int index){
 	destroy_celement(toremove);
 	return ret;
 }
+
 void * cat(clist_t *list, int index){
 	if(index > list->size - 1 || index < 0){
 		fprintf(stderr, "Index out of range\n");

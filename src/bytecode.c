@@ -268,8 +268,22 @@ void DALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void DASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void DCMPG_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void DCMPL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void DCONST_0_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void DCONST_1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void DCONST_0_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  u4 *dvalue_high = (u4 *) calloc(1, sizeof(u4));
+  u4 *dvalue_low = (u4 *) calloc(1, sizeof(u4));
+  *dvalue_high = 0x00000000; /* 0.0 IEEE-754 Double */
+  *dvalue_low = 0x00000000;
+  cpush(frame->operands_stack, dvalue_high);
+  cpush(frame->operands_stack, dvalue_low);
+}
+void DCONST_1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  u4 *dvalue_high = (u4 *) calloc(1, sizeof(u4));
+  u4 *dvalue_low = (u4 *) calloc(1, sizeof(u4));
+  *dvalue_high = 0x3FF00000;
+  *dvalue_low = 0x00000000; /* 1.0 IEEE-754 Double */
+  cpush(frame->operands_stack, dvalue_high);
+  cpush(frame->operands_stack, dvalue_low);
+}
 void DDIV_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void DLOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u1 lv_index = (*pc + 1)[0]; ++*pc;
@@ -338,7 +352,10 @@ void DSTORE_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cinsert(frame->local_variables, 4, dvalue_low);
 }
 void DSUB_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void DUP_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void DUP_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  void *top = frame->operands_stack->top;
+  cpush(frame->operands_stack, top);
+}
 void DUP_X1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void DUP_X2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void DUP2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
@@ -352,9 +369,21 @@ void FALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void FASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void FCMPG_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void FCMPL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void FCONST_0_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void FCONST_1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void FCONST_2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void FCONST_0_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  u4 *ivalue = (u4 *) calloc(1, sizeof(u4));
+  *ivalue = 0x00000000; /* 0.0 IEEE-754 Float */
+  cpush(frame->operands_stack, ivalue);
+}
+void FCONST_1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  u4 *ivalue = (u4 *) calloc(1, sizeof(u4));
+  *ivalue = 0x3F800000; /* 1.0 IEEE-754 Float */
+  cpush(frame->operands_stack, ivalue);
+}
+void FCONST_2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  u4 *ivalue = (u4 *) calloc(1, sizeof(u4));
+  *ivalue = 0x40000000; /* 2.0 IEEE-754 Float */
+  cpush(frame->operands_stack, ivalue);
+}
 void FDIV_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void FLOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u1 lv_index = (*pc + 1)[0]; ++*pc;
@@ -435,13 +464,41 @@ void IADD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void IALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void IAND_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void IASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void ICONST_M1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void ICONST_0_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void ICONST_1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void ICONST_2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void ICONST_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void ICONST_4_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void ICONST_5_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void ICONST_M1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  u4 *ivalue = (u4 *) calloc(1, sizeof(u4));
+  *ivalue = 0xFFFFFFFF; /* -1 em complemento de dois */
+  cpush(frame->operands_stack, ivalue);
+}
+void ICONST_0_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  u4 *ivalue = (u4 *) calloc(1, sizeof(u4));
+  *ivalue = 0;
+  cpush(frame->operands_stack, ivalue);
+}
+void ICONST_1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  u4 *ivalue = (u4 *) calloc(1, sizeof(u4));
+  *ivalue = 1;
+  cpush(frame->operands_stack, ivalue);
+}
+void ICONST_2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  u4 *ivalue = (u4 *) calloc(1, sizeof(u4));
+  *ivalue = 2;
+  cpush(frame->operands_stack, ivalue);
+}
+void ICONST_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  u4 *ivalue = (u4 *) calloc(1, sizeof(u4));
+  *ivalue = 3;
+  cpush(frame->operands_stack, ivalue);
+}
+void ICONST_4_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  u4 *ivalue = (u4 *) calloc(1, sizeof(u4));
+  *ivalue = 4;
+  cpush(frame->operands_stack, ivalue);
+}
+void ICONST_5_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  u4 *ivalue = (u4 *) calloc(1, sizeof(u4));
+  *ivalue = 5;
+  cpush(frame->operands_stack, ivalue);
+}
 void IDIV_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void IF_ACMPEQ_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void IF_ACMPNE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
@@ -531,14 +588,20 @@ void LAND_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void LASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void LCMP_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void LCONST_0_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-  u8 *value = (u8 *) calloc(1, sizeof(u8));
-	*value = 0;
-	cpush(frame->operands_stack, value);
+  u4 *lvalue_high = (u4 *) calloc(1, sizeof(u4));
+  u4 *lvalue_low = (u4 *) calloc(1, sizeof(u4));
+	*lvalue_high = 0x00000000;
+  *lvalue_low = 0x00000000;
+	cpush(frame->operands_stack, lvalue_high);
+  cpush(frame->operands_stack, lvalue_low);
 }
 void LCONST_1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-  u8 *value = (u8 *) calloc(1, sizeof(u8));
-	*value = 1;
-	cpush(frame->operands_stack, value);
+  u4 *lvalue_high = (u4 *) calloc(1, sizeof(u4));
+  u4 *lvalue_low = (u4 *) calloc(1, sizeof(u4));
+	*lvalue_high = 0x00000000;
+  *lvalue_low = 0x00000001;
+	cpush(frame->operands_stack, lvalue_high);
+  cpush(frame->operands_stack, lvalue_low);
 }
 void LDC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u2 cp_index = (*pc + 1)[0]; ++*pc;
@@ -677,8 +740,13 @@ void NEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void NOP_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	return;
 }
-void POP_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void POP2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void POP_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  cpop(frame->operands_stack);
+}
+void POP2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  cpop(frame->operands_stack);
+  cpop(frame->operands_stack);
+}
 void PUTFIELD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void PUTSTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void RET_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
