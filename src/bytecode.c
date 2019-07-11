@@ -250,14 +250,22 @@ void ALOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 void ANEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
 	u1 ref_tag = get_constant_pool_tag(frame, cp_index);
-	/* Só pra não dar erro de unused variable */
-	if(0)
-		printf("%d\n", ref_tag);
+
+	if(ref_tag != CONSTANT_Class){
+		fprintf(stderr, "Invalid class reference in anewarray\n");
+		exit(ERR_INVREF);
+	}
+	info_t *class_info = get_constant_pool_entry(frame, cp_index);
+	info_t *class_info_utf8 = get_constant_pool_entry(frame, class_info->Class.name_index);
+	char *class_name = (char *) calloc(class_info_utf8->Utf8.length + 1, sizeof(char));
+	memcpy(class_name, class_info_utf8->Utf8.bytes, class_info_utf8->Utf8.length);
 	int32_t *count = (int32_t *) cpop(frame->operands_stack);
 
 	array_t *array = new_array();
 	/* Tem que definir o tipo certinho */
 	array_of(array, ARR_RefClass, *count);
+	array_of_class(array, class_name);
+	free(class_name);
 	
 	objectref_t *ref = new_objectref();
 	reference_of(ref, REF_Array, array);
@@ -281,7 +289,6 @@ void ASTORE_0_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cinsert(frame->local_variables, 0, cpop(frame->operands_stack));
 }
 void ASTORE_1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	printf("size %d\n", frame->local_variables->size);
 	cinsert(frame->local_variables, 1, cpop(frame->operands_stack));
 }
 void ASTORE_2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
@@ -1052,7 +1059,6 @@ void INSTANCEOF_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 void INVOKEDYNAMIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void INVOKEINTERFACE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void INVOKESPECIAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	printf("Invokando especialmente\n");
 	objectref_t *ref = (objectref_t *) cpop(frame->operands_stack);
 	if(ref->tag != REF_Instance){
 		fprintf(stderr, "Invalid object reference to invoke special\n");
@@ -1060,16 +1066,15 @@ void INVOKESPECIAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	}
 	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
 	info_t *method_ref = get_constant_pool_entry(frame, cp_index);
-	printf("class_index %d\n", method_ref->Methodref.class_index);
-	printf("ó aqui %p\n", (void *) ((instance_t *) ref->object)->class);
+	printf("\tclass_index %d\n", method_ref->Methodref.class_index);
+	/* printf("ó aqui %p\n", (void *) ((instance_t *) ref->object)->class); */
 	char *classname = get_class_name(ref->object);
-	printf("class name %s\n", classname);
+	printf("\tclass name %s\n", classname);
 	free(classname);
 
 	cpop(frame->operands_stack);
 }
 void INVOKESTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	printf("Invoke static\n");
 	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
 	info_t *method_ref = get_constant_pool_entry(frame, cp_index);
 	info_t *method_class_ref = get_constant_pool_entry(frame, method_ref->Methodref.class_index);
@@ -1451,7 +1456,32 @@ void LUSHR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void LXOR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void MONITORENTER_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void MONITOREXIT_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void MULTIANEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void MULTIANEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+
+
+	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
+	u1 ref_tag = get_constant_pool_tag(frame, cp_index);
+
+	if(ref_tag != CONSTANT_Class){
+		fprintf(stderr, "Invalid class reference in anewarray\n");
+		exit(ERR_INVREF);
+	}
+	info_t *class_info = get_constant_pool_entry(frame, cp_index);
+	info_t *class_info_utf8 = get_constant_pool_entry(frame, class_info->Class.name_index);
+	char *class_name = (char *) calloc(class_info_utf8->Utf8.length + 1, sizeof(char));
+	memcpy(class_name, class_info_utf8->Utf8.bytes, class_info_utf8->Utf8.length);
+	int32_t *count = (int32_t *) cpop(frame->operands_stack);
+
+	array_t *array = new_array();
+	/* Tem que definir o tipo certinho */
+	array_of(array, ARR_RefClass, *count);
+	array_of_class(array, class_name);
+	free(class_name);
+	
+	objectref_t *ref = new_objectref();
+	reference_of(ref, REF_Array, array);
+	cpush(frame->operands_stack, ref);
+}
 void NEW_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
 
@@ -1471,9 +1501,7 @@ void NEW_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 		cappend(init_frame->local_variables, init_this_ref);
 		Method method_init = get_method_by_name(inst->class, "<init>");
 		init_frame->pc = method_init.code;
-		printf("Pronto para iniciar o init\n");
 		run_method(init_frame, &method_init, jvm);
-		printf("Sucesso\n");
 		destroy_frame(init_frame);
 		cpop(jvm->frame_stack);
 	}
@@ -1500,7 +1528,6 @@ void POP2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cpop(frame->operands_stack);
 }
 void PUTFIELD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	printf("Chegou aqui\n");
 	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
 	info_t *fieldref = get_constant_pool_entry(frame, cp_index);
 	info_t *fieldref_nameandtype = get_constant_pool_entry(frame, fieldref->Fieldref.name_and_type_index);
@@ -1537,7 +1564,7 @@ void PUTFIELD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 		field->value.Double = pop_double(frame);
 		field->tag = FIELD_Double;
 	}else{
-		printf("É uma classe\n");
+		printf("\t\tÉ uma classe\n");
 		field->value.ObjectRef = cpop(frame->operands_stack);
 		field->tag = FIELD_ObjectRef;
 	}

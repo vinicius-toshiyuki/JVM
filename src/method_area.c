@@ -71,6 +71,13 @@ int is_loaded(method_area_t *marea, char *classname){
 }
 
 ClassFile * get_class_by_name(method_area_t *marea, char *classname){
+	if(!is_loaded(marea, classname)){
+		char *classpath = (char *) calloc(strlen(classname) + 7, sizeof(char));
+		strcpy(classpath, classname);
+		strcat(classpath, ".class");
+		load_class(marea, classpath);
+		free(classpath);
+	}
 	int i;
 	ClassFile *ret_class = NULL;
 	celement_t *iter = marea->loaded->head;

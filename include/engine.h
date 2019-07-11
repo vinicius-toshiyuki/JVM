@@ -93,4 +93,14 @@ float pop_float(frame_t *frame);
  * Push a java float into frame operands stack top
  */
 void push_float(frame_t *frame, float fvalue);
+
+/**
+ *  Pop a java short from the frame operands stack top
+ */
+short pop_short(frame_t *frame);
+
+/**
+ *  Push a java short into frame operands stack top
+ */
+void push_short(frame_t *frame, short svalue);
 #endif
