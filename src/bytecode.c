@@ -1535,12 +1535,12 @@ void MULTIANEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	memcpy(class_name, class_info_utf8->Utf8.bytes, class_info_utf8->Utf8.length);
 
 	frame_t count_frame;
-	cstack *counts = new_cstack();
+	cstack_t *counts = new_cstack();
 	count_frame.operands_stack = counts;
 
 	u1 i;
 	for(i = 0; i < dimensions; i++)
-		cpush(cpop(frame->operands_stack));
+		cpush(frame->operands_stack, cpop(frame->operands_stack));
 
 	/* COM UM PASSO DE FÉ, DIZEMOS QUE ESTÁ CERTO */
 	/* Ao final de tudo ARRAY é pra ter o MULTIARRAY*/
@@ -1551,9 +1551,9 @@ void MULTIANEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	for(i = 0; i < dimensions; i++){
 		integer k;
 		integer count = pop_integer(&count_frame);
-		next_arrays = new_array();
+		array_t *next_arrays = new_array();
 		array_of(next_arrays, ARR_RefArray, count);
-		for(k = 0; k < arrays->size; k++){
+		for(k = 0; k < arrays->length; k++){
 			/* TODO: devia fazer um iterator */
 			array_t *narray = at(arrays, k);
 			array_of(narray, ARR_RefArray, count);
@@ -1695,7 +1695,7 @@ void SIPUSH_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	integer value = 0x00000000;
 	memcpy(&value, *pc + 1, 2);
 	*pc += 2;
-	push_integer(value);
+	push_integer(frame, value);
 }
 void SWAP_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	void *value1 = cpop(frame->operands_stack);
