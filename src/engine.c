@@ -14,11 +14,18 @@ Method get_method_by_name(ClassFile *class, char *name){
         if(!strcmp(name, (const char *) class->constant_pool[class->methods[i].name_index - 1].info->Utf8.bytes))
             break;
     
-    int ac = class->methods[i].attributes_count;
+    int ac = class->methods[i].attributes_count, found = 0;
     for(j = 0; j < ac; j++)
-        if(!strcmp("Code", (const char *) class->constant_pool[class->methods[i].attributes[j].attribute_name_index - 1].info->Utf8.bytes))
+        if(!strcmp("Code", (const char *) class->constant_pool[class->methods[i].attributes[j].attribute_name_index - 1].info->Utf8.bytes)){
+						found = 1;
             break;
+				}
     
+		if(!found){
+			fprintf(stderr, "Can not find method %s\n", name);
+			exit(ERR_NOMETH);
+		}
+
     Attributes codeatt;
     get_attribute_from_info(
         class->methods[i].attributes[j].info,

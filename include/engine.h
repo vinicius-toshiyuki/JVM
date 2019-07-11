@@ -83,7 +83,6 @@ double high_low_to_double(u4 *value_low, u4* value_high);
  */
 long pop_long(frame_t *frame);
 
-
 /**
  * Push a java long into frame operands stack top
  */
