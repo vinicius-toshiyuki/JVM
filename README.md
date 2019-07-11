@@ -42,16 +42,16 @@ Reads .class files and let you choose to prints it's structure as described in O
 Resumo: 100
 
 1.() array simples
-2.() arrays.length
+2.(X) arrays.length
 3.() arrays multidimensionais
-4.() arrays de referencia
+4.(X) arrays de referencia
 5.(X) doubles - falta as conversões, dastore, daload, dcmpl e dcmpg
 6.(X) floats - falta as conversões, fastore, faload, fcmpl e fcmpg
 7.(X) longs - falta as conversões, lastore, laload e operações lógicas
 8.(X) inteiros - shifts, falta iastore, iaload e operações lógicas
 9.() shorts
-10.() strings
-11.() desvios com cat 1
+10.(X) strings -certo no viewer falta passar pro interpretador
+11.(X) desvios com cat 1
 12.() operacoes logicas com cat 1  
 13.() operacoes de deslocamento com cat 1
 14.(X) operacoes aritmeticas de cat 2 - falta o long
@@ -63,14 +63,14 @@ Resumo: 100
 20.() fields
 21.() interfaces
 22.() recursao
-23.() metodos estaticos  
+23.(X) metodos estaticos
 24.() metodos nao estaticos
-25.() objetos
+25.(X) objetos
 26.() operacoes de retorno
 27.() operacoes de manipulacao de pilha
 28.(X) consistencia
 29.() exceptions
-30.() invokes
+30.(X) invokes - invokestatic e invokevirtual feitos
 31.() polimofismo e reescrita
 
 -------------------------

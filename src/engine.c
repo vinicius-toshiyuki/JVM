@@ -83,12 +83,28 @@ integer pop_integer(frame_t *frame){
     return ivalue;
 }
 
+void push_integer(frame_t *frame, integer ivalue){
+    u4 *value = (u4 *) calloc(1, sizeof(u4));
+    u4 i;
+    memcpy(&i, &ivalue, 4);
+    *value = i;
+    cpush(frame->operands_stack, value);
+}
+
 byte pop_byte(frame_t *frame){
     void *value = cpop(frame->operands_stack);
     byte bvalue;
     memcpy(&bvalue, value, 1);
     free(value);
     return bvalue;
+}
+
+void push_byte(frame_t *frame, byte bvalue){
+    u4 *value = (u4 *) calloc(1, sizeof(u4));
+    u4 b;
+    memcpy(&b, &bvalue, 1);
+    *value = b;
+    cpush(frame->operands_stack, value);
 }
 
 array_t * pop_array(frame_t *frame){
@@ -118,6 +134,13 @@ void push_double(frame_t *frame, double dvalue){
     cpush(frame->operands_stack, value_low);
 }
 
+double high_low_to_double(u4 *value_low, u4* value_high){
+    u8 value = ((u8) *value_high << 32) | *value_low;
+    double dvalue;
+    memcpy(&dvalue, &value, 8);
+    return dvalue;
+}
+
 long pop_long(frame_t *frame){
     u4 *low_value = (u4 *) cpop(frame->operands_stack);
     u4 *high_value = (u4 *) cpop(frame->operands_stack);
@@ -129,7 +152,7 @@ long pop_long(frame_t *frame){
     return lvalue;
 }
 
-void push_long(frame_t *frame, long lvalue) {
+void push_long(frame_t *frame, long lvalue){
     u4 *value_low = (u4 *) calloc(1, sizeof(u4));
     u4 *value_high = (u4 *) calloc(1, sizeof(u4));
     u8 *value = (u8 *) &lvalue;
@@ -141,8 +164,25 @@ void push_long(frame_t *frame, long lvalue) {
     cpush(frame->operands_stack, value_low);
 }
 
+long high_low_to_long(u4 *value_low, u4* value_high){
+    u8 value = ((u8) *value_high << 32) | *value_low;
+    long lvalue;
+    memcpy(&lvalue, &value, 8);
+    return lvalue;
+}
+
+float pop_float(frame_t *frame){
+    void *value = cpop(frame->operands_stack);
+    float fvalue;
+    memcpy(&fvalue, value, 4);
+    free(value);
+    return fvalue;
+}
+
 void push_float(frame_t *frame, float fvalue){
-    float *value = (float *) calloc(1, sizeof(float));
-    *value = fvalue;
+    u4 *value = (u4 *) calloc(1, sizeof(u4));
+    u4 f;
+    memcpy(&f, &fvalue, 4);
+    *value = f;
     cpush(frame->operands_stack, value);
 }

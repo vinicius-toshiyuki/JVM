@@ -348,31 +348,12 @@ void D2L_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cpush(frame->operands_stack, lvalue);
 }
 void DADD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	u4 *dvalue_low1 = NULL, *dvalue_high1 = NULL, *dvalue_low2 = NULL, *dvalue_high2 = NULL;
 	double dvalue1, dvalue2, dresult;
-	u8 value1 = 0x000000000000000, value2 = 0x000000000000000;
+	dvalue1 = pop_double(frame);
+	dvalue2 = pop_double(frame);
 
-	dvalue_low1 = cpop(frame->operands_stack);
-	dvalue_high1 = cpop(frame->operands_stack);
-	dvalue_low2 = cpop(frame->operands_stack);
-	dvalue_high2 = cpop(frame->operands_stack);
-
-	value1 = ((u8) *dvalue_high1) << 32 | *dvalue_low1;
-	memcpy(&dvalue1, &value1, 8);
-
-	value2 = ((u8) *dvalue_high2) << 32 | *dvalue_low2;
-	memcpy(&dvalue2, &value2, 8);
-
-	dresult = dvalue1 + dvalue2;
-	memcpy(&value1, &dresult, 8);
-
-	u4 *dresult_low = (u4 *) calloc(1, sizeof(u4));
-	u4 *dresult_high = (u4 *) calloc(1, sizeof(u4));
-	memcpy(dresult_low, &value1, 4);
-	value1 >>= 32;
-	memcpy(dresult_high, &value1, 4);
-	cpush(frame->operands_stack, dresult_high);
-	cpush(frame->operands_stack, dresult_low);
+	dresult = dvalue2 + dvalue1;
+	push_double(frame, dresult);
 }
 void DALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	integer index = pop_integer(frame);
@@ -429,138 +410,66 @@ void DCONST_1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cpush(frame->operands_stack, dvalue_low);
 }
 void DDIV_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	u4 *dvalue_low1 = NULL, *dvalue_high1 = NULL, *dvalue_low2 = NULL, *dvalue_high2 = NULL;
 	double dvalue1, dvalue2, dresult;
-	u8 value1 = 0x000000000000000, value2 = 0x000000000000000;
-
-	dvalue_low1 = cpop(frame->operands_stack);
-	dvalue_high1 = cpop(frame->operands_stack);
-	dvalue_low2 = cpop(frame->operands_stack);
-	dvalue_high2 = cpop(frame->operands_stack);
-
-	value1 = ((u8) *dvalue_high1) << 32 | *dvalue_low1;
-	memcpy(&dvalue1, &value1, 8);
-
-	value2 = ((u8) *dvalue_high2) << 32 | *dvalue_low2;
-	memcpy(&dvalue2, &value2, 8);
+	dvalue1 = pop_double(frame);
+	dvalue2 = pop_double(frame);
 
 	dresult = dvalue2 / dvalue1;
-	memcpy(&value1, &dresult, 8);
-
-	u4 *dresult_low = (u4 *) calloc(1, sizeof(u4));
-	u4 *dresult_high = (u4 *) calloc(1, sizeof(u4));
-	memcpy(dresult_low, &value1, 4);
-	value1 >>= 32;
-	memcpy(dresult_high, &value1, 4);
-	cpush(frame->operands_stack, dresult_high);
-	cpush(frame->operands_stack, dresult_low);
+	push_double(frame, dresult);
 }
 void DLOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u1 lv_index = (*pc + 1)[0]; ++*pc;
 	u4 *dvalue_high = (u4 *) cat(frame->local_variables, lv_index++);
 	u4 *dvalue_low = (u4 *) cat(frame->local_variables, lv_index);
-	cpush(frame->operands_stack, dvalue_high);
-	cpush(frame->operands_stack, dvalue_low);
+	double d = high_low_to_double(dvalue_low, dvalue_high);
+	push_double(frame, d);
 }
 void DLOAD_0_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *dvalue_high = (u4 *) cat(frame->local_variables, 0);
 	u4 *dvalue_low = (u4 *) cat(frame->local_variables, 1);
-	cpush(frame->operands_stack, dvalue_high);
-	cpush(frame->operands_stack, dvalue_low);
+	double d = high_low_to_double(dvalue_low, dvalue_high);
+	push_double(frame, d);
 }
 void DLOAD_1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *dvalue_high = (u4 *) cat(frame->local_variables, 1);
 	u4 *dvalue_low = (u4 *) cat(frame->local_variables, 2);
-	cpush(frame->operands_stack, dvalue_high);
-	cpush(frame->operands_stack, dvalue_low);
+	double d = high_low_to_double(dvalue_low, dvalue_high);
+	push_double(frame, d);
 }
 void DLOAD_2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *dvalue_high = (u4 *) cat(frame->local_variables, 2);
 	u4 *dvalue_low = (u4 *) cat(frame->local_variables, 3);
-	cpush(frame->operands_stack, dvalue_high);
-	cpush(frame->operands_stack, dvalue_low);
+	double d = high_low_to_double(dvalue_low, dvalue_high);
+	push_double(frame, d);
 }
 void DLOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *dvalue_high = (u4 *) cat(frame->local_variables, 3);
 	u4 *dvalue_low = (u4 *) cat(frame->local_variables, 4);
-	cpush(frame->operands_stack, dvalue_high);
-	cpush(frame->operands_stack, dvalue_low);
+	double d = high_low_to_double(dvalue_low, dvalue_high);
+	push_double(frame, d);
 }
 void DMUL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	u4 *dvalue_low1 = NULL, *dvalue_high1 = NULL, *dvalue_low2 = NULL, *dvalue_high2 = NULL;
 	double dvalue1, dvalue2, dresult;
-	u8 value1 = 0x000000000000000, value2 = 0x000000000000000;
+	dvalue1 = pop_double(frame);
+	dvalue2 = pop_double(frame);
 
-	dvalue_low1 = cpop(frame->operands_stack);
-	dvalue_high1 = cpop(frame->operands_stack);
-	dvalue_low2 = cpop(frame->operands_stack);
-	dvalue_high2 = cpop(frame->operands_stack);
-
-	value1 = ((u8) *dvalue_high1) << 32 | *dvalue_low1;
-	memcpy(&dvalue1, &value1, 8);
-
-	value2 = ((u8) *dvalue_high2) << 32 | *dvalue_low2;
-	memcpy(&dvalue2, &value2, 8);
-
-	dresult = dvalue1 * dvalue2;
-	memcpy(&value1, &dresult, 8);
-
-	u4 *dresult_low = (u4 *) calloc(1, sizeof(u4));
-	u4 *dresult_high = (u4 *) calloc(1, sizeof(u4));
-	memcpy(dresult_low, &value1, 4);
-	value1 >>= 32;
-	memcpy(dresult_high, &value1, 4);
-	cpush(frame->operands_stack, dresult_high);
-	cpush(frame->operands_stack, dresult_low);
+	dresult = dvalue2 * dvalue1;
+	push_double(frame, dresult);
 }
 void DNEG_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	u4 *dvalue_low = NULL, *dvalue_high = NULL;
 	double dvalue1, dresult;
-	u8 value1 = 0x000000000000000;
-
-	dvalue_low = cpop(frame->operands_stack);
-	dvalue_high = cpop(frame->operands_stack);
-
-	value1 = ((u8) *dvalue_high) << 32 | *dvalue_low;
-	memcpy(&dvalue1, &value1, 8);
+	dvalue1 = pop_double(frame);
 
 	dresult = -dvalue1;
-	memcpy(&value1, &dresult, 8);
-
-	u4 *dresult_low = (u4 *) calloc(1, sizeof(u4));
-	u4 *dresult_high = (u4 *) calloc(1, sizeof(u4));
-	memcpy(dresult_low, &value1, 4);
-	value1 >>= 32;
-	memcpy(dresult_high, &value1, 4);
-	cpush(frame->operands_stack, dresult_high);
-	cpush(frame->operands_stack, dresult_low);
+	push_double(frame, dresult);
 }
 void DREM_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	u4 *dvalue_low1 = NULL, *dvalue_high1 = NULL, *dvalue_low2 = NULL, *dvalue_high2 = NULL;
 	double dvalue1, dvalue2, dresult;
-	u8 value1 = 0x000000000000000, value2 = 0x000000000000000;
-
-	dvalue_low1 = cpop(frame->operands_stack);
-	dvalue_high1 = cpop(frame->operands_stack);
-	dvalue_low2 = cpop(frame->operands_stack);
-	dvalue_high2 = cpop(frame->operands_stack);
-
-	value1 = ((u8) *dvalue_high1) << 32 | *dvalue_low1;
-	memcpy(&dvalue1, &value1, 8);
-
-	value2 = ((u8) *dvalue_high2) << 32 | *dvalue_low2;
-	memcpy(&dvalue2, &value2, 8);
+	dvalue1 = pop_double(frame);
+	dvalue2 = pop_double(frame);
 
 	dresult = fmod(dvalue2, dvalue1);
-	memcpy(&value1, &dresult, 8);
-
-	u4 *dresult_low = (u4 *) calloc(1, sizeof(u4));
-	u4 *dresult_high = (u4 *) calloc(1, sizeof(u4));
-	memcpy(dresult_low, &value1, 4);
-	value1 >>= 32;
-	memcpy(dresult_high, &value1, 4);
-	cpush(frame->operands_stack, dresult_high);
-	cpush(frame->operands_stack, dresult_low);
+	push_double(frame, dresult);
 }
 void DRETURN_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	void *low = cpop(frame->operands_stack);
@@ -600,31 +509,12 @@ void DSTORE_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cinsert(frame->local_variables, 4, dvalue_low);
 }
 void DSUB_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	u4 *dvalue_low1 = NULL, *dvalue_high1 = NULL, *dvalue_low2 = NULL, *dvalue_high2 = NULL;
 	double dvalue1, dvalue2, dresult;
-	u8 value1 = 0x000000000000000, value2 = 0x000000000000000;
-
-	dvalue_low1 = cpop(frame->operands_stack);
-	dvalue_high1 = cpop(frame->operands_stack);
-	dvalue_low2 = cpop(frame->operands_stack);
-	dvalue_high2 = cpop(frame->operands_stack);
-
-	value1 = ((u8) *dvalue_high1) << 32 | *dvalue_low1;
-	memcpy(&dvalue1, &value1, 8);
-
-	value2 = ((u8) *dvalue_high2) << 32 | *dvalue_low2;
-	memcpy(&dvalue2, &value2, 8);
+	dvalue1 = pop_double(frame);
+	dvalue2 = pop_double(frame);
 
 	dresult = dvalue2 - dvalue1;
-	memcpy(&value1, &dresult, 8);
-
-	u4 *dresult_low = (u4 *) calloc(1, sizeof(u4));
-	u4 *dresult_high = (u4 *) calloc(1, sizeof(u4));
-	memcpy(dresult_low, &value1, 4);
-	value1 >>= 32;
-	memcpy(dresult_high, &value1, 4);
-	cpush(frame->operands_stack, dresult_high);
-	cpush(frame->operands_stack, dresult_low);
+	push_double(frame, dresult);
 }
 void DUP_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *top = (u4 *) cpop(frame->operands_stack);
@@ -640,20 +530,13 @@ void F2D_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void F2I_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void F2L_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void FADD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	float *ivalue1 = NULL, *ivalue2 = NULL;
-	float *iresult;
-	u4 *value1 = NULL, *value2 = NULL;
+	float fvalue1 = 0, fvalue2 = 0;
+	float fresult;
+	fvalue1 = pop_float(frame);
+	fvalue2 = pop_float(frame);
 
-	value1 = (u4 *) cpop(frame->operands_stack);
-	ivalue1 = (float *) value1;
-
-	value2 = (u4 *) cpop(frame->operands_stack);
-	ivalue2 = (float *) value2;
-
-	iresult = calloc(1, sizeof(float));
-	*iresult = *ivalue2 + *ivalue1;
-
-	cpush(frame->operands_stack, iresult);
+	fresult = fvalue2 + fvalue1;
+	push_float(frame, fresult);
 }
 void FALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void FASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
@@ -675,87 +558,70 @@ void FCONST_2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cpush(frame->operands_stack, ivalue);
 }
 void FDIV_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	float *ivalue1 = NULL, *ivalue2 = NULL;
-	float *iresult;
-	u4 *value1 = NULL, *value2 = NULL;
+	float fvalue1 = 0, fvalue2 = 0;
+	float fresult;
+	fvalue1 = pop_float(frame);
+	fvalue2 = pop_float(frame);
 
-	value1 = (u4 *) cpop(frame->operands_stack);
-	ivalue1 = (float *) value1;
-
-	value2 = (u4 *) cpop(frame->operands_stack);
-	ivalue2 = (float *) value2;
-
-	iresult = calloc(1, sizeof(float));
-	
-	*iresult = *ivalue2 / *ivalue1;
-
-	cpush(frame->operands_stack, iresult);
+	fresult = fvalue2 / fvalue1;
+	push_float(frame, fresult);
 }
 void FLOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u1 lv_index = (*pc + 1)[0]; ++*pc;
-	u8 *fvalue = (u8 *) cat(frame->local_variables, lv_index);
-	cpush(frame->operands_stack, fvalue);
+	u4 *fvalue = (u4 *) cat(frame->local_variables, lv_index);
+	float f;
+	memcpy(&f, fvalue, 4);
+	push_float(frame, f);
 }
 void FLOAD_0_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	u8 *fvalue = (u8 *) cat(frame->local_variables, 0);
-	cpush(frame->operands_stack, fvalue);
+	u4 *fvalue = (u4 *) cat(frame->local_variables, 0);
+	float f;
+	memcpy(&f, fvalue, 4);
+	push_float(frame, f);
 }
 void FLOAD_1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	u8 *fvalue = (u8 *) cat(frame->local_variables, 1);
-	cpush(frame->operands_stack, fvalue);
+	u4 *fvalue = (u4 *) cat(frame->local_variables, 1);
+	float f;
+	memcpy(&f, fvalue, 4);
+	push_float(frame, f);
 }
 void FLOAD_2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	u8 *fvalue = (u8 *) cat(frame->local_variables, 2);
-	cpush(frame->operands_stack, fvalue);
+	u4 *fvalue = (u4 *) cat(frame->local_variables, 2);
+	float f;
+	memcpy(&f, fvalue, 4);
+	push_float(frame, f);
 }
 void FLOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	u8 *fvalue = (u8 *) cat(frame->local_variables, 3);
-	cpush(frame->operands_stack, fvalue);
+	u4 *fvalue = (u4 *) cat(frame->local_variables, 3);
+	float f;
+	memcpy(&f, fvalue, 4);
+	push_float(frame, f);
 }
 void FMUL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	float *ivalue1 = NULL, *ivalue2 = NULL;
-	float *iresult;
-	u4 *value1 = NULL, *value2 = NULL;
+	float fvalue1 = 0, fvalue2 = 0;
+	float fresult;
+	fvalue1 = pop_float(frame);
+	fvalue2 = pop_float(frame);
 
-	value1 = (u4 *) cpop(frame->operands_stack);
-	ivalue1 = (float *) value1;
-
-	value2 = (u4 *) cpop(frame->operands_stack);
-	ivalue2 = (float *) value2;
-
-	iresult = calloc(1, sizeof(float));
-	*iresult = *ivalue2 * *ivalue1;
-
-	cpush(frame->operands_stack, iresult);
+	fresult = fvalue2 * fvalue1;
+	push_float(frame, fresult);
 }
 void FNEG_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	float *ivalue1 = NULL;
-	float *iresult;
-	u4 *value1 = NULL;
+	float fvalue1 = 0;
+	float fresult;
+	fvalue1 = pop_float(frame);
 
-	value1 = (u4 *) cpop(frame->operands_stack);
-	ivalue1 = (float *) value1;
-
-	iresult = calloc(1, sizeof(float));
-	*iresult = -*ivalue1;
-
-	cpush(frame->operands_stack, iresult);
+	fresult = -fvalue1;
+	push_float(frame, fresult);
 }
 void FREM_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	float *ivalue1 = NULL, *ivalue2 = NULL;
-	float *iresult;
-	u4 *value1 = NULL, *value2 = NULL;
+	float fvalue1 = 0, fvalue2 = 0;
+	float fresult;
+	fvalue1 = pop_float(frame);
+	fvalue2 = pop_float(frame);
 
-	value1 = (u4 *) cpop(frame->operands_stack);
-	ivalue1 = (float *) value1;
-
-	value2 = (u4 *) cpop(frame->operands_stack);
-	ivalue2 = (float *) value2;
-
-	iresult = calloc(1, sizeof(float));
-	*iresult = (float) fmod(*ivalue2, *ivalue1);
-
-	cpush(frame->operands_stack, iresult);
+	fresult = (float) fmod(fvalue2, fvalue1);
+	push_float(frame, fresult);
 }
 void FRETURN_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cpush(((frame_t *) jvm->frame_stack->top->next->value)->operands_stack, cpop(frame->operands_stack));
@@ -783,24 +649,17 @@ void FSTORE_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cinsert(frame->local_variables, 3, fvalue);
 }
 void FSUB_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	float *ivalue1 = NULL, *ivalue2 = NULL;
-	float *iresult;
-	u4 *value1 = NULL, *value2 = NULL;
+	float fvalue1 = 0, fvalue2 = 0;
+	float fresult;
+	fvalue1 = pop_float(frame);
+	fvalue2 = pop_float(frame);
 
-	value1 = (u4 *) cpop(frame->operands_stack);
-	ivalue1 = (float *) value1;
-
-	value2 = (u4 *) cpop(frame->operands_stack);
-	ivalue2 = (float *) value2;
-
-	iresult = calloc(1, sizeof(float));
-	*iresult = *ivalue2 - *ivalue1;
-
-	cpush(frame->operands_stack, iresult);
+	fresult = fvalue2 - fvalue1;
+	push_float(frame, fresult);
 }
 void GETFIELD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void GETSTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	printf("Get static\n");
+	// printf("Get static\n");
 	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
 	info_t *value = get_constant_pool_entry(frame, cp_index);
 	info_t *class_info = get_constant_pool_entry(frame, get_constant_pool_entry(frame, value->Fieldref.class_index)->Class.name_index);
@@ -882,20 +741,16 @@ void I2L_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 }
 void I2S_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void IADD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	int32_t *ivalue1 = NULL, *ivalue2 = NULL;
-	int32_t *iresult;
-	u4 *value1 = NULL, *value2 = NULL;
+	integer ivalue1 = 0, ivalue2 = 0;
+	integer iresult;
 
-	value1 = (u4 *) cpop(frame->operands_stack);
-	ivalue1 = (int32_t *) value1;
+	ivalue1 = pop_integer(frame);
 
-	value2 = (u4 *) cpop(frame->operands_stack);
-	ivalue2 = (int32_t *) value2;
+	ivalue2 = pop_integer(frame);
 
-	iresult = calloc(1, sizeof(int32_t));
-	*iresult = *ivalue2 + *ivalue1;
+	iresult = ivalue2 + ivalue1;
 
-	cpush(frame->operands_stack, iresult);
+	push_integer(frame, iresult);
 }
 void IALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void IAND_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
@@ -936,20 +791,16 @@ void ICONST_5_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cpush(frame->operands_stack, ivalue);
 }
 void IDIV_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	int32_t *ivalue1 = NULL, *ivalue2 = NULL;
-	int32_t *iresult;
-	u4 *value1 = NULL, *value2 = NULL;
+	integer ivalue1 = 0, ivalue2 = 0;
+	integer iresult;
 
-	value1 = (u4 *) cpop(frame->operands_stack);
-	ivalue1 = (int32_t *) value1;
+	ivalue1 = pop_integer(frame);
 
-	value2 = (u4 *) cpop(frame->operands_stack);
-	ivalue2 = (int32_t *) value2;
+	ivalue2 = pop_integer(frame);
 
-	iresult = calloc(1, sizeof(int32_t));
-	*iresult = *ivalue2 / *ivalue1;
+	iresult = ivalue2 / ivalue1;
 
-	cpush(frame->operands_stack, iresult);
+	push_integer(frame, iresult);
 }
 void IF_ACMPEQ_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1];
@@ -1139,52 +990,55 @@ void IINC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 void ILOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u1 lv_index = (*pc + 1)[0]; ++*pc;
 	u4 *ivalue = (u4 *) cat(frame->local_variables, lv_index);
-	cpush(frame->operands_stack, ivalue);
+	integer i;
+	memcpy(&i, ivalue, 4);
+	push_integer(frame, i);
 }
 void ILOAD_0_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *ivalue = (u4 *) cat(frame->local_variables, 0);
-	cpush(frame->operands_stack, ivalue);
+	integer i;
+	memcpy(&i, ivalue, 4);
+	push_integer(frame, i);
 }
 void ILOAD_1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *ivalue = (u4 *) cat(frame->local_variables, 1);
-	cpush(frame->operands_stack, ivalue);
+	integer i;
+	memcpy(&i, ivalue, 4);
+	push_integer(frame, i);
 }
 void ILOAD_2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *ivalue = (u4 *) cat(frame->local_variables, 2);
-	cpush(frame->operands_stack, ivalue);
+	integer i;
+	memcpy(&i, ivalue, 4);
+	push_integer(frame, i);
 }
 void ILOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *ivalue = (u4 *) cat(frame->local_variables, 3);
-	cpush(frame->operands_stack, ivalue);
+	integer i;
+	memcpy(&i, ivalue, 4);
+	push_integer(frame, i);
 }
 void IMUL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	int32_t *ivalue1 = NULL, *ivalue2 = NULL;
-	int32_t *iresult;
-	u4 *value1 = NULL, *value2 = NULL;
+	integer ivalue1 = 0, ivalue2 = 0;
+	integer iresult;
 
-	value1 = (u4 *) cpop(frame->operands_stack);
-	ivalue1 = (int32_t *) value1;
+	ivalue1 = pop_integer(frame);
 
-	value2 = (u4 *) cpop(frame->operands_stack);
-	ivalue2 = (int32_t *) value2;
+	ivalue2 = pop_integer(frame);
 
-	iresult = calloc(1, sizeof(int32_t));
-	*iresult = *ivalue2 * *ivalue1;
+	iresult = ivalue2 * ivalue1;
 
-	cpush(frame->operands_stack, iresult);
+	push_integer(frame, iresult);
 }
 void INEG_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	int32_t *ivalue1 = NULL;
-	int32_t *iresult;
-	u4 *value1 = NULL;
+	integer ivalue1 = 0;
+	integer iresult;
 
-	value1 = (u4 *) cpop(frame->operands_stack);
-	ivalue1 = (int32_t *) value1;
+	ivalue1 = pop_integer(frame);
 
-	iresult = calloc(1, sizeof(int32_t));
-	*iresult = -*ivalue1;
+	iresult = -ivalue1;
 
-	cpush(frame->operands_stack, iresult);
+	push_integer(frame, iresult);
 }
 void INSTANCEOF_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	/*u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
@@ -1276,7 +1130,7 @@ void INVOKEVIRTUAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 				u8 value = ((u8) *dvalue_high) << 32 | *dvalue_low;
 				double dvalue;
 				memcpy(&dvalue, &value, 8);
-				printf("%lf\n", dvalue);
+				printf("%0.16lf\n", dvalue);
 				break;
 			case 'J':;
 				u4 *lvalue_low = cpop(frame->operands_stack);
@@ -1346,20 +1200,16 @@ void INVOKEVIRTUAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 
 void IOR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void IREM_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	int32_t *ivalue1 = NULL, *ivalue2 = NULL;
-	int32_t *iresult;
-	u4 *value1 = NULL, *value2 = NULL;
+	integer ivalue1 = 0, ivalue2 = 0;
+	integer iresult;
 
-	value1 = (u4 *) cpop(frame->operands_stack);
-	ivalue1 = (int32_t *) value1;
+	ivalue1 = pop_integer(frame);
 
-	value2 = (u4 *) cpop(frame->operands_stack);
-	ivalue2 = (int32_t *) value2;
+	ivalue2 = pop_integer(frame);
 
-	iresult = calloc(1, sizeof(int32_t));
-	*iresult = *ivalue2 % *ivalue1;
+	iresult = ivalue2 % ivalue1;
 
-	cpush(frame->operands_stack, iresult);
+	push_integer(frame, iresult);
 }
 void IRETURN_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cpush(((frame_t *) jvm->frame_stack->top->next->value)->operands_stack, cpop(frame->operands_stack));
@@ -1389,20 +1239,13 @@ void ISTORE_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cinsert(frame->local_variables, 3, ivalue);
 }
 void ISUB_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	int32_t *ivalue1 = NULL, *ivalue2 = NULL;
-	int32_t *iresult;
-	u4 *value1 = NULL, *value2 = NULL;
+	integer ivalue1 = 0, ivalue2 = 0;
+	integer iresult;
+	ivalue1 = pop_integer(frame);
+	ivalue2 = pop_integer(frame);
 
-	value1 = (u4 *) cpop(frame->operands_stack);
-	ivalue1 = (int32_t *) value1;
-
-	value2 = (u4 *) cpop(frame->operands_stack);
-	ivalue2 = (int32_t *) value2;
-
-	iresult = calloc(1, sizeof(int32_t));
-	*iresult = *ivalue2 - *ivalue1;
-
-	cpush(frame->operands_stack, iresult);
+	iresult = ivalue2 - ivalue1;
+	push_integer(frame, iresult);
 }
 void IUSHR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void IXOR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
@@ -1412,31 +1255,12 @@ void L2D_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void L2F_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void L2I_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void LADD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	u4 *lvalue_low1 = NULL, *lvalue_high1 = NULL, *lvalue_low2 = NULL, *lvalue_high2 = NULL;
-	int64_t lvalue1, lvalue2, lresult;
-	u8 value1 = 0x000000000000000, value2 = 0x000000000000000;
-
-	lvalue_low1 = cpop(frame->operands_stack);
-	lvalue_high1 = cpop(frame->operands_stack);
-	lvalue_low2 = cpop(frame->operands_stack);
-	lvalue_high2 = cpop(frame->operands_stack);
-
-	value1 = ((u8) *lvalue_high1) << 32 | *lvalue_low1;
-	memcpy(&lvalue1, &value1, 8);
-
-	value2 = ((u8) *lvalue_high2) << 32 | *lvalue_low2;
-	memcpy(&lvalue2, &value2, 8);
+	long lvalue1, lvalue2, lresult;
+	lvalue1 = pop_long(frame);
+	lvalue2 = pop_long(frame);
 
 	lresult = lvalue2 + lvalue1;
-	memcpy(&value1, &lresult, 8);
-
-	u4 *lresult_low = (u4 *) calloc(1, sizeof(u4));
-	u4 *lresult_high = (u4 *) calloc(1, sizeof(u4));
-	memcpy(lresult_low, &value1, 4);
-	value1 >>= 32;
-	memcpy(lresult_high, &value1, 4);
-	cpush(frame->operands_stack, lresult_high);
-	cpush(frame->operands_stack, lresult_low);
+	push_long(frame, lresult);
 }
 void LALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void LAND_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
@@ -1447,16 +1271,16 @@ void LCONST_0_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *lvalue_low = (u4 *) calloc(1, sizeof(u4));
 	*lvalue_high = 0x00000000;
 	*lvalue_low = 0x00000000;
-	cpush(frame->operands_stack, lvalue_high);
-	cpush(frame->operands_stack, lvalue_low);
+	long l = high_low_to_long(lvalue_low, lvalue_high);
+	push_long(frame, l);
 }
 void LCONST_1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *lvalue_high = (u4 *) calloc(1, sizeof(u4));
 	u4 *lvalue_low = (u4 *) calloc(1, sizeof(u4));
 	*lvalue_high = 0x00000000;
 	*lvalue_low = 0x00000001;
-	cpush(frame->operands_stack, lvalue_high);
-	cpush(frame->operands_stack, lvalue_low);
+	long l = high_low_to_long(lvalue_low, lvalue_high);
+	push_long(frame, l);
 }
 void LDC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u2 cp_index = (*pc + 1)[0]; ++*pc;
@@ -1513,140 +1337,68 @@ void LDC2_W_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cpush(frame->operands_stack, &cp_entry->Double.low_bytes);
 }
 void LDIV_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	u4 *lvalue_low1 = NULL, *lvalue_high1 = NULL, *lvalue_low2 = NULL, *lvalue_high2 = NULL;
-	int64_t lvalue1, lvalue2, lresult;
-	u8 value1 = 0x000000000000000, value2 = 0x000000000000000;
-
-	lvalue_low1 = cpop(frame->operands_stack);
-	lvalue_high1 = cpop(frame->operands_stack);
-	lvalue_low2 = cpop(frame->operands_stack);
-	lvalue_high2 = cpop(frame->operands_stack);
-
-	value1 = ((u8) *lvalue_high1) << 32 | *lvalue_low1;
-	memcpy(&lvalue1, &value1, 8);
-
-	value2 = ((u8) *lvalue_high2) << 32 | *lvalue_low2;
-	memcpy(&lvalue2, &value2, 8);
+	long lvalue1, lvalue2, lresult;
+	lvalue1 = pop_long(frame);
+	lvalue2 = pop_long(frame);
 
 	lresult = lvalue2 / lvalue1;
-	memcpy(&value1, &lresult, 8);
-
-	u4 *lresult_low = (u4 *) calloc(1, sizeof(u4));
-	u4 *lresult_high = (u4 *) calloc(1, sizeof(u4));
-	memcpy(lresult_low, &value1, 4);
-	value1 >>= 32;
-	memcpy(lresult_high, &value1, 4);
-	cpush(frame->operands_stack, lresult_high);
-	cpush(frame->operands_stack, lresult_low);
+	push_long(frame, lresult);
 }
 void LLOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u1 lv_index = (*pc + 1)[0]; ++*pc;
 	u4 *lvalue_high = (u4 *) cat(frame->local_variables, lv_index++);
 	u4 *lvalue_low = (u4 *) cat(frame->local_variables, lv_index);
-	cpush(frame->operands_stack, lvalue_high);
-	cpush(frame->operands_stack, lvalue_low);
+	long lvalue = high_low_to_long(lvalue_low, lvalue_high);
+	push_long(frame, lvalue);
 }
 void LLOAD_0_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *lvalue_high = (u4 *) cat(frame->local_variables, 0);
 	u4 *lvalue_low = (u4 *) cat(frame->local_variables, 1);
-	cpush(frame->operands_stack, lvalue_high);
-	cpush(frame->operands_stack, lvalue_low);
+	long lvalue = high_low_to_long(lvalue_low, lvalue_high);
+	push_long(frame, lvalue);
 }
 void LLOAD_1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *lvalue_high = (u4 *) cat(frame->local_variables, 1);
 	u4 *lvalue_low = (u4 *) cat(frame->local_variables, 2);
-	cpush(frame->operands_stack, lvalue_high);
-	cpush(frame->operands_stack, lvalue_low);
+	long lvalue = high_low_to_long(lvalue_low, lvalue_high);
+	push_long(frame, lvalue);
 }
 void LLOAD_2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *lvalue_high = (u4 *) cat(frame->local_variables, 2);
 	u4 *lvalue_low = (u4 *) cat(frame->local_variables, 3);
-	cpush(frame->operands_stack, lvalue_high);
-	cpush(frame->operands_stack, lvalue_low);
+	long lvalue = high_low_to_long(lvalue_low, lvalue_high);
+	push_long(frame, lvalue);
 }
 void LLOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *lvalue_high = (u4 *) cat(frame->local_variables, 3);
 	u4 *lvalue_low = (u4 *) cat(frame->local_variables, 4);
-	cpush(frame->operands_stack, lvalue_high);
-	cpush(frame->operands_stack, lvalue_low);
+	long lvalue = high_low_to_long(lvalue_low, lvalue_high);
+	push_long(frame, lvalue);
 }
 void LMUL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	u4 *lvalue_low1 = NULL, *lvalue_high1 = NULL, *lvalue_low2 = NULL, *lvalue_high2 = NULL;
-	int64_t lvalue1, lvalue2, lresult;
-	u8 value1 = 0x000000000000000, value2 = 0x000000000000000;
-
-	lvalue_low1 = cpop(frame->operands_stack);
-	lvalue_high1 = cpop(frame->operands_stack);
-	lvalue_low2 = cpop(frame->operands_stack);
-	lvalue_high2 = cpop(frame->operands_stack);
-
-	value1 = ((u8) *lvalue_high1) << 32 | *lvalue_low1;
-	memcpy(&lvalue1, &value1, 8);
-
-	value2 = ((u8) *lvalue_high2) << 32 | *lvalue_low2;
-	memcpy(&lvalue2, &value2, 8);
+	long lvalue1, lvalue2, lresult;
+	lvalue1 = pop_long(frame);
+	lvalue2 = pop_long(frame);
 
 	lresult = lvalue2 * lvalue1;
-	memcpy(&value1, &lresult, 8);
-
-	u4 *lresult_low = (u4 *) calloc(1, sizeof(u4));
-	u4 *lresult_high = (u4 *) calloc(1, sizeof(u4));
-	memcpy(lresult_low, &value1, 4);
-	value1 >>= 32;
-	memcpy(lresult_high, &value1, 4);
-	cpush(frame->operands_stack, lresult_high);
-	cpush(frame->operands_stack, lresult_low);
+	push_long(frame, lresult);
 }
 void LNEG_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	u4 *lvalue_low1 = NULL, *lvalue_high1 = NULL;
-	int64_t lvalue1, lresult;
-	u8 value1 = 0x000000000000000;
-
-	lvalue_low1 = cpop(frame->operands_stack);
-	lvalue_high1 = cpop(frame->operands_stack);
-
-	value1 = ((u8) *lvalue_high1) << 32 | *lvalue_low1;
-	memcpy(&lvalue1, &value1, 8);
+	long lvalue1, lresult;
+	lvalue1 = pop_long(frame);
 
 	lresult = -lvalue1;
-	memcpy(&value1, &lresult, 8);
-
-	u4 *lresult_low = (u4 *) calloc(1, sizeof(u4));
-	u4 *lresult_high = (u4 *) calloc(1, sizeof(u4));
-	memcpy(lresult_low, &value1, 4);
-	value1 >>= 32;
-	memcpy(lresult_high, &value1, 4);
-	cpush(frame->operands_stack, lresult_high);
-	cpush(frame->operands_stack, lresult_low);
+	push_long(frame, lresult);
 }
 void LOOKUPSWITCH_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void LOR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void LREM_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	u4 *lvalue_low1 = NULL, *lvalue_high1 = NULL, *lvalue_low2 = NULL, *lvalue_high2 = NULL;
-	int64_t lvalue1, lvalue2, lresult;
-	u8 value1 = 0x000000000000000, value2 = 0x000000000000000;
-
-	lvalue_low1 = cpop(frame->operands_stack);
-	lvalue_high1 = cpop(frame->operands_stack);
-	lvalue_low2 = cpop(frame->operands_stack);
-	lvalue_high2 = cpop(frame->operands_stack);
-
-	value1 = ((u8) *lvalue_high1) << 32 | *lvalue_low1;
-	memcpy(&lvalue1, &value1, 8);
-
-	value2 = ((u8) *lvalue_high2) << 32 | *lvalue_low2;
-	memcpy(&lvalue2, &value2, 8);
+	long lvalue1, lvalue2, lresult;
+	lvalue1 = pop_long(frame);
+	lvalue2 = pop_long(frame);
 
 	lresult = lvalue2 % lvalue1;
-	memcpy(&value1, &lresult, 8);
-
-	u4 *lresult_low = (u4 *) calloc(1, sizeof(u4));
-	u4 *lresult_high = (u4 *) calloc(1, sizeof(u4));
-	memcpy(lresult_low, &value1, 4);
-	value1 >>= 32;
-	memcpy(lresult_high, &value1, 4);
-	cpush(frame->operands_stack, lresult_high);
-	cpush(frame->operands_stack, lresult_low);
+	push_long(frame, lresult);
 }
 void LRETURN_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	void *low = cpop(frame->operands_stack);
@@ -1687,31 +1439,12 @@ void LSTORE_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cinsert(frame->local_variables, 4, lvalue_low);
 }
 void LSUB_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	u4 *lvalue_low1 = NULL, *lvalue_high1 = NULL, *lvalue_low2 = NULL, *lvalue_high2 = NULL;
-	int64_t lvalue1, lvalue2, lresult;
-	u8 value1 = 0x000000000000000, value2 = 0x000000000000000;
-
-	lvalue_low1 = cpop(frame->operands_stack);
-	lvalue_high1 = cpop(frame->operands_stack);
-	lvalue_low2 = cpop(frame->operands_stack);
-	lvalue_high2 = cpop(frame->operands_stack);
-
-	value1 = ((u8) *lvalue_high1) << 32 | *lvalue_low1;
-	memcpy(&lvalue1, &value1, 8);
-
-	value2 = ((u8) *lvalue_high2) << 32 | *lvalue_low2;
-	memcpy(&lvalue2, &value2, 8);
+	long lvalue1, lvalue2, lresult;
+	lvalue1 = pop_long(frame);
+	lvalue2 = pop_long(frame);
 
 	lresult = lvalue2 - lvalue1;
-	memcpy(&value1, &lresult, 8);
-
-	u4 *lresult_low = (u4 *) calloc(1, sizeof(u4));
-	u4 *lresult_high = (u4 *) calloc(1, sizeof(u4));
-	memcpy(lresult_low, &value1, 4);
-	value1 >>= 32;
-	memcpy(lresult_high, &value1, 4);
-	cpush(frame->operands_stack, lresult_high);
-	cpush(frame->operands_stack, lresult_low);
+	push_long(frame, lresult);
 }
 void LUSHR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void LXOR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
