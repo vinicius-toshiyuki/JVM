@@ -1562,7 +1562,7 @@ void MULTIANEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	/* Ao final de tudo ARRAY é pra ter o MULTIARRAY*/
 	array_t *array = new_array();
 	array_t *arrays = new_array();
-	array_t *next_arrays = NULL;
+	// array_t *next_arrays = NULL;
 	array_of(arrays, ARR_RefArray, 1);
 	put(arrays, 0, array);
 	for(i = 0; i < dimensions; i++){
