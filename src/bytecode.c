@@ -236,7 +236,10 @@ void ALOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cpush(frame->operands_stack, cat(frame->local_variables, 3));
 }
 void ANEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void ARETURN_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void ARETURN_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	cpush(((frame_t *) jvm->frame_stack->top->next->value)->operands_stack, cpop(frame->operands_stack));
+	*pc = NULL;
+}
 void ARRAYLENGTH_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void ASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u1 lv_index = (*pc + 1)[0]; ++*pc;
@@ -453,7 +456,12 @@ void DREM_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cpush(frame->operands_stack, dresult_high);
 	cpush(frame->operands_stack, dresult_low);
 }
-void DRETURN_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void DRETURN_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	void *low = cpop(frame->operands_stack);
+	cpush(((frame_t *) jvm->frame_stack->top->next->value)->operands_stack, cpop(frame->operands_stack));
+	cpush(((frame_t *) jvm->frame_stack->top->next->value)->operands_stack, low);
+	*pc = NULL;
+}
 void DSTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u1 lv_index = (*pc + 1)[0]; ++*pc;
 	u4 *dvalue_low = (u4 *) cpop(frame->operands_stack);
@@ -643,7 +651,10 @@ void FREM_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 
 	cpush(frame->operands_stack, iresult);
 }
-void FRETURN_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void FRETURN_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	cpush(((frame_t *) jvm->frame_stack->top->next->value)->operands_stack, cpop(frame->operands_stack));
+	*pc = NULL;
+}
 void FSTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u1 lv_index = (*pc + 1)[0]; ++*pc;
 	float *fvalue = (float *) cpop(frame->operands_stack);
@@ -1129,7 +1140,6 @@ void INVOKESTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	info_t *method_type_utf8 = get_constant_pool_entry(frame, method_name_and_type->NameAndType.descriptor_index);
 	char *method_descriptor = (char *) calloc(method_type_utf8->Utf8.length + 1, sizeof(char));
 	memcpy(method_descriptor, method_type_utf8->Utf8.bytes, method_type_utf8->Utf8.length);
-	printf("-->%s\n", method_descriptor);
 	if(strlen(method_descriptor))
 		store_arguments(method_frame, frame, method_descriptor);
 	free(method_class_name);
@@ -1137,24 +1147,15 @@ void INVOKESTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 
 	run_method(method_frame, &method, jvm);
 	destroy_frame(method_frame);
-	printf("Rodando até o final\n");
 }
 
 void INVOKEVIRTUAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	/* se for print só imprime */
-	/* java/lang/System.class tem o field out */
-	/* System.out.println() */
-	/* out é um campo do tipo PrintStream */
-	/* O que está sendo chamado é o método println (D)V do objeto out */
-	/* ou faz um if aqui dentro ou faz um método nativo */
-
 	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
 	info_t *methodref = get_constant_pool_entry(frame, cp_index);
 	
 	info_t *method_name_utf8 = get_constant_pool_entry(frame, get_constant_pool_entry(frame, methodref->Methodref.name_and_type_index)->NameAndType.name_index);
 	char *method_name = (char *) calloc(method_name_utf8->Utf8.length + 1, sizeof(char));
 	memcpy(method_name, method_name_utf8->Utf8.bytes, method_name_utf8->Utf8.length);
-	/* Se o método for println, entra no if */
 	if(!strcmp(method_name, "println")){
 		/* Descobre o que é que é pra imprimir (int, float, bool etc.) */
 		info_t *method_descriptor_utf8 = get_constant_pool_entry(frame, get_constant_pool_entry(frame, methodref->Methodref.name_and_type_index)->NameAndType.descriptor_index);
@@ -1251,7 +1252,10 @@ void IREM_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 
 	cpush(frame->operands_stack, iresult);
 }
-void IRETURN_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IRETURN_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	cpush(((frame_t *) jvm->frame_stack->top->next->value)->operands_stack, cpop(frame->operands_stack));
+	*pc = NULL;
+}
 void ISHL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void ISHR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void ISTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
@@ -1535,7 +1539,11 @@ void LREM_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cpush(frame->operands_stack, lresult_high);
 	cpush(frame->operands_stack, lresult_low);
 }
-void LRETURN_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void LRETURN_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	void *low = cpop(frame->operands_stack);
+	cpush(((frame_t *) jvm->frame_stack->top->next->value)->operands_stack, cpop(frame->operands_stack));
+	cpush(((frame_t *) jvm->frame_stack->top->next->value)->operands_stack, low);
+}
 void LSHL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void LSHR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void LSTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){

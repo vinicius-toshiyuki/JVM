@@ -23,7 +23,6 @@ void load_class(method_area_t *marea, char *pathtoclass){
 	strcat(fullpath, PATH);
 	strcat(fullpath, pathtoclass);
 	FILE *classfile = fopen(fullpath, "rb");
-	printf("%s\n", fullpath);
 	if(!classfile){
 		fprintf(stderr, "Can not open specified file.\n");
 		exit(ERR_CANTOPENFILE);

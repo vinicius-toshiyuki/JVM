@@ -51,7 +51,6 @@ void store_arguments(frame_t *frame, frame_t *old_frame, char *arguments){
             case 'S':
             case 'Z':;
                 u4 *value = (u4 *) cpop(old_frame->operands_stack);
-                printf("%04x\n", *value);
                 cappend(frame->local_variables, value);
                 break;
             case 'L':

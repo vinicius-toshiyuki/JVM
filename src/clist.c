@@ -15,7 +15,6 @@ clist_t * new_clist(void){
 void destroy_clist(clist_t *list){
 	while(list->size)
 		cremove(list, 0);
-	printf("Aquii\n");
 	free(list);
 	return;
 }
@@ -62,20 +61,22 @@ void * cremove(clist_t *list, int index){
 		fprintf(stderr, "No elements to remove\n");
 		exit(ERR_EMPTY);
 	}
+
 	celement_t *toremove = NULL;
-	if(!index){
+	if(list->size == 1){
 		toremove = list->head;
-		if(list->size > 1)
-			list->head = list->head->next;
-		else
-			list->head = list->tail = NULL;
+		list->head = list->tail = NULL;
 	}else{
-		celement_t *iter = list->head, *toremove = NULL;
-		int i;
-		for(i = 0; i < index - 1; i++)
-			iter = iter->next;
-		printf("%p\n", (void *) iter);
-		toremove = iter->next;
+		celement_t *iter = list->head;
+		if(index){
+			int i;
+			for(i = 0; i < index - 1; i++)
+				iter = iter->next;
+			toremove = iter->next;
+		}else{
+			toremove = iter;
+			list->head = iter->next;
+		}
 		iter->next = toremove->next;
 		if(index == list->size - 1)
 			list->tail = iter;
@@ -83,6 +84,7 @@ void * cremove(clist_t *list, int index){
 
 	void *ret = toremove->value;
 	destroy_celement(toremove);
+	list->size--;
 	return ret;
 }
 
