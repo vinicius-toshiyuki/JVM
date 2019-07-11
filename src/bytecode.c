@@ -720,23 +720,27 @@ void GOTO_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
   memcpy(&offset, &offset_bytes, 2);
   *pc += offset - 1;
 }
-void GOTO_W_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void GOTO_W_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  u4 offset_bytes = (*pc + 1)[0] << 24 | (*pc + 1)[1] << 16 | (*pc + 1)[2] << 8 | (*pc + 1)[3];
+  int32_t offset;
+  memcpy(&offset, &offset_bytes, 4);
+  *pc += offset - 1;
+}
 void I2B_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
   int32_t *ivalue = (int32_t *) cpop(frame->operands_stack);
   int8_t aux = (int8_t) *ivalue;
-  u4 *bvalue = (u4 *) &aux;
-
   u4 *brvalue = (u4 *) calloc(1, sizeof(u4));
-  *brvalue = *bvalue;
+  memcpy(brvalue, &aux, 1);
+
   cpush(frame->operands_stack, brvalue);
 }
 void I2C_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
   int32_t *ivalue = (int32_t *) cpop(frame->operands_stack);
-  char aux = (char) *ivalue;
-  u1 *cvalue = (u1 *) calloc(1, sizeof(u1));
-  *cvalue = (u1) aux;
+  int8_t aux = (int8_t) *ivalue;
+  u4 *crvalue = (u4 *) calloc(1, sizeof(u4));
+  memcpy(crvalue, &aux, 1);
   
-  cpush(frame->operands_stack, cvalue);
+  cpush(frame->operands_stack, crvalue);
 }
 void I2D_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
   int32_t *ivalue = (int32_t *) cpop(frame->operands_stack);
@@ -1079,13 +1083,37 @@ void INEG_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 
 	cpush(frame->operands_stack, iresult);
 }
-void INSTANCEOF_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void INSTANCEOF_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  /*u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
+  info_t *objectref = (info_t *) cpop(frame->operands_stack);
+  if(objectref != NIL){
+    info_t *cp_entry = get_constant_pool_entry(frame, cp_index);
+    u1 cp_tag = get_constant_pool_tag(frame, cp_index);
+  }*/
+}
 void INVOKEDYNAMIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void INVOKEINTERFACE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void INVOKESPECIAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
   
 }
-void INVOKESTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void INVOKESTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  // u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
+  // info_t *method_ref = get_constant_pool_entry(frame, cp_index);
+  // info_t *method_class_ref = get_constant_pool_entry(frame, method_ref->Methodref.class_index);
+  // info_t *method_class_name_utf8 = get_constant_pool_entry(frame, method_class_ref->Class.name_index);
+  // char *method_class_name = (char *) calloc(method_class_name_utf8->Utf8.length + 1, sizeof(char));
+  // memcpy(method_class_name, method_class_name_utf8->Utf8.bytes, method_class_name_utf8->Utf8.length);
+  // if(!is_loaded(jvm->marea, method_class_name)){
+  //   printf("Is not loaded %s\n", method_class_name);
+  //   load_class(jvm->marea, method_class_name);
+  // }
+  // info_t *method_name_and_type = get_constant_pool_entry(frame, method_ref->Methodref.name_and_type_index);
+  // info_t *method_type_utf8 = get_constant_pool_entry(frame, method_name_and_type->NameAndType.descriptor_index);
+  // char *method_descriptor = (char *) calloc(method_type_utf8->Utf8.length + 1, sizeof(char));
+  // memcpy(method_descriptor, method_type_utf8)
+  // free(method_class_name);
+
+}
 /*
 Na programação orientada a objetos uma função virtual ou método virtual é 
 uma função ou método cujo comportamento pode ser 
@@ -1198,10 +1226,12 @@ Otherwise, if the method handle to be invoked has no bytecode behavior, the Java
         }else{
           printf("%s@%p\n", ponto_e_virgula, (void *) cpop(frame->operands_stack));
         }
-    }/*else{
-      ; Aqui tinha que executar o método
-    }*/
+    }
     /*pilha antes = objectref, [arg1, arg2, ...] -> pilha depois = result*/
+  }else{
+    printf("Executar método\n");
+    printf("%s\n", method_name);
+    exit(-1);
   }
 
 }

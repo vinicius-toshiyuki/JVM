@@ -17,6 +17,7 @@ void destroy_method_area(method_area_t *ma){
 }
 
 void load_class(method_area_t *marea, char *pathtoclass){
+	/* PATH + pathtoclass */
 	FILE *classfile = fopen(pathtoclass, "rb");
 	if(!classfile){
 		fprintf(stderr, "Can not open specified file.\n");

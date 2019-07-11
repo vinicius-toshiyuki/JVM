@@ -28,12 +28,14 @@ void start_jvm(jvm_t **_jvm, ClassFile *entry){
 	frame_t *top_frame = (frame_t *) jvm->frame_stack->top->value;
 	cappend(top_frame->local_variables, &entry->this_class);
 	/*
+	TODO: Tem que fazer é um array e ocupar só a posição 0
 	int i;
 	for(i = 0; i < JVM_ARGC; i++)
 		cappend(top_frame->local_variables, JVM_ARGV[i]);
 	*/
 	link_class(jvm->marea, entry);
 	Method main_method = get_method_by_name(entry, "main");
+	top_frame->pc = main_method.code;
 	run_method(top_frame, &main_method, jvm);
 	return;
 }

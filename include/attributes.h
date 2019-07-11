@@ -189,7 +189,7 @@ void get_attribute_from_info(u1 *, Attributes *, u2, ClassFile *);
       printf("%sBytes: %d\n", prefix, cp->info->Integer.bytes); \
       break; \
 		case CONSTANT_Float: \
-      printf("%sBytes: %d\n", prefix, cp->info->Integer.bytes); \
+      printf("%sValue: %f\n", prefix, (float) cp->info->Integer.bytes); \
       break; \
 		case CONSTANT_Long: \
       printf( \

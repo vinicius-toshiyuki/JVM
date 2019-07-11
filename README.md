@@ -25,12 +25,15 @@ Reads .class files and let you choose to prints it's structure as described in O
 - [x] Print constant pool value using opcode argument as index if needed
 - [x] Print jump destination on jump opcodes printing
 - [x] Fix consistency
-- [ ] Clean output
+- [x] Clean output
 - [ ] Refactor code
-- [ ] Pass command line arguments (path, main and mode at least)
+- [x] Pass command line arguments (path, main and mode at least)
 - [ ] Implement java bytecode instructions
-- [ ] Frame stack
-- [ ] Method area
+- [x] Frame stack
+- [x] Method area
+- [x] Fix string
+- [x] Fix float printing in viewer mode
+- [x] Fix iinc printing in viewer mode
 
 ## Authors
 

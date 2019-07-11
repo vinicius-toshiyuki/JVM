@@ -10,6 +10,7 @@ frame_t * new_frame(void){
 	new->local_variables = new_clist();
 	new->operands_stack = new_cstack();
 	new->constant_pool = NULL;
+	new->pc = NULL;
 	return new;
 }
 

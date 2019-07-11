@@ -10,6 +10,7 @@ typedef struct frame_t {
 	clist_t *local_variables;
 	cstack_t *operands_stack;
 	cp_info *constant_pool;
+	u1 *pc;
 } frame_t;
 
 frame_t * new_frame(void);
