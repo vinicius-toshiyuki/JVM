@@ -513,7 +513,8 @@ void DSUB_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cpush(frame->operands_stack, dresult_low);
 }
 void DUP_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	void *top = frame->operands_stack->top;
+	u4 *top = (u4 *) cpop(frame->operands_stack);
+	cpush(frame->operands_stack, top);
 	cpush(frame->operands_stack, top);
 }
 void DUP_X1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
@@ -1093,9 +1094,7 @@ void INSTANCEOF_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 }
 void INVOKEDYNAMIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void INVOKEINTERFACE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void INVOKESPECIAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	
-}
+void INVOKESPECIAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void INVOKESTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
 	info_t *method_ref = get_constant_pool_entry(frame, cp_index);
@@ -1107,14 +1106,12 @@ void INVOKESTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 		char *method_class_name_classfile = (char *) calloc(strlen(method_class_name) + 7, sizeof(char));
 		strcpy(method_class_name_classfile, method_class_name);
 		strcat(method_class_name_classfile, ".class");
-		printf("Is not loaded %s\n", method_class_name_classfile);
 		load_class(jvm->marea, method_class_name_classfile);
 		free(method_class_name_classfile);
 	}
 
 	/* cria nova frame e se tiver argumentos coloca no vetor de variáveis locais */
 	frame_t *method_frame = new_frame();
-	/* Isso pode retornar null e eu tento dereferenciar */
 	ClassFile *method_class = get_class_by_name(jvm->marea, method_class_name);
 	if(!method_class)
 		exit(ERR_UNKTYPE);
@@ -1132,28 +1129,17 @@ void INVOKESTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	info_t *method_type_utf8 = get_constant_pool_entry(frame, method_name_and_type->NameAndType.descriptor_index);
 	char *method_descriptor = (char *) calloc(method_type_utf8->Utf8.length + 1, sizeof(char));
 	memcpy(method_descriptor, method_type_utf8->Utf8.bytes, method_type_utf8->Utf8.length);
-	strtok(method_descriptor, "(");
-	char *method_descriptor_token = strtok(NULL, ")");
-	if(!method_descriptor_token){
-		printf("\t\tArgs is void\n");
-	}else{
-		/* Só pra preencher, tem que ser enquanto tiver argumentos */
-		while(1)
-			cappend(method_frame->local_variables, cpop(frame->operands_stack));
-	}
+	printf("-->%s\n", method_descriptor);
+	if(strlen(method_descriptor))
+		store_arguments(method_frame, frame, method_descriptor);
 	free(method_class_name);
 	free(method_descriptor);
 
 	run_method(method_frame, &method, jvm);
+	destroy_frame(method_frame);
+	printf("Rodando até o final\n");
 }
-/*
-Na programação orientada a objetos uma função virtual ou método virtual é 
-uma função ou método cujo comportamento pode ser 
-sobrescrito em uma classe herdeira por uma função com a 
-mesma assinatura. 
-Esse conceito é uma parte 
-muito importante do polimorfismo em 
-programação orientada a objetos (OOP). */
+
 void INVOKEVIRTUAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	/* se for print só imprime */
 	/* java/lang/System.class tem o field out */
@@ -1161,27 +1147,7 @@ void INVOKEVIRTUAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	/* out é um campo do tipo PrintStream */
 	/* O que está sendo chamado é o método println (D)V do objeto out */
 	/* ou faz um if aqui dentro ou faz um método nativo */
-	
-/*
-The unsigned indexbyte1 and indexbyte2 are used to construct an index into the run-time constant pool of the current class (§2.6), where the value of the index is (indexbyte1 << 8) | indexbyte2. The run-time constant pool item at that index must be a symbolic reference to a method (§5.1), which gives the name and descriptor (§4.3.3) of the method as well as a symbolic reference to the class in which the method is to be found. The named method is resolved (§5.4.3.3). The resolved method must not be an instance initialization method (§2.9) or the class or interface initialization method (§2.9). Finally, if the resolved method is protected (§4.6), and it is a member of a superclass of the current class, and the method is not declared in the same run-time package (§5.3) as the current class, then the class of objectref must be either the current class or a subclass of the current class.
-If the resolved method is not signature polymorphic (§2.9), then the invokevirtual instruction proceeds as follows.
-Let C = System be the class of objectref = out. The actual method = println to be invoked is selected by the following lookup procedure:
-		If C contains a declaration for an instance method m that overrides (§5.4.5) the resolved method, then m is the method to be invoked, and the lookup procedure terminates.
-		Otherwise, if C has a superclass, this same lookup procedure is performed recursively using the direct superclass of C; the method to be invoked is the result of the recursive invocation of this lookup procedure.
-If the method is not native, the nargs argument values and objectref are popped from the operand stack. A new frame is created on the Java Virtual Machine stack for the method being invoked. The objectref and the argument values are consecutively made the values of local variables of the new frame, with objectref in local variable 0, arg1 in local variable 1 (or, if arg1 is of type long or double, in local variables 1 and 2), and so on. Any argument value that is of a floating-point type undergoes value set conversion (§2.8.3) prior to being stored in a local variable. The new frame is then made current, and the Java Virtual Machine pc is set to the opcode of the first instruction of the method to be invoked. Execution continues with the first instruction of the method.
-If the method is native and the platform-dependent code that implements it has not yet been bound (§5.6) into the Java Virtual Machine, that is done. The nargs argument values and objectref are popped from the operand stack and are passed as parameters to the code that implements the method. Any argument value that is of a floating-point type undergoes value set conversion (§2.8.3) prior to being passed as a parameter. The parameters are passed and the code is invoked in an implementation-dependent manner. When the platform-dependent code returns, the following take place:
-		If the native method is synchronized, the monitor associated with objectref is updated and possibly exited as if by execution of a monitorexit instruction (§monitorexit) in the current thread.
-		If the native method returns a value, the return value of the platform-dependent code is converted in an implementation-dependent way to the return type of the native method and pushed onto the operand stack.
-If the resolved method is signature polymorphic (§2.9), then the invokevirtual instruction proceeds as follows.
-First, a reference to an instance of java.lang.invoke.MethodType is obtained as if by resolution of a symbolic reference to a method type (§5.4.3.5) with the same parameter and return types as the descriptor of the method referenced by the invokevirtual instruction.
-		If the named method is invokeExact, the instance of java.lang.invoke.MethodType must be semantically equal to the type descriptor of the receiving method handle objectref. The method handle to be invoked is objectref.
-		If the named method is invoke, and the instance of java.lang.invoke.MethodType is semantically equal to the type descriptor of the receiving method handle objectref, then the method handle to be invoked is objectref.
-		If the named method is invoke, and the instance of java.lang.invoke.MethodType is not semantically equal to the type descriptor of the receiving method handle objectref, then the Java Virtual Machine attempts to adjust the type descriptor of the receiving method handle, as if by a call to java.lang.invoke.MethodHandle.asType, to obtain an exactly invokable method handle m. The method handle to be invoked is m.
-The objectref must be followed on the operand stack by nargs argument values, where the number, type, and order of the values must be consistent with the type descriptor of the method handle to be invoked. (This type descriptor will correspond to the method descriptor appropriate for the kind of the method handle to be invoked, as specified in §5.4.3.5.)
-Then, if the method handle to be invoked has bytecode behavior, the Java Virtual Machine invokes the method handle as if by execution of the bytecode behavior associated with the method handle's kind. If the kind is 5 (REF_invokeVirtual), 6 (REF_invokeStatic), 7 (REF_invokeSpecial), 8 (REF_newInvokeSpecial), or 9 (REF_invokeInterface), then a frame will be created and made current in the course of executing the bytecode behavior; when the method invoked by the bytecode behavior completes (normally or abruptly), the frame of its invoker is considered to be the frame for the method containing this invokevirtual instruction.
-The frame in which the bytecode behavior itself executes is not visible.
-Otherwise, if the method handle to be invoked has no bytecode behavior, the Java Virtual Machine invokes it in an implementation-dependent manner. 
- */
+
 	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
 	info_t *methodref = get_constant_pool_entry(frame, cp_index);
 	
@@ -1332,7 +1298,33 @@ void JSR_W_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void L2D_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void L2F_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void L2I_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void LADD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void LADD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	u4 *lvalue_low1 = NULL, *lvalue_high1 = NULL, *lvalue_low2 = NULL, *lvalue_high2 = NULL;
+	int64_t lvalue1, lvalue2, lresult;
+	u8 value1 = 0x000000000000000, value2 = 0x000000000000000;
+
+	lvalue_low1 = cpop(frame->operands_stack);
+	lvalue_high1 = cpop(frame->operands_stack);
+	lvalue_low2 = cpop(frame->operands_stack);
+	lvalue_high2 = cpop(frame->operands_stack);
+
+	value1 = ((u8) *lvalue_high1) << 32 | *lvalue_low1;
+	memcpy(&lvalue1, &value1, 8);
+
+	value2 = ((u8) *lvalue_high2) << 32 | *lvalue_low2;
+	memcpy(&lvalue2, &value2, 8);
+
+	lresult = lvalue2 + lvalue1;
+	memcpy(&value1, &lresult, 8);
+
+	u4 *lresult_low = (u4 *) calloc(1, sizeof(u4));
+	u4 *lresult_high = (u4 *) calloc(1, sizeof(u4));
+	memcpy(lresult_low, &value1, 4);
+	value1 >>= 32;
+	memcpy(lresult_high, &value1, 4);
+	cpush(frame->operands_stack, lresult_high);
+	cpush(frame->operands_stack, lresult_low);
+}
 void LALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void LAND_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void LASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
@@ -1407,7 +1399,33 @@ void LDC2_W_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cpush(frame->operands_stack, &cp_entry->Double.high_bytes);
 	cpush(frame->operands_stack, &cp_entry->Double.low_bytes);
 }
-void LDIV_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void LDIV_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	u4 *lvalue_low1 = NULL, *lvalue_high1 = NULL, *lvalue_low2 = NULL, *lvalue_high2 = NULL;
+	int64_t lvalue1, lvalue2, lresult;
+	u8 value1 = 0x000000000000000, value2 = 0x000000000000000;
+
+	lvalue_low1 = cpop(frame->operands_stack);
+	lvalue_high1 = cpop(frame->operands_stack);
+	lvalue_low2 = cpop(frame->operands_stack);
+	lvalue_high2 = cpop(frame->operands_stack);
+
+	value1 = ((u8) *lvalue_high1) << 32 | *lvalue_low1;
+	memcpy(&lvalue1, &value1, 8);
+
+	value2 = ((u8) *lvalue_high2) << 32 | *lvalue_low2;
+	memcpy(&lvalue2, &value2, 8);
+
+	lresult = lvalue2 / lvalue1;
+	memcpy(&value1, &lresult, 8);
+
+	u4 *lresult_low = (u4 *) calloc(1, sizeof(u4));
+	u4 *lresult_high = (u4 *) calloc(1, sizeof(u4));
+	memcpy(lresult_low, &value1, 4);
+	value1 >>= 32;
+	memcpy(lresult_high, &value1, 4);
+	cpush(frame->operands_stack, lresult_high);
+	cpush(frame->operands_stack, lresult_low);
+}
 void LLOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u1 lv_index = (*pc + 1)[0]; ++*pc;
 	u4 *lvalue_high = (u4 *) cat(frame->local_variables, lv_index++);
@@ -1439,11 +1457,84 @@ void LLOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cpush(frame->operands_stack, lvalue_high);
 	cpush(frame->operands_stack, lvalue_low);
 }
-void LMUL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void LNEG_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void LMUL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	u4 *lvalue_low1 = NULL, *lvalue_high1 = NULL, *lvalue_low2 = NULL, *lvalue_high2 = NULL;
+	int64_t lvalue1, lvalue2, lresult;
+	u8 value1 = 0x000000000000000, value2 = 0x000000000000000;
+
+	lvalue_low1 = cpop(frame->operands_stack);
+	lvalue_high1 = cpop(frame->operands_stack);
+	lvalue_low2 = cpop(frame->operands_stack);
+	lvalue_high2 = cpop(frame->operands_stack);
+
+	value1 = ((u8) *lvalue_high1) << 32 | *lvalue_low1;
+	memcpy(&lvalue1, &value1, 8);
+
+	value2 = ((u8) *lvalue_high2) << 32 | *lvalue_low2;
+	memcpy(&lvalue2, &value2, 8);
+
+	lresult = lvalue2 * lvalue1;
+	memcpy(&value1, &lresult, 8);
+
+	u4 *lresult_low = (u4 *) calloc(1, sizeof(u4));
+	u4 *lresult_high = (u4 *) calloc(1, sizeof(u4));
+	memcpy(lresult_low, &value1, 4);
+	value1 >>= 32;
+	memcpy(lresult_high, &value1, 4);
+	cpush(frame->operands_stack, lresult_high);
+	cpush(frame->operands_stack, lresult_low);
+}
+void LNEG_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	u4 *lvalue_low1 = NULL, *lvalue_high1 = NULL;
+	int64_t lvalue1, lresult;
+	u8 value1 = 0x000000000000000;
+
+	lvalue_low1 = cpop(frame->operands_stack);
+	lvalue_high1 = cpop(frame->operands_stack);
+
+	value1 = ((u8) *lvalue_high1) << 32 | *lvalue_low1;
+	memcpy(&lvalue1, &value1, 8);
+
+	lresult = -lvalue1;
+	memcpy(&value1, &lresult, 8);
+
+	u4 *lresult_low = (u4 *) calloc(1, sizeof(u4));
+	u4 *lresult_high = (u4 *) calloc(1, sizeof(u4));
+	memcpy(lresult_low, &value1, 4);
+	value1 >>= 32;
+	memcpy(lresult_high, &value1, 4);
+	cpush(frame->operands_stack, lresult_high);
+	cpush(frame->operands_stack, lresult_low);
+}
 void LOOKUPSWITCH_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void LOR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void LREM_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void LREM_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	u4 *lvalue_low1 = NULL, *lvalue_high1 = NULL, *lvalue_low2 = NULL, *lvalue_high2 = NULL;
+	int64_t lvalue1, lvalue2, lresult;
+	u8 value1 = 0x000000000000000, value2 = 0x000000000000000;
+
+	lvalue_low1 = cpop(frame->operands_stack);
+	lvalue_high1 = cpop(frame->operands_stack);
+	lvalue_low2 = cpop(frame->operands_stack);
+	lvalue_high2 = cpop(frame->operands_stack);
+
+	value1 = ((u8) *lvalue_high1) << 32 | *lvalue_low1;
+	memcpy(&lvalue1, &value1, 8);
+
+	value2 = ((u8) *lvalue_high2) << 32 | *lvalue_low2;
+	memcpy(&lvalue2, &value2, 8);
+
+	lresult = lvalue2 % lvalue1;
+	memcpy(&value1, &lresult, 8);
+
+	u4 *lresult_low = (u4 *) calloc(1, sizeof(u4));
+	u4 *lresult_high = (u4 *) calloc(1, sizeof(u4));
+	memcpy(lresult_low, &value1, 4);
+	value1 >>= 32;
+	memcpy(lresult_high, &value1, 4);
+	cpush(frame->operands_stack, lresult_high);
+	cpush(frame->operands_stack, lresult_low);
+}
 void LRETURN_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void LSHL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void LSHR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
@@ -1478,13 +1569,51 @@ void LSTORE_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cinsert(frame->local_variables, 3, lvalue_high);
 	cinsert(frame->local_variables, 4, lvalue_low);
 }
-void LSUB_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void LSUB_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	u4 *lvalue_low1 = NULL, *lvalue_high1 = NULL, *lvalue_low2 = NULL, *lvalue_high2 = NULL;
+	int64_t lvalue1, lvalue2, lresult;
+	u8 value1 = 0x000000000000000, value2 = 0x000000000000000;
+
+	lvalue_low1 = cpop(frame->operands_stack);
+	lvalue_high1 = cpop(frame->operands_stack);
+	lvalue_low2 = cpop(frame->operands_stack);
+	lvalue_high2 = cpop(frame->operands_stack);
+
+	value1 = ((u8) *lvalue_high1) << 32 | *lvalue_low1;
+	memcpy(&lvalue1, &value1, 8);
+
+	value2 = ((u8) *lvalue_high2) << 32 | *lvalue_low2;
+	memcpy(&lvalue2, &value2, 8);
+
+	lresult = lvalue2 - lvalue1;
+	memcpy(&value1, &lresult, 8);
+
+	u4 *lresult_low = (u4 *) calloc(1, sizeof(u4));
+	u4 *lresult_high = (u4 *) calloc(1, sizeof(u4));
+	memcpy(lresult_low, &value1, 4);
+	value1 >>= 32;
+	memcpy(lresult_high, &value1, 4);
+	cpush(frame->operands_stack, lresult_high);
+	cpush(frame->operands_stack, lresult_low);
+}
 void LUSHR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void LXOR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void MONITORENTER_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void MONITOREXIT_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void MULTIANEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void NEW_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void NEW_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
+
+	u1 tag = get_constant_pool_tag(frame, cp_index);
+	info_t *template = get_constant_pool_entry(frame, cp_index);
+	object_t *object = new_object();
+	if(tag == CONSTANT_Class){
+		/* Falta inicializar o objeto (<init>) */
+		instantiate_by_index(object, jvm, template->Class.name_index, new_clist());
+	}
+	cpush(jvm->heap, object);
+	cpush(frame->operands_stack, object);
+}
 void NEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void NOP_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	return;

@@ -5,6 +5,7 @@
 #include "frame.h"
 #include "jvm.h"
 #include "constant_pool.h"
+#include "object.h"
 
 #define NIL (void *) 0x1
 

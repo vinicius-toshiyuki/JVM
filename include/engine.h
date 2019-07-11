@@ -14,4 +14,7 @@ typedef struct Method {
 Method get_method_by_name(ClassFile *, char *);
 void run_method(frame_t *, Method *, jvm_t *);
 
+/* Store @arguments in local variable array on @frame from @old_frame. @arguments is a char array of descriptors */
+void store_arguments(frame_t *frame, frame_t *old_frame, char *arguments);
+
 #endif

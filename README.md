@@ -35,6 +35,80 @@ Reads .class files and let you choose to prints it's structure as described in O
 - [x] Fix float printing in viewer mode
 - [x] Fix iinc printing in viewer mode
 
+## Nota
+
+### Corretude do interpretador **
+
+Resumo: 100
+
+1.() array simples
+2.() arrays.length
+3.() arrays multidimensionais
+4.() arrays de referencia
+5.(X) doubles - falta as conversões, dastore, daload, dcmpl e dcmpg
+6.(X) floats - falta as conversões, fastore, faload, fcmpl e fcmpg
+7.() longs
+8.(X) inteiros - shifts, falta iastore, iaload e operações lógicas
+9.() shorts
+10.() strings
+11.() desvios com cat 1
+12.() operacoes logicas com cat 1  
+13.() operacoes de deslocamento com cat 1
+14.(X) operacoes aritmeticas de cat 2 - falta o long
+15.() operacoes de deslocamento de longs
+16.(X) system.out.println (int, float, string e booleano)
+17.() conversao de e para cat 2
+18.() iteracao
+19.() switches
+20.() fields
+21.() interfaces
+22.() recursao
+23.() metodos estaticos  
+24.() metodos nao estaticos
+25.() objetos
+26.() operacoes de retorno
+27.() operacoes de manipulacao de pilha
+28.(X) consistencia
+29.() exceptions
+30.() invokes
+31.() polimofismo e reescrita
+
+-------------------------
+
+Resumo: 100
+
+-- leitura do formato ponto class:
+
+- Trata versões superiores?
+- Despreza silenciosamente atributos não tratados?
+- Consistência?
+- Corretude?
+- Exibe mnemônicos?
+- Apresenta reindireção das entradas no Constant Pool?
+
+Bonus: 10% (bonus sobre a corretude do interpretador)
+
+--  opcionais
+Todas as demais instruções.
+
+( ) threads
+( ) debug
+( ) chamadas às bibliotecas do Java
+( ) checagem dinâmica de tipos
+( ) coletor de lixo.
+
+-------------------------
+
+Atribuição de nota para a JVM
+0,1*leitor_exibidor + 0,4*corretude + 0,4*defesa do interpretador + 0,1*site
+
+Site: 100
+
+- Apresenta o DCM e a descrição de cada função?
+- Contem a relação das estruturas de dados e os arquivos?
+- Está atualizado?
+- Corretude?
+
 ## Authors
 
 - Vinicius Toshiyuki Menezes Sugimoto - 17/0023664

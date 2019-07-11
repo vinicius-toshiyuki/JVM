@@ -14,7 +14,12 @@ frame_t * new_frame(void){
 	return new;
 }
 
+#include <stdio.h>
 void destroy_frame(frame_t *f){
+	printf("clistkkk\n");
+	destroy_clist(f->local_variables);
+	destroy_cstack(f->operands_stack);
+	printf("cstack\n");
 	free(f);
 	return;
 }
