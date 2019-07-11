@@ -1750,7 +1750,12 @@ void NEW_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cpush(jvm->heap, ref);
 	cpush(frame->operands_stack, ref);
 }
-void NEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void NEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	u1 tag = (*pc + 1)[0]; ++*pc;
+	array_t *array = new_array();
+	array_of(array, tag, pop_integer(frame));
+	cpush(frame->operands_stack, array);
+}
 void NOP_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	return;
 }

@@ -26,14 +26,14 @@ typedef enum{
     ARR_RefFieldref = REF_Fieldref,
     ARR_RefMethodref = REF_Methodref,
     ARR_RefClass = REF_Class,
-    ARR_Char,
-    ARR_Boolean,
-    ARR_Byte,
-    ARR_Short,
-    ARR_Integer,
-    ARR_Float,
-    ARR_Double,
-    ARR_Long
+    ARR_Boolean = 4,
+    ARR_Char = 5,
+    ARR_Float = 6,
+    ARR_Double = 7,
+    ARR_Byte = 8,
+    ARR_Short = 9,
+    ARR_Integer = 10,
+    ARR_Long = 11
 } ARR;
 
 /**
