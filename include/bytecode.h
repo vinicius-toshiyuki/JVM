@@ -137,8 +137,6 @@ void ILOAD_0_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm);
 void ILOAD_1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm);
 void ILOAD_2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm);
 void ILOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm);
-void IMPDEP1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm);
-void IMPDEP2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm);
 void IMUL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm);
 void INEG_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm);
 void INSTANCEOF_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm);

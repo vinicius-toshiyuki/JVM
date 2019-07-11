@@ -135,8 +135,6 @@ handler bytecode_handlers[] = {
   [0x1b] = ILOAD_1_handler,
   [0x1c] = ILOAD_2_handler,
   [0x1d] = ILOAD_3_handler,
-  [0xfe] = IMPDEP1_handler,
-  [0xff] = IMPDEP2_handler,
   [0x68] = IMUL_handler,
   [0x74] = INEG_handler,
   [0xc1] = INSTANCEOF_handler,
@@ -717,17 +715,64 @@ void GETSTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cpush(frame->operands_stack, value);
 }
 void GOTO_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-  u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
+  u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1];
   int16_t offset;
   memcpy(&offset, &offset_bytes, 2);
-  *pc += offset;
+  *pc += offset - 1;
 }
 void GOTO_W_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void I2B_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void I2C_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void I2D_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void I2F_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void I2L_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void I2B_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  int32_t *ivalue = (int32_t *) cpop(frame->operands_stack);
+  int8_t aux = (int8_t) *ivalue;
+  u4 *bvalue = (u4 *) &aux;
+
+  u4 *brvalue = (u4 *) calloc(1, sizeof(u4));
+  *brvalue = *bvalue;
+  cpush(frame->operands_stack, brvalue);
+}
+void I2C_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  int32_t *ivalue = (int32_t *) cpop(frame->operands_stack);
+  char aux = (char) *ivalue;
+  u1 *cvalue = (u1 *) calloc(1, sizeof(u1));
+  *cvalue = (u1) aux;
+  
+  cpush(frame->operands_stack, cvalue);
+}
+void I2D_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  int32_t *ivalue = (int32_t *) cpop(frame->operands_stack);
+  double aux = (double) *ivalue;
+  u8 *dvalue = (u8 *) &aux;
+
+  u4 *dhigh = (u4 *) calloc(1, sizeof(u4));
+  u4 *dlow = (u4 *) calloc(1, sizeof(u4));
+  *dhigh = *dvalue >> 32;
+  *dlow |= *dvalue;
+  
+  cpush(frame->operands_stack, dhigh);
+  cpush(frame->operands_stack, dlow);
+}
+void I2F_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  int32_t *ivalue = (int32_t *) cpop(frame->operands_stack);
+  float aux = (float) *ivalue;
+  u4 *fvalue = (u4 *) &aux;
+
+  u4 *frvalue = (u4 *) calloc(1, sizeof(u4));
+  *frvalue = *fvalue;
+  cpush(frame->operands_stack, frvalue);
+}
+void I2L_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  int32_t *ivalue = (int32_t *) cpop(frame->operands_stack);
+  int64_t aux = (int64_t) *ivalue;
+  u8 *lvalue = (u8 *) &aux;
+
+  u4 *lhigh = (u4 *) calloc(1, sizeof(u4));
+  u4 *llow = (u4 *) calloc(1, sizeof(u4));
+  *lhigh = *lvalue >> 32;
+  *llow |= *lvalue;
+
+  cpush(frame->operands_stack, lhigh);
+  cpush(frame->operands_stack, llow);
+}
 void I2S_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void IADD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
   int32_t *ivalue1 = NULL, *ivalue2 = NULL;
@@ -800,81 +845,190 @@ void IDIV_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cpush(frame->operands_stack, iresult);
 }
 void IF_ACMPEQ_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-  u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
+  u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1];
   if(cpop(frame->operands_stack) == cpop(frame->operands_stack)){
     int16_t offset;
     memcpy(&offset, &offset_bytes, 2);
-    *pc += offset;
+    *pc += offset - 1;
+  }else{
+    *pc += 2;
   }
 }
 void IF_ACMPNE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-  u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
+  u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1];
   if(cpop(frame->operands_stack) != cpop(frame->operands_stack)){
     int16_t offset;
     memcpy(&offset, &offset_bytes, 2);
-    *pc += offset;
+    *pc += offset - 1;
+  }else{
+    *pc += 2;
   }
 }
 void IF_ICMPEQ_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-  u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
-  int32_t *ivalue1 = cpop(frame->operands_stack);
-  int32_t *ivalue2 = cpop(frame->operands_stack);
-  if(ivalue1 == ivalue2){
+  u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1];
+  int32_t *ivalue1 = (int32_t *) cpop(frame->operands_stack);
+  int32_t *ivalue2 = (int32_t *) cpop(frame->operands_stack);
+  if(*ivalue2 == *ivalue1){
     int16_t offset;
     memcpy(&offset, &offset_bytes, 2);
-    *pc += offset;
+    *pc += offset - 1;
+  } else {
+    *pc += 2;
   }
 }
 void IF_ICMPGE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-  u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
-  int32_t *ivalue1 = cpop(frame->operands_stack);
-  int32_t *ivalue2 = cpop(frame->operands_stack);
-  if(ivalue1 >= ivalue2){
+  u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1];
+  int32_t *ivalue1 = (int32_t *) cpop(frame->operands_stack);
+  int32_t *ivalue2 = (int32_t *) cpop(frame->operands_stack);
+  if(*ivalue2 >= *ivalue1){
     int16_t offset;
     memcpy(&offset, &offset_bytes, 2);
-    *pc += offset;
+    *pc += offset - 1;
+  } else {
+    *pc += 2;
   }
 }
 void IF_ICMPGT_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-  u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
-  int32_t *ivalue1 = cpop(frame->operands_stack);
-  int32_t *ivalue2 = cpop(frame->operands_stack);
-  if(ivalue1 > ivalue2){
+  u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1];
+  int32_t *ivalue1 = (int32_t *) cpop(frame->operands_stack);
+  int32_t *ivalue2 = (int32_t *) cpop(frame->operands_stack);
+  if(*ivalue2 > *ivalue1){
     int16_t offset;
     memcpy(&offset, &offset_bytes, 2);
-    *pc += offset;
+    *pc += offset - 1;
+  }else{
+    *pc += 2;
   }
 }
 void IF_ICMPLE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-  u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
-  int32_t *ivalue1 = cpop(frame->operands_stack);
-  int32_t *ivalue2 = cpop(frame->operands_stack);
-  if(ivalue1 <= ivalue2){
+  u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1];
+  int32_t *ivalue1 = (int32_t *) cpop(frame->operands_stack);
+  int32_t *ivalue2 = (int32_t *) cpop(frame->operands_stack);
+  if(*ivalue2 <= *ivalue1){
     int16_t offset;
     memcpy(&offset, &offset_bytes, 2);
-    *pc += offset;
+    *pc += offset - 1;
+  } else {
+    *pc += 2;
   }
 }
 void IF_ICMPLT_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-  u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
-  int32_t *ivalue1 = cpop(frame->operands_stack);
-  int32_t *ivalue2 = cpop(frame->operands_stack);
-  if(ivalue1 < ivalue2){
+  u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1];
+  int32_t *ivalue1 = (int32_t *) cpop(frame->operands_stack);
+  int32_t *ivalue2 = (int32_t *) cpop(frame->operands_stack);
+  if(*ivalue2 < *ivalue1){
     int16_t offset;
     memcpy(&offset, &offset_bytes, 2);
-    *pc += offset;
+    *pc += offset - 1;
+  } else {
+    *pc += 2;
   }
 }
-void IF_ICMPNE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void IFEQ_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void IFGE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void IFGT_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void IFLE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void IFLT_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void IFNE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void IFNONNULL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void IFNULL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void IINC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IF_ICMPNE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1];
+  int32_t *ivalue1 = (int32_t *) cpop(frame->operands_stack);
+  int32_t *ivalue2 = (int32_t *) cpop(frame->operands_stack);
+  if(*ivalue2 != *ivalue1){
+    int16_t offset;
+    memcpy(&offset, &offset_bytes, 2);
+    *pc += offset - 1;
+  } else {
+    *pc += 2;
+  }
+}
+void IFEQ_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1];
+  int32_t *ivalue = (int32_t *) cpop(frame->operands_stack);
+  if(0 == *ivalue){
+    int16_t offset;
+    memcpy(&offset, &offset_bytes, 2);
+    *pc += offset - 1;
+  } else {
+    *pc += 2;
+  }
+}
+void IFGE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1];
+  int32_t *ivalue = (int32_t *) cpop(frame->operands_stack);
+  if(0 >= *ivalue){
+    int16_t offset;
+    memcpy(&offset, &offset_bytes, 2);
+    *pc += offset - 1;
+  } else {
+    *pc += 2;
+  }
+}
+void IFGT_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1];
+  int32_t *ivalue = (int32_t *) cpop(frame->operands_stack);
+  if(0 > *ivalue){
+    int16_t offset;
+    memcpy(&offset, &offset_bytes, 2);
+    *pc += offset - 1;
+  } else {
+    *pc += 2;
+  }
+}
+void IFLE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1];
+  int32_t *ivalue = (int32_t *) cpop(frame->operands_stack);
+  if(0 <= *ivalue){
+    int16_t offset;
+    memcpy(&offset, &offset_bytes, 2);
+    *pc += offset - 1;
+  } else {
+    *pc += 2;
+  }
+}
+void IFLT_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1];
+  int32_t *ivalue = (int32_t *) cpop(frame->operands_stack);
+  if(0 < *ivalue){
+    int16_t offset;
+    memcpy(&offset, &offset_bytes, 2);
+    *pc += offset - 1;
+  } else {
+    *pc += 2;
+  }
+}
+void IFNE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1];
+  int32_t *ivalue = (int32_t *) cpop(frame->operands_stack);
+  if(0 != *ivalue){
+    int16_t offset;
+    memcpy(&offset, &offset_bytes, 2);
+    *pc += offset - 1;
+  } else {
+    *pc += 2;
+  }
+}
+void IFNONNULL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1];
+  if(NIL != cpop(frame->operands_stack)){
+    int16_t offset;
+    memcpy(&offset, &offset_bytes, 2);
+    *pc += offset - 1;
+  }else{
+    *pc += 2;
+  }
+}
+void IFNULL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1];
+  if(NIL == cpop(frame->operands_stack)){
+    int16_t offset;
+    memcpy(&offset, &offset_bytes, 2);
+    *pc += offset - 1;
+  }else{
+    *pc += 2;
+  }
+}
+void IINC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  u1 lv_index = (*pc + 1)[0];
+  u1 cvalue_byte = (*pc + 1)[1]; *pc += 2;
+  int8_t cvalue;
+  memcpy(&cvalue, &cvalue_byte, 1);
+  *((int32_t *) cat(frame->local_variables, lv_index)) += cvalue;
+}
 void ILOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u1 lv_index = (*pc + 1)[0]; ++*pc;
 	u4 *ivalue = (u4 *) cat(frame->local_variables, lv_index);
@@ -896,8 +1050,6 @@ void ILOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *ivalue = (u4 *) cat(frame->local_variables, 3);
 	cpush(frame->operands_stack, ivalue);
 }
-void IMPDEP1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void IMPDEP2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void IMUL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
   int32_t *ivalue1 = NULL, *ivalue2 = NULL;
 	int32_t *iresult;
