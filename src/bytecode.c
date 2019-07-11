@@ -7,6 +7,7 @@
 #include "../include/info.h"
 #include "../include/engine.h"
 #include "../include/array.h"
+#include "../include/field_object.h"
 #include <math.h>
 
 handler bytecode_handlers[] = {
@@ -249,14 +250,22 @@ void ALOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 void ANEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
 	u1 ref_tag = get_constant_pool_tag(frame, cp_index);
-	/* Só pra não dar erro de unused variable */
-	if(0)
-		printf("%d\n", ref_tag);
+
+	if(ref_tag != CONSTANT_Class){
+		fprintf(stderr, "Invalid class reference in anewarray\n");
+		exit(ERR_INVREF);
+	}
+	info_t *class_info = get_constant_pool_entry(frame, cp_index);
+	info_t *class_info_utf8 = get_constant_pool_entry(frame, class_info->Class.name_index);
+	char *class_name = (char *) calloc(class_info_utf8->Utf8.length + 1, sizeof(char));
+	memcpy(class_name, class_info_utf8->Utf8.bytes, class_info_utf8->Utf8.length);
 	int32_t *count = (int32_t *) cpop(frame->operands_stack);
 
 	array_t *array = new_array();
 	/* Tem que definir o tipo certinho */
 	array_of(array, ARR_RefClass, *count);
+	array_of_class(array, class_name);
+	free(class_name);
 	
 	objectref_t *ref = new_objectref();
 	reference_of(ref, REF_Array, array);
@@ -280,7 +289,6 @@ void ASTORE_0_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cinsert(frame->local_variables, 0, cpop(frame->operands_stack));
 }
 void ASTORE_1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	printf("size %d\n", frame->local_variables->size);
 	cinsert(frame->local_variables, 1, cpop(frame->operands_stack));
 }
 void ASTORE_2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
@@ -1057,7 +1065,6 @@ void INSTANCEOF_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 void INVOKEDYNAMIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void INVOKEINTERFACE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void INVOKESPECIAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	printf("Invokando especialmente\n");
 	objectref_t *ref = (objectref_t *) cpop(frame->operands_stack);
 	if(ref->tag != REF_Instance){
 		fprintf(stderr, "Invalid object reference to invoke special\n");
@@ -1065,17 +1072,15 @@ void INVOKESPECIAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	}
 	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
 	info_t *method_ref = get_constant_pool_entry(frame, cp_index);
-	printf("class_index %d\n", method_ref->Methodref.class_index);
-	printf("Não pegou\n");
+	printf("\tclass_index %d\n", method_ref->Methodref.class_index);
+	/* printf("ó aqui %p\n", (void *) ((instance_t *) ref->object)->class); */
 	char *classname = get_class_name(ref->object);
-	printf("Pegou\n");
-	printf("class name %s\n", classname);
+	printf("\tclass name %s\n", classname);
 	free(classname);
 
 	cpop(frame->operands_stack);
 }
 void INVOKESTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	printf("Invoke static\n");
 	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
 	info_t *method_ref = get_constant_pool_entry(frame, cp_index);
 	info_t *method_class_ref = get_constant_pool_entry(frame, method_ref->Methodref.class_index);
@@ -1116,6 +1121,7 @@ void INVOKESTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 
 	run_method(method_frame, &method, jvm);
 	destroy_frame(method_frame);
+	cpop(jvm->frame_stack);
 }
 
 void INVOKEVIRTUAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
@@ -1486,7 +1492,32 @@ void LXOR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 }
 void MONITORENTER_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void MONITOREXIT_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void MULTIANEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void MULTIANEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+
+
+	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
+	u1 ref_tag = get_constant_pool_tag(frame, cp_index);
+
+	if(ref_tag != CONSTANT_Class){
+		fprintf(stderr, "Invalid class reference in anewarray\n");
+		exit(ERR_INVREF);
+	}
+	info_t *class_info = get_constant_pool_entry(frame, cp_index);
+	info_t *class_info_utf8 = get_constant_pool_entry(frame, class_info->Class.name_index);
+	char *class_name = (char *) calloc(class_info_utf8->Utf8.length + 1, sizeof(char));
+	memcpy(class_name, class_info_utf8->Utf8.bytes, class_info_utf8->Utf8.length);
+	int32_t *count = (int32_t *) cpop(frame->operands_stack);
+
+	array_t *array = new_array();
+	/* Tem que definir o tipo certinho */
+	array_of(array, ARR_RefClass, *count);
+	array_of_class(array, class_name);
+	free(class_name);
+	
+	objectref_t *ref = new_objectref();
+	reference_of(ref, REF_Array, array);
+	cpush(frame->operands_stack, ref);
+}
 void NEW_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
 
@@ -1496,6 +1527,19 @@ void NEW_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	if(tag == CONSTANT_Class){
 		/* Falta inicializar o objeto (<init>) */
 		instantiate_by_index(inst, jvm, template->Class.name_index, new_clist());
+
+		frame_t *init_frame = new_frame();
+		cpush(jvm->frame_stack, init_frame);
+		init_frame->constant_pool = inst->class->constant_pool;
+		objectref_t *init_this_ref = new_objectref();
+
+		reference_of(init_this_ref, REF_Instance, inst);
+		cappend(init_frame->local_variables, init_this_ref);
+		Method method_init = get_method_by_name(inst->class, "<init>");
+		init_frame->pc = method_init.code;
+		run_method(init_frame, &method_init, jvm);
+		destroy_frame(init_frame);
+		cpop(jvm->frame_stack);
 	}
 
 	objectref_t *ref = new_objectref();
@@ -1503,7 +1547,12 @@ void NEW_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cpush(jvm->heap, ref);
 	cpush(frame->operands_stack, ref);
 }
-void NEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void NEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	u1 tag = (*pc + 1)[0]; ++*pc;
+	array_t *array = new_array();
+	array_of(array, tag, pop_integer(frame));
+	cpush(frame->operands_stack, array);
+}
 void NOP_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	return;
 }
@@ -1514,7 +1563,55 @@ void POP2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cpop(frame->operands_stack);
 	cpop(frame->operands_stack);
 }
-void PUTFIELD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void PUTFIELD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
+	info_t *fieldref = get_constant_pool_entry(frame, cp_index);
+	info_t *fieldref_nameandtype = get_constant_pool_entry(frame, fieldref->Fieldref.name_and_type_index);
+	info_t *fieldref_descriptor_utf8 = get_constant_pool_entry(frame, fieldref_nameandtype->NameAndType.descriptor_index);
+	char *fieldref_descriptor = (char *) calloc(fieldref_descriptor_utf8->Utf8.length + 1, sizeof(char));
+	memcpy(fieldref_descriptor, fieldref_descriptor_utf8->Utf8.bytes, fieldref_descriptor_utf8->Utf8.length);
+
+	field_object_t *field = new_field_object();
+	field->ref = fieldref;
+
+	if(!strcmp(fieldref_descriptor, "F")){
+
+		field->value.Float = pop_float(frame);
+		field->tag = FIELD_Float;
+	}else if(!strcmp(fieldref_descriptor, "B")){
+		field->value.Byte = pop_byte(frame);
+		field->tag = FIELD_Byte;
+	}else if(!strcmp(fieldref_descriptor, "C")){
+		field->value.Char = pop_char(frame);
+		field->tag = FIELD_Char;
+	}else if(!strcmp(fieldref_descriptor, "S")){
+		field->value.Short = pop_short(frame);
+		field->tag = FIELD_Short;
+	}else if(!strcmp(fieldref_descriptor, "Z")){
+		field->value.Boolean = pop_boolean(frame);
+		field->tag = FIELD_Boolean;
+	}else if(!strcmp(fieldref_descriptor, "I")){
+		field->value.Integer = pop_integer(frame);
+		field->tag = FIELD_Integer;
+	}else if(!strcmp(fieldref_descriptor, "L")){
+		field->value.Long = pop_long(frame);
+		field->tag = FIELD_Long;
+	}else if(!strcmp(fieldref_descriptor, "D")){
+		field->value.Double = pop_double(frame);
+		field->tag = FIELD_Double;
+	}else{
+		printf("\t\tÉ uma classe\n");
+		field->value.ObjectRef = cpop(frame->operands_stack);
+		field->tag = FIELD_ObjectRef;
+	}
+	objectref_t *ref = cpop(frame->operands_stack);
+	if(ref->tag != REF_Instance){
+		fprintf(stderr, "Invalid reference in putfield\n");
+		exit(ERR_INVREF);
+	}
+	cappend(((instance_t *) ref->object)->variables, field);
+	free(fieldref_descriptor);
+}
 void PUTSTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void RET_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void RETURN_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){

@@ -29,7 +29,7 @@ void destroy_instance(instance_t *instance);
 void instantiate_by_name(instance_t *instance, method_area_t *marea, char *classname, clist_t *variables);
 
 /**
- *  Initialize object_t class from class in jvm_t jvm top frame constant poll at index class_index and instance fields
+ *  Initialize object_t class from class in jvm_t jvm top frame constant pool at index class_index and instance fields
  */
 void instantiate_by_index(instance_t *instance, jvm_t *jvm, u2 class_index, clist_t *variables);
 

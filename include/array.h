@@ -11,8 +11,9 @@
  */
 typedef struct array_t{
     int32_t length;
-    u2 type;
+    u2 tag;
     int32_t max_length;
+		char *class_name;
     clist_t *items;
 } array_t;
 
@@ -26,14 +27,14 @@ typedef enum{
     ARR_RefFieldref = REF_Fieldref,
     ARR_RefMethodref = REF_Methodref,
     ARR_RefClass = REF_Class,
-    ARR_Char,
-    ARR_Boolean,
-    ARR_Byte,
-    ARR_Short,
-    ARR_Integer,
-    ARR_Float,
-    ARR_Double,
-    ARR_Long
+    ARR_Boolean = 4,
+    ARR_Char = 5,
+    ARR_Float = 6,
+    ARR_Double = 7,
+    ARR_Byte = 8,
+    ARR_Short = 9,
+    ARR_Integer = 10,
+    ARR_Long = 11
 } ARR;
 
 /**
@@ -44,7 +45,12 @@ array_t * new_array(void);
 /**
  *  Defines the type of an array and it's max length
  */
-void array_of(array_t *array, int type, int max_length);
+void array_of(array_t *array, int tag, int max_length);
+
+/**
+ *  If array tag is a class reference tag, set array class name to class_name (copying)
+ */
+void array_of_class(array_t *array, char *class_name);
 
 /**
  *  Destroys an array_t

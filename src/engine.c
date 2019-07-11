@@ -186,3 +186,15 @@ void push_float(frame_t *frame, float fvalue){
     *value = f;
     cpush(frame->operands_stack, value);
 }
+
+short pop_short(frame_t *frame){
+	void *value = cpop(frame->operands_stack);
+	short svalue;
+	memcpy(&svalue, value, 2);
+	return svalue;
+}
+
+void push_short(frame_t *frame, short svalue){
+	u4 *value = (u4 *) calloc(1, sizeof(u4));
+	memcpy(value, &svalue, 2);
+}
