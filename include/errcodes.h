@@ -16,7 +16,8 @@ enum {
   ERR_ARGFILE,
 	ERR_INDEX,
   ERR_UNKTYPE,
-  ERR_EMPTY
+  ERR_EMPTY,
+	ERR_INVREF
 } Errors;
 
 #endif

@@ -33,5 +33,10 @@ void instantiate_by_name(instance_t *instance, method_area_t *marea, char *class
  */
 void instantiate_by_index(instance_t *instance, jvm_t *jvm, u2 class_index, clist_t *variables);
 
+/**
+ *  Get an instance class name
+ */
+char * get_class_name(instance_t *instance);
+
 
 #endif

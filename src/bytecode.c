@@ -280,6 +280,7 @@ void ASTORE_0_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cinsert(frame->local_variables, 0, cpop(frame->operands_stack));
 }
 void ASTORE_1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	printf("size %d\n", frame->local_variables->size);
 	cinsert(frame->local_variables, 1, cpop(frame->operands_stack));
 }
 void ASTORE_2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
@@ -799,6 +800,7 @@ void FSUB_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 }
 void GETFIELD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void GETSTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	printf("Get static\n");
 	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
 	info_t *value = get_constant_pool_entry(frame, cp_index);
 	info_t *class_info = get_constant_pool_entry(frame, get_constant_pool_entry(frame, value->Fieldref.class_index)->Class.name_index);
@@ -1195,9 +1197,23 @@ void INSTANCEOF_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 void INVOKEDYNAMIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void INVOKEINTERFACE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void INVOKESPECIAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	printf("Invokand especialmente\n");
+	printf("Invokando especialmente\n");
+	objectref_t *ref = (objectref_t *) cpop(frame->operands_stack);
+	if(ref->tag != REF_Instance){
+		fprintf(stderr, "Invalid object reference to invoke special\n");
+		exit(ERR_INVREF);
+	}
+	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
+	info_t *method_ref = get_constant_pool_entry(frame, cp_index);
+	printf("class_index %d\n", method_ref->Methodref.class_index);
+	char *classname = get_class_name(ref->object);
+	printf("class name %s\n", classname);
+	free(classname);
+
+	cpop(frame->operands_stack);
 }
 void INVOKESTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	printf("Invoke static\n");
 	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
 	info_t *method_ref = get_constant_pool_entry(frame, cp_index);
 	info_t *method_class_ref = get_constant_pool_entry(frame, method_ref->Methodref.class_index);
