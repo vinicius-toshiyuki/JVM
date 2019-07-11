@@ -545,8 +545,28 @@ void FADD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 }
 void FALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void FASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void FCMPG_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void FCMPL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void FCMPG_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	float value1 = pop_float(frame);
+	float value2 = pop_float(frame);
+	if(value2 > value1){
+		push_integer(frame, -1);
+	}else if(value2 < value1){
+		push_integer(frame, 1);
+	}else if(value2 == value1){
+		push_integer(frame, 0);
+	}
+}
+void FCMPL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	float value1 = pop_float(frame);
+	float value2 = pop_float(frame);
+	if(value2 > value1){
+		push_integer(frame, -1);
+	}else if(value2 < value1){
+		push_integer(frame, 1);
+	}else if(value2 == value1){
+		push_integer(frame, 0);
+	}
+}
 void FCONST_0_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *ivalue = (u4 *) calloc(1, sizeof(u4));
 	*ivalue = 0x00000000; /* 0.0 IEEE-754 Float */
@@ -927,6 +947,7 @@ void IFGT_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 void IFLE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1];
 	int32_t *ivalue = (int32_t *) cpop(frame->operands_stack);
+
 	if(0 <= *ivalue){
 		int16_t offset;
 		memcpy(&offset, &offset_bytes, 2);
