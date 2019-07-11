@@ -572,6 +572,7 @@ void FDIV_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	ivalue2 = (float *) value2;
 
   iresult = calloc(1, sizeof(float));
+  
 	*iresult = *ivalue2 / *ivalue1;
 
 	cpush(frame->operands_stack, iresult);
