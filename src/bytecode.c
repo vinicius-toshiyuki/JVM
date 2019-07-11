@@ -665,7 +665,7 @@ void FSUB_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 void GETFIELD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
 	info_t *fieldref = get_constant_pool_entry(frame, cp_index);
-	info_t *fieldref_name_utf8 = get_constant_pool_entry(frame, fieldref->Fieldref.name_index);
+	info_t *fieldref_name_utf8 = get_constant_pool_entry(frame, fieldref->Fieldref.name_and_type_index);
 	char *fieldref_name = (char *) calloc(fieldref_name_utf8->Utf8.length + 1, sizeof(char));
 	memcpy(fieldref_name, fieldref_name_utf8->Utf8.bytes, fieldref_name_utf8->Utf8.length);
 	printf("%s\n", fieldref_name);
