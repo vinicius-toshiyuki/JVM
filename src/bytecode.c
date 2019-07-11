@@ -697,57 +697,35 @@ void GOTO_W_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	*pc += offset - 1;
 }
 void I2B_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	int32_t *ivalue = (int32_t *) cpop(frame->operands_stack);
-	int8_t aux = (int8_t) *ivalue;
-	u4 *brvalue = (u4 *) calloc(1, sizeof(u4));
-	memcpy(brvalue, &aux, 1);
-
-	cpush(frame->operands_stack, brvalue);
+	integer value = pop_integer(frame);
+	byte rvalue = (byte) value;
+	push_byte(frame, rvalue);
 }
 void I2C_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	int32_t *ivalue = (int32_t *) cpop(frame->operands_stack);
-	int8_t aux = (int8_t) *ivalue;
-	u4 *crvalue = (u4 *) calloc(1, sizeof(u4));
-	memcpy(crvalue, &aux, 1);
-	
-	cpush(frame->operands_stack, crvalue);
+	integer value = pop_integer(frame);
+	byte rvalue = (byte) value;
+	push_char(frame, rvalue);
 }
 void I2D_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	int32_t *ivalue = (int32_t *) cpop(frame->operands_stack);
-	double aux = (double) *ivalue;
-	u8 *dvalue = (u8 *) &aux;
-
-	u4 *dhigh = (u4 *) calloc(1, sizeof(u4));
-	u4 *dlow = (u4 *) calloc(1, sizeof(u4));
-	*dhigh = *dvalue >> 32;
-	*dlow |= *dvalue;
-	
-	cpush(frame->operands_stack, dhigh);
-	cpush(frame->operands_stack, dlow);
+	integer value = pop_integer(frame);
+	double rvalue = (double) value;
+	push_double(frame, rvalue);
 }
 void I2F_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	int32_t *ivalue = (int32_t *) cpop(frame->operands_stack);
-	float aux = (float) *ivalue;
-	u4 *fvalue = (u4 *) &aux;
-
-	u4 *frvalue = (u4 *) calloc(1, sizeof(u4));
-	*frvalue = *fvalue;
-	cpush(frame->operands_stack, frvalue);
+	integer value = pop_integer(frame);
+	float rvalue = (float) value;
+	push_float(frame, rvalue);
 }
 void I2L_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	int32_t *ivalue = (int32_t *) cpop(frame->operands_stack);
-	int64_t aux = (int64_t) *ivalue;
-	u8 *lvalue = (u8 *) &aux;
-
-	u4 *lhigh = (u4 *) calloc(1, sizeof(u4));
-	u4 *llow = (u4 *) calloc(1, sizeof(u4));
-	*lhigh = *lvalue >> 32;
-	*llow |= *lvalue;
-
-	cpush(frame->operands_stack, lhigh);
-	cpush(frame->operands_stack, llow);
+	integer value = pop_integer(frame);
+	long rvalue = (long) value;
+	push_long(frame, rvalue);
 }
-void I2S_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void I2S_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	integer value = pop_integer(frame);
+	short rvalue = (short) value;
+	push_short(frame, rvalue);
+}
 void IADD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	integer ivalue1 = 0, ivalue2 = 0;
 	integer iresult;
@@ -1233,8 +1211,20 @@ void IRETURN_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cpush(((frame_t *) jvm->frame_stack->top->next->value)->operands_stack, cpop(frame->operands_stack));
 	*pc = NULL;
 }
-void ISHL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void ISHR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void ISHL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	integer value1 = pop_integer(frame);
+	integer value2 = pop_integer(frame);
+
+	integer result = value2 << value1;
+	push_integer(frame, result);
+}
+void ISHR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	integer value1 = pop_integer(frame);
+	integer value2 = pop_integer(frame);
+
+	integer result = value2 >> value1;
+	push_integer(frame, result);
+}
 void ISTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u1 lv_index = (*pc + 1)[0]; ++*pc;
 	int *ivalue = (int *) cpop(frame->operands_stack);
@@ -1265,7 +1255,15 @@ void ISUB_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	iresult = ivalue2 - ivalue1;
 	push_integer(frame, iresult);
 }
-void IUSHR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IUSHR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	integer ivalue1 = 0, ivalue2 = 0;
+	integer iresult;
+	ivalue1 = pop_integer(frame);
+	ivalue2 = pop_integer(frame);
+
+	iresult = (integer) ((uint32_t) ivalue2 >> ivalue1); /* O shift right lógico só acontece para tipos unsigned em C */
+	push_integer(frame, iresult);
+}
 void IXOR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	integer value1 = pop_integer(frame);
 	integer value2 = pop_integer(frame);
@@ -1275,9 +1273,21 @@ void IXOR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 }
 void JSR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void JSR_W_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void L2D_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void L2F_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void L2I_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void L2D_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	long value = pop_long(frame);
+	double rvalue = (double) value;
+	push_double(frame, rvalue);
+}
+void L2F_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	long value = pop_long(frame);
+	float rvalue = (float) value;
+	push_float(frame, rvalue);
+}
+void L2I_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	long value = pop_long(frame);
+	integer rvalue = (integer) value;
+	push_integer(frame, rvalue);
+}
 void LADD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	long lvalue1, lvalue2, lresult;
 	lvalue1 = pop_long(frame);
@@ -1441,8 +1451,20 @@ void LRETURN_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cpush(((frame_t *) jvm->frame_stack->top->next->value)->operands_stack, cpop(frame->operands_stack));
 	cpush(((frame_t *) jvm->frame_stack->top->next->value)->operands_stack, low);
 }
-void LSHL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void LSHR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void LSHL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	long value1 = pop_long(frame);
+	long value2 = pop_long(frame);
+
+	long result = value2 << value1;
+	push_long(frame, result);
+}
+void LSHR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	long value1 = pop_long(frame);
+	long value2 = pop_long(frame);
+
+	long result = value2 >> value1;
+	push_long(frame, result);
+}
 void LSTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u1 lv_index = (*pc + 1)[0]; ++*pc;
 	u4 *lvalue_low = (u4 *) cpop(frame->operands_stack);
@@ -1482,7 +1504,13 @@ void LSUB_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	lresult = lvalue2 - lvalue1;
 	push_long(frame, lresult);
 }
-void LUSHR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void LUSHR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	long value1 = pop_long(frame);
+	long value2 = pop_long(frame);
+
+	long result = (long) ((unsigned long) value2 >> value1); /* O shift right lógico só acontece para tipos unsigned em C */;
+	push_long(frame, result);
+}
 void LXOR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	long value1 = pop_long(frame);
 	long value2 = pop_long(frame);

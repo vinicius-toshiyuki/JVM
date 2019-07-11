@@ -44,9 +44,19 @@ void push_byte(frame_t *frame, byte bvalue);
 #define pop_char(frame) pop_byte(frame)
 
 /**
+ * Push a java char into frame operands stack top
+ */
+#define push_char(frame, bvalue) push_byte(frame, bvalue)
+
+/**
  *  Pop a java boolean from the frame operands stack top
  */
 #define pop_boolean(frame) pop_byte(frame)
+
+/**
+ * Push a java boolean into frame operands stack top
+ */
+#define push_boolean(frame, bvalue) push_byte(frame, bvalue)
 
 /**
  *  Pop a java array reference from the frame operands stack top
