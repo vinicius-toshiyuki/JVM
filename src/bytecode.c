@@ -665,7 +665,15 @@ void FSUB_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	fresult = fvalue2 - fvalue1;
 	push_float(frame, fresult);
 }
-void GETFIELD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void GETFIELD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
+	info_t *fieldref = get_constant_pool_entry(frame, cp_index);
+	info_t *fieldref_name_utf8 = get_constant_pool_entry(frame, fieldref->Fieldref.name_index);
+	char *fieldref_name = (char *) calloc(fieldref_name_utf8->Utf8.length + 1, sizeof(char));
+	memcpy(fieldref_name, fieldref_name_utf8->Utf8.bytes, fieldref_name_utf8->Utf8.length);
+	printf("%s\n", fieldref_name);
+	free(fieldref_name);
+}
 void GETSTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	// printf("Get static\n");
 	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
@@ -1535,17 +1543,18 @@ void MULTIANEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	memcpy(class_name, class_info_utf8->Utf8.bytes, class_info_utf8->Utf8.length);
 
 	frame_t count_frame;
-	cstack *counts = new_cstack();
+	cstack_t *counts = new_cstack();
 	count_frame.operands_stack = counts;
 
 	u1 i;
 	for(i = 0; i < dimensions; i++)
-		cpush(cpop(frame->operands_stack));
+		cpush(count_frame.operands_stack, cpop(frame->operands_stack));
 
 	/* COM UM PASSO DE FÉ, DIZEMOS QUE ESTÁ CERTO */
 	/* Ao final de tudo ARRAY é pra ter o MULTIARRAY*/
 	array_t *array = new_array();
 	array_t *arrays = new_array();
+	array_t *next_arrays = NULL;
 	array_of(arrays, ARR_RefArray, 1);
 	put(arrays, 0, array);
 	for(i = 0; i < dimensions; i++){
@@ -1553,7 +1562,7 @@ void MULTIANEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 		integer count = pop_integer(&count_frame);
 		next_arrays = new_array();
 		array_of(next_arrays, ARR_RefArray, count);
-		for(k = 0; k < arrays->size; k++){
+		for(k = 0; k < arrays->length; k++){
 			/* TODO: devia fazer um iterator */
 			array_t *narray = at(arrays, k);
 			array_of(narray, ARR_RefArray, count);
@@ -1695,7 +1704,7 @@ void SIPUSH_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	integer value = 0x00000000;
 	memcpy(&value, *pc + 1, 2);
 	*pc += 2;
-	push_integer(value);
+	push_integer(frame, value);
 }
 void SWAP_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	void *value1 = cpop(frame->operands_stack);
