@@ -28,9 +28,11 @@ void instantiate_by_index(instance_t *instance, jvm_t *jvm, u2 cp_index, clist_t
     instance->variables = variables;
 }
 
+#include <stdio.h>
 char * get_class_name(instance_t *instance){
 	ClassFile *class = instance->class;
-	info_t *classname_utf8 = class->constant_pool[class->this_class - 1].info;
+	info_t *classname_class = class->constant_pool[class->this_class - 1].info;
+    info_t *classname_utf8 = class->constant_pool[classname_class->Class.name_index - 1].info;
 	char *classname = (char *) calloc(classname_utf8->Utf8.length + 1, sizeof(char));
 	memcpy(classname, classname_utf8->Utf8.bytes, classname_utf8->Utf8.length);
 	return classname;

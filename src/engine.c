@@ -118,6 +118,29 @@ void push_double(frame_t *frame, double dvalue){
     cpush(frame->operands_stack, value_low);
 }
 
+long pop_long(frame_t *frame){
+    u4 *low_value = (u4 *) cpop(frame->operands_stack);
+    u4 *high_value = (u4 *) cpop(frame->operands_stack);
+    u8 value = ((u8) *high_value << 32) | *low_value;
+    long lvalue;
+    memcpy(&lvalue, &value, 8);
+    free(low_value);
+    free(high_value);
+    return lvalue;
+}
+
+void push_long(frame_t *frame, long lvalue) {
+    u4 *value_low = (u4 *) calloc(1, sizeof(u4));
+    u4 *value_high = (u4 *) calloc(1, sizeof(u4));
+    u8 *value = (u8 *) &lvalue;
+
+    memcpy(value_low, value, 4);
+    *value >>= 32;
+    memcpy(value_high, value, 4);
+	cpush(frame->operands_stack, value_high);
+    cpush(frame->operands_stack, value_low);
+}
+
 void push_float(frame_t *frame, float fvalue){
     float *value = (float *) calloc(1, sizeof(float));
     *value = fvalue;

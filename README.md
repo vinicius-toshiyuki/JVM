@@ -47,7 +47,7 @@ Resumo: 100
 4.() arrays de referencia
 5.(X) doubles - falta as conversões, dastore, daload, dcmpl e dcmpg
 6.(X) floats - falta as conversões, fastore, faload, fcmpl e fcmpg
-7.() longs
+7.(X) longs - falta as conversões, lastore, laload e operações lógicas
 8.(X) inteiros - shifts, falta iastore, iaload e operações lógicas
 9.() shorts
 10.() strings

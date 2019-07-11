@@ -1206,7 +1206,9 @@ void INVOKESPECIAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
 	info_t *method_ref = get_constant_pool_entry(frame, cp_index);
 	printf("class_index %d\n", method_ref->Methodref.class_index);
+	printf("Não pegou\n");
 	char *classname = get_class_name(ref->object);
+	printf("Pegou\n");
 	printf("class name %s\n", classname);
 	free(classname);
 
