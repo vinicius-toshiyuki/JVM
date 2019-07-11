@@ -1560,7 +1560,7 @@ void MULTIANEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	for(i = 0; i < dimensions; i++){
 		integer k;
 		integer count = pop_integer(&count_frame);
-		next_arrays = new_array();
+		array_t *next_arrays = new_array();
 		array_of(next_arrays, ARR_RefArray, count);
 		for(k = 0; k < arrays->length; k++){
 			/* TODO: devia fazer um iterator */
