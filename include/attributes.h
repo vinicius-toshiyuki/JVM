@@ -188,8 +188,11 @@ void get_attribute_from_info(u1 *, Attributes *, u2, ClassFile *);
 		case CONSTANT_Integer: \
       printf("%sBytes: %d\n", prefix, cp->info->Integer.bytes); \
       break; \
-		case CONSTANT_Float: \
-      printf("%sValue: %f\n", prefix, (float) cp->info->Integer.bytes); \
+		case CONSTANT_Float:; \
+      u4 __value_f = cp->info->Float.bytes; \
+      float __f; \
+      memcpy(&__f, &__value_f, 4); \
+      printf("%sValue: %f\n", prefix, __f); \
       break; \
 		case CONSTANT_Long: \
       printf( \
