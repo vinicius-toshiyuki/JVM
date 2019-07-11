@@ -339,21 +339,18 @@ void CASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 void CHECKCAST_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void D2F_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	double dvalue = pop_double(frame);
-	float *fvalue = (float *) calloc(1, sizeof(float));
-	*fvalue = (float) dvalue;
-	cpush(frame->operands_stack, fvalue);
+	float fvalue = (float) dvalue;
+	push_float(frame, fvalue);
 }
 void D2I_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	double dvalue = pop_double(frame);
-	integer *ivalue = (integer *) calloc(1, sizeof(integer));
-	*ivalue = (integer) dvalue;
-	cpush(frame->operands_stack, ivalue);
+	integer ivalue = (integer) dvalue;
+	push_integer(frame, ivalue);
 }
 void D2L_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	double dvalue = pop_double(frame);
-	long int *lvalue = (long int *) calloc(1, sizeof(long int));
-	*lvalue = (long int) dvalue;
-	cpush(frame->operands_stack, lvalue);
+	long lvalue = (long) dvalue;
+	push_long(frame, lvalue);
 }
 void DADD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	double dvalue1, dvalue2, dresult;
@@ -1358,7 +1355,18 @@ void LAND_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	push_long(frame, result);
 }
 void LASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void LCMP_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void LCMP_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	long value1 = pop_long(frame);
+	long value2 = pop_long(frame);
+
+	if(value1 == value2){
+		push_long(frame, 0);
+	}else if(value1 > value2){
+		push_long(frame, 1);
+	}else{
+		push_long(frame, -1);
+	}
+}
 void LCONST_0_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *lvalue_high = (u4 *) calloc(1, sizeof(u4));
 	u4 *lvalue_low = (u4 *) calloc(1, sizeof(u4));
@@ -1484,7 +1492,6 @@ void LNEG_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	push_long(frame, lresult);
 }
 void LOOKUPSWITCH_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	printf("Loockup\n");
 	integer key = pop_integer(frame);
 
 	u4 rem = (*pc + 1 - bp) % 4;
