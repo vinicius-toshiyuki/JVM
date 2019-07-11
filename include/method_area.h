@@ -20,4 +20,9 @@ void initialize_class(method_area_t *, ClassFile *);
 
 int is_loaded(method_area_t *, char *);
 
+/*
+	Get a class @classname in method area @marea.
+*/
+ClassFile * get_class_by_name(method_area_t *marea, char *classname);
+
 #endif

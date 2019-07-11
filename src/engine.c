@@ -31,7 +31,7 @@ Method get_method_by_name(ClassFile *class, char *name){
 
 extern handler bytecode_handlers[];
 void run_method(frame_t *frame, Method *method, jvm_t *jvm){
-    u1 **pc = &method->code;
+    u1 **pc = &frame->pc;
     do bytecode_handlers[(*pc)[0]](pc, method->code, frame, jvm);
     while((*pc)++ != NULL);
 }
