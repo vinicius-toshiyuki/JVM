@@ -21,6 +21,7 @@ typedef struct field_object_t {
 		boolean Boolean;
 		short Short;
 		objectref_t *ObjectRef;
+		objectref_t *ArrayRef;
 	} value;
 } field_object_t;
 
@@ -37,6 +38,7 @@ typedef enum {
 	FIELD_Short,
 	FIELD_Double,
 	FIELD_Long,
+	FIELD_ArrayRef,
 	FIELD_ObjectRef
 } FIELD;
 /**

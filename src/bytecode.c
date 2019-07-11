@@ -685,14 +685,59 @@ void FSUB_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 void GETFIELD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
 	info_t *fieldref = get_constant_pool_entry(frame, cp_index);
-	info_t *fieldref_name_utf8 = get_constant_pool_entry(frame, fieldref->Fieldref.name_and_type_index);
+
+	info_t *fieldref_nameandtype = get_constant_pool_entry(frame, fieldref->Fieldref.name_and_type_index);
+	info_t *fieldref_name_utf8 = get_constant_pool_entry(frame, fieldref_nameandtype->NameAndType.name_index);
+	info_t *fieldref_descriptor_utf8 = get_constant_pool_entry(frame, fieldref_nameandtype->NameAndType.descriptor_index);
+
 	char *fieldref_name = (char *) calloc(fieldref_name_utf8->Utf8.length + 1, sizeof(char));
 	memcpy(fieldref_name, fieldref_name_utf8->Utf8.bytes, fieldref_name_utf8->Utf8.length);
-	printf("%s\n", fieldref_name);
+/*	printf("%s\n", fieldref_name); */
+
+	char *fieldref_descriptor = (char *) calloc(fieldref_descriptor_utf8->Utf8.length + 1, sizeof(char));
+	memcpy(fieldref_descriptor, fieldref_descriptor_utf8->Utf8.bytes, fieldref_descriptor_utf8->Utf8.length);
+/*	printf("%s\n", fieldref_descriptor); */
+
+	objectref_t *ref = (objectref_t *) cpop(frame->operands_stack);
+	field_object_t *field = ref->object;
+/*	printf("%d\n", field->tag); */
+
+	if(field->tag == FIELD_Null){
+		fprintf(stderr, "Value not assigned to field %s\n", fieldref_name);
+		exit(ERR_UNASSG);
+	}
+
+	if(!strcmp(fieldref_descriptor, "B") && field->tag == FIELD_Byte){
+		push_byte(frame, field->value.Byte);
+	}else if(!strcmp(fieldref_descriptor, "C") && field->tag == FIELD_Char){
+		push_char(frame, field->value.Char);
+	}else if(!strcmp(fieldref_descriptor, "D") && field->tag == FIELD_Double){
+		push_double(frame, field->value.Double);
+	}else if(!strcmp(fieldref_descriptor, "F") && field->tag == FIELD_Float){
+		push_float(frame, field->value.Float);
+	}else if(!strcmp(fieldref_descriptor, "I") && field->tag == FIELD_Integer){
+		push_integer(frame, field->value.Integer);
+	}else if(!strcmp(fieldref_descriptor, "J") && field->tag == FIELD_Long){
+		push_long(frame, field->value.Long);
+	}else if(!strcmp(fieldref_descriptor, "S") && field->tag == FIELD_Short){
+		push_short(frame, field->value.Short);
+	}else if(!strcmp(fieldref_descriptor, "Z") && field->tag == FIELD_Boolean){
+		push_boolean(frame, field->value.Boolean);
+	}else{
+		if(*fieldref_descriptor == 'L' && field->tag == FIELD_ObjectRef){
+			cpush(frame->operands_stack, field->value.ObjectRef);
+		}else if(*fieldref_descriptor == '[' && field->tag == FIELD_ArrayRef){
+			cpush(frame->operands_stack, field->value.ArrayRef);
+		}else{
+			fprintf(stderr, "Invalid field descriptor %s\n", fieldref_descriptor);
+			exit(ERR_INVDESC);
+		}
+	}
+
 	free(fieldref_name);
+	free(fieldref_descriptor);
 }
 void GETSTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	// printf("Get static\n");
 	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
 	info_t *value = get_constant_pool_entry(frame, cp_index);
 	info_t *class_info = get_constant_pool_entry(frame, get_constant_pool_entry(frame, value->Fieldref.class_index)->Class.name_index);
@@ -1467,7 +1512,39 @@ void LNEG_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	lresult = -lvalue1;
 	push_long(frame, lresult);
 }
-void LOOKUPSWITCH_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void LOOKUPSWITCH_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	integer key = pop_integer(frame);
+
+	u4 rem = (*pc + 1 - bp) % 4;
+	u1 *fpc = *pc;
+	fpc += rem ? 4 - rem : rem;
+
+	integer default_offset = (fpc+1)[0] << 24 | (fpc+1)[1] << 16 | (fpc+1)[2] << 8 | (fpc+1)[3]; fpc += 4;
+	integer npairs = (fpc+1)[0] << 24 | (fpc+1)[1] << 16 | (fpc+1)[2] << 8 | (fpc+1)[3]; fpc += 4;
+
+	integer i, option, offset;
+	for(i = 0; i < npairs; i++){
+		option = \
+				(fpc + 1)[0] << 24 | \
+				(fpc + 1)[1] << 16 | \
+				(fpc + 1)[2] << 8 | \
+				(fpc + 1)[3];
+		fpc += 4;
+		offset = \
+				(fpc + 1)[0] << 24 | \
+				(fpc + 1)[1] << 16 | \
+				(fpc + 1)[2] << 8 | \
+				(fpc + 1)[3];
+		fpc += 4;
+		if(option == key)
+			break;
+	}
+	if(option != key){
+		*pc += default_offset - 1;
+	}else{
+		*pc += offset - 1;
+	}
+}
 void LOR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	long value1 = pop_long(frame);
 	long value2 = pop_long(frame);
@@ -1583,7 +1660,6 @@ void MULTIANEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	/* Ao final de tudo ARRAY é pra ter o MULTIARRAY*/
 	array_t *array = new_array();
 	array_t *arrays = new_array();
-	// array_t *next_arrays = NULL;
 	array_of(arrays, ARR_RefArray, 1);
 	put(arrays, 0, array);
 	for(i = 0; i < dimensions; i++){
@@ -1699,9 +1775,16 @@ void PUTFIELD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 		field->value.Double = pop_double(frame);
 		field->tag = FIELD_Double;
 	}else{
-		printf("\t\tÉ uma classe\n");
-		field->value.ObjectRef = cpop(frame->operands_stack);
-		field->tag = FIELD_ObjectRef;
+		if(*fieldref_descriptor == 'L'){
+			field->value.ObjectRef = cpop(frame->operands_stack);
+			field->tag = FIELD_ObjectRef;
+		}else if(*fieldref_descriptor == '['){
+			field->value.ArrayRef = cpop(frame->operands_stack);
+			field->tag = FIELD_ArrayRef;
+		}else{
+			fprintf(stderr, "Invalid field descriptor %s\n", fieldref_descriptor);
+			exit(ERR_INVDESC);
+		}
 	}
 	objectref_t *ref = cpop(frame->operands_stack);
 	if(ref->tag != REF_Instance){
@@ -1741,5 +1824,35 @@ void SWAP_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cpush(frame->operands_stack, value1);
 	cpush(frame->operands_stack, value2);
 }
-void TABLESWITCH_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void TABLESWITCH_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	integer index = pop_integer(frame);
+	u4 rem = (*pc + 1 - bp) % 4;
+	/* Se rem for diferente de zero, soma 4 - rem, senão zero */
+	/* Alinhando o pc */
+	u1 *fpc = *pc;
+	fpc += rem ? 4 - rem : rem;
+	u4 default_offset_bytes = (fpc+1)[0] << 24 | (fpc+1)[1] << 16 | (fpc+1)[2] << 8 | (fpc+1)[3]; fpc += 4;
+	u4 low = (fpc+1)[0] << 24 | (fpc+1)[1] << 16 | (fpc+1)[2] << 8 | (fpc+1)[3]; fpc += 4;
+	u4 high = (fpc+1)[0] << 24 | (fpc+1)[1] << 16 | (fpc+1)[2] << 8 | (fpc+1)[3]; fpc += 4;
+	u4 x = high - low + 1;
+	int i, j;
+	u4 offset_bytes;
+	for(i = 0, j = low; i < x; i++, j++){
+		offset_bytes = \
+				(fpc + 1)[0] << 24 | \
+				(fpc + 1)[1] << 16 | \
+				(fpc + 1)[2] << 8 | \
+				(fpc + 1)[3];
+		fpc += 4;
+		if(j == index)
+			break;
+	}
+	if(i == x){
+		integer *default_offset = (integer *) &default_offset_bytes;
+		*pc += *default_offset - 1;
+	}else{
+		integer *offset = (integer *) &offset_bytes;
+		*pc += *offset - 1;
+	}
+}
 void WIDE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}

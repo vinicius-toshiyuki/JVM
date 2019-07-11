@@ -2,8 +2,8 @@
 #define errcodes_h
 
 enum {
-  ERR_NOFILE = -1,
-  ERR_MAGIC = -2,
+  ERR_NOFILE = 1,
+  ERR_MAGIC,
   ERR_UNKTAG,
   ERR_CANTOPENFILE,
 	ERR_MINOR,
@@ -18,7 +18,10 @@ enum {
   ERR_UNKTYPE,
   ERR_EMPTY,
 	ERR_INVREF,
-	ERR_INVARR
+	ERR_INVARR,
+	ERR_UNASSG,
+	ERR_INVDESC,
+	ERR_NOMETH
 } Errors;
 
 #endif
