@@ -24,9 +24,19 @@ void store_arguments(frame_t *frame, frame_t *old_frame, char *arguments);
 integer pop_integer(frame_t *frame);
 
 /**
+ * Push a java integer into frame operands stack top
+ */
+void push_integer(frame_t *frame, integer ivalue);
+
+/**
  *  Pop a java byte from the frame operands stack top
  */
 byte pop_byte(frame_t *frame);
+
+/**
+ * Push a java byte into frame operands stack top
+ */
+void push_byte(frame_t *frame, byte bvalue);
 
 /**
  *  Pop a java char from the frame operands stack top
@@ -52,4 +62,35 @@ double pop_double(frame_t *frame);
  *  Push a java double into frame operands stack top
  */
 void push_double(frame_t *frame, double dvalue);
+
+/**
+ * Transform high and low bytes into a java double
+ */
+double high_low_to_double(u4 *value_low, u4* value_high);
+
+/**
+ * Pop a java long from the frame operand stack top
+ */
+long pop_long(frame_t *frame);
+
+
+/**
+ * Push a java long into frame operands stack top
+ */
+void push_long(frame_t *frame, long lvalue);
+
+/**
+ * Transform high and low bytes into a java long
+ */
+long high_low_to_long(u4 *value_low, u4* value_high);
+
+/**
+ * Pop a java float from the frame operand stack top
+ */
+float pop_float(frame_t *frame);
+
+/**
+ * Push a java float into frame operands stack top
+ */
+void push_float(frame_t *frame, float fvalue);
 #endif
