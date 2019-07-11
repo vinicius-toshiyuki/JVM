@@ -45,19 +45,19 @@ Resumo: 100
 2.(X) arrays.length
 3.() arrays multidimensionais
 4.(X) arrays de referencia
-5.(X) doubles - falta as conversões, dastore, daload, dcmpl e dcmpg
-6.(X) floats - falta as conversões, fastore, faload, fcmpl e fcmpg
-7.(X) longs - falta as conversões, lastore, laload e operações lógicas
-8.(X) inteiros - shifts, falta iastore, iaload e operações lógicas
-9.() shorts
+5.(X) doubles - dastore, daload
+6.(X) floats - fastore, faload
+7.(X) longs - lastore, laload
+8.(X) inteiros - falta iastore, iaload
+9.(X) shorts
 10.(X) strings -certo no viewer falta passar pro interpretador
 11.(X) desvios com cat 1
-12.() operacoes logicas com cat 1  
+12.(X) operacoes logicas com cat 1  
 13.() operacoes de deslocamento com cat 1
-14.(X) operacoes aritmeticas de cat 2 - falta o long
+14.(X) operacoes aritmeticas de cat 2
 15.() operacoes de deslocamento de longs
 16.(X) system.out.println (int, float, string e booleano)
-17.() conversao de e para cat 2
+17.(X) conversao de e para cat 2
 18.() iteracao
 19.() switches
 20.() fields
@@ -79,12 +79,12 @@ Resumo: 100
 
 -- leitura do formato ponto class:
 
-- Trata versões superiores?
-- Despreza silenciosamente atributos não tratados?
-- Consistência?
-- Corretude?
-- Exibe mnemônicos?
-- Apresenta reindireção das entradas no Constant Pool?
+- Trata versões superiores? Sim
+- Despreza silenciosamente atributos não tratados? Sim
+- Consistência? Consistente
+- Corretude? Correto
+- Exibe mnemônicos? Sim
+- Apresenta reindireção das entradas no Constant Pool? Apresenta
 
 Bonus: 10% (bonus sobre a corretude do interpretador)
 

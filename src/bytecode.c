@@ -522,18 +522,46 @@ void DSUB_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	push_double(frame, dresult);
 }
 void DUP_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	u4 *top = (u4 *) cpop(frame->operands_stack);
+	void *top = (void *) cpop(frame->operands_stack);
 	cpush(frame->operands_stack, top);
 	cpush(frame->operands_stack, top);
 }
-void DUP_X1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void DUP_X2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void DUP_X1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	void *top = (void *) cpop(frame->operands_stack);
+	void *sec = (void *) cpop(frame->operands_stack);
+
+	cpush(frame->operands_stack, top);
+	cpush(frame->operands_stack, sec);
+	cpush(frame->operands_stack, top);
+}
+void DUP_X2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	void *top = (void *) cpop(frame->operands_stack);
+	void *sec = (void *) cpop(frame->operands_stack);
+	void *ter = (void *) cpop(frame->operands_stack);
+
+	cpush(frame->operands_stack, top);
+	cpush(frame->operands_stack, ter);
+	cpush(frame->operands_stack, sec);
+	cpush(frame->operands_stack, top);
+}
 void DUP2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void DUP2_X1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void DUP2_X2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void F2D_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void F2I_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void F2L_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void F2D_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	float value = pop_float(frame);
+	double rvalue = (double) value;
+	push_double(frame, rvalue);
+}
+void F2I_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	float value = pop_float(frame);
+	integer rvalue = (integer) value;
+	push_integer(frame, rvalue);
+}
+void F2L_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	float value = pop_float(frame);
+	long rvalue = (long) value;
+	push_long(frame, rvalue);
+}
 void FADD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	float fvalue1 = 0, fvalue2 = 0;
 	float fresult;
