@@ -6,6 +6,7 @@
 #include "../include/jvm.h"
 #include "../include/info.h"
 #include "../include/engine.h"
+#include "../include/array.h"
 #include <math.h>
 
 handler bytecode_handlers[] = {
@@ -29,7 +30,6 @@ handler bytecode_handlers[] = {
   [0x33] = BALOAD_handler,
   [0x54] = BASTORE_handler,
   [0x10] = BIPUSH_handler,
-  [0xca] = BREAKPOINT_handler,
   [0x34] = CALOAD_handler,
   [0x55] = CASTORE_handler,
   [0xc0] = CHECKCAST_handler,
@@ -214,10 +214,21 @@ handler bytecode_handlers[] = {
   [0xc4] = WIDE_handler
 };
 
-void AALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void AASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void AALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	integer index = pop_integer(frame);
+	array_t *array = pop_array(frame);
+	cpush(frame->operands_stack, at(array, index));
+}
+void AASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	objectref_t *ref = (objectref_t *) cpop(frame->operands_stack);
+	integer index = pop_integer(frame);
+	array_t *array = pop_array(frame);
+	put(array, index, ref);
+}
 void ACONST_NULL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	cpush(frame->operands_stack, NIL);
+	objectref_t *ref = new_objectref();
+	reference_of(ref, REF_Null, NULL);
+	cpush(frame->operands_stack, ref);
 }
 void ALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u1 lv_index = (*pc + 1)[0]; ++*pc;
@@ -235,12 +246,32 @@ void ALOAD_2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 void ALOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cpush(frame->operands_stack, cat(frame->local_variables, 3));
 }
-void ANEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void ANEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
+	u1 ref_tag = get_constant_pool_tag(frame, cp_index);
+	/* Só pra não dar erro de unused variable */
+	if(0)
+		printf("%d\n", ref_tag);
+	int32_t *count = (int32_t *) cpop(frame->operands_stack);
+
+	array_t *array = new_array();
+	/* Tem que definir o tipo certinho */
+	array_of(array, ARR_RefClass, *count);
+	
+	objectref_t *ref = new_objectref();
+	reference_of(ref, REF_Array, array);
+	cpush(frame->operands_stack, ref);
+}
 void ARETURN_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cpush(((frame_t *) jvm->frame_stack->top->next->value)->operands_stack, cpop(frame->operands_stack));
 	*pc = NULL;
 }
-void ARRAYLENGTH_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void ARRAYLENGTH_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	array_t *array = pop_array(frame);
+	int32_t *length = (int32_t *) calloc(1, sizeof(int32_t));
+	memcpy(length, &array->length, 4);
+	cpush(frame->operands_stack, length);
+}
 void ASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u1 lv_index = (*pc + 1)[0]; ++*pc;
 	cinsert(frame->local_variables, lv_index, cpop(frame->operands_stack));
@@ -258,8 +289,21 @@ void ASTORE_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cinsert(frame->local_variables, 3, cpop(frame->operands_stack));
 }
 void ATHROW_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void BALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void BASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void BALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	integer index = pop_integer(frame);
+	array_t *array = pop_array(frame);
+	byte *bvalue = (byte *) calloc(1, sizeof(byte));
+	*bvalue = *((byte *) at(array, index));
+	cpush(frame->operands_stack, bvalue);
+}
+void BASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	byte bvalue = pop_byte(frame);
+	byte *value = (byte *) calloc(1, sizeof(byte));
+	*value = bvalue;
+	integer index = pop_integer(frame);
+	array_t *array = pop_array(frame);
+	put(array, index, value);
+}
 void BIPUSH_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *ivalue = (u4 *) calloc(1, sizeof(u4));
 	if((*pc + 1)[0] >> 7 & 0x01){
@@ -268,13 +312,40 @@ void BIPUSH_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	memcpy(ivalue, (*pc)++ + 1, 1);
 	cpush(frame->operands_stack, ivalue);
 }
-void BREAKPOINT_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void CALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void CASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void CALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	integer index = pop_integer(frame);
+	array_t *array = pop_array(frame);
+	character *cvalue = (character *) calloc(1, sizeof(character));
+	memcpy(cvalue, at(array, index), 1);
+	cpush(frame->operands_stack, cvalue);
+}
+void CASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	character cvalue = pop_char(frame);
+	integer index = pop_integer(frame);
+	array_t *array = pop_array(frame);
+	character *value = (character *) calloc(1, sizeof(character));
+	*value = cvalue;
+	put(array, index, value);
+}
 void CHECKCAST_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void D2F_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void D2I_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void D2L_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void D2F_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	double dvalue = pop_double(frame);
+	float *fvalue = (float *) calloc(1, sizeof(float));
+	*fvalue = (float) dvalue;
+	cpush(frame->operands_stack, fvalue);
+}
+void D2I_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	double dvalue = pop_double(frame);
+	integer *ivalue = (integer *) calloc(1, sizeof(integer));
+	*ivalue = (integer) dvalue;
+	cpush(frame->operands_stack, ivalue);
+}
+void D2L_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	double dvalue = pop_double(frame);
+	long int *lvalue = (long int *) calloc(1, sizeof(long int));
+	*lvalue = (long int) dvalue;
+	cpush(frame->operands_stack, lvalue);
+}
 void DADD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *dvalue_low1 = NULL, *dvalue_high1 = NULL, *dvalue_low2 = NULL, *dvalue_high2 = NULL;
 	double dvalue1, dvalue2, dresult;
@@ -302,10 +373,44 @@ void DADD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cpush(frame->operands_stack, dresult_high);
 	cpush(frame->operands_stack, dresult_low);
 }
-void DALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void DASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void DCMPG_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void DCMPL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void DALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	integer index = pop_integer(frame);
+	array_t *array = pop_array(frame);
+
+	push_double(frame, *((double *) at(array, index)));
+}
+void DASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	double dvalue = pop_double(frame);
+	integer index = pop_integer(frame);
+	array_t *array = pop_array(frame);
+	double *value = (double *) calloc(1, sizeof(double));
+	*value = dvalue;
+	put(array, index, value);
+}
+void DCMPG_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	double dvalue2 = pop_double(frame);
+	double dvalue1 = pop_double(frame);
+	integer *result = (integer *) calloc(1, sizeof(integer));
+	if(dvalue1 > dvalue2)
+		*result = 1;
+	else if(dvalue1 == dvalue2)
+		*result = 0;
+	else
+		*result = -1;
+	cpush(frame->operands_stack, result);
+}
+void DCMPL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	double dvalue2 = pop_double(frame);
+	double dvalue1 = pop_double(frame);
+	integer *result = (integer *) calloc(1, sizeof(integer));
+	if(dvalue1 < dvalue2)
+		*result = 1;
+	else if(dvalue1 == dvalue2)
+		*result = 0;
+	else
+		*result = -1;
+	cpush(frame->operands_stack, result);
+}
 void DCONST_0_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *dvalue_high = (u4 *) calloc(1, sizeof(u4));
 	u4 *dvalue_low = (u4 *) calloc(1, sizeof(u4));
@@ -695,10 +800,8 @@ void FSUB_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 void GETFIELD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void GETSTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
-	/* objectref aqui é uma referência simbólica para um field, que é um Fieldref */
-	CONSTANT_Fieldref_info *value = (CONSTANT_Fieldref_info *) get_constant_pool_entry(frame, cp_index);
-	/* tem que resolver a referência */
-	info_t *class_info = get_constant_pool_entry(frame, get_constant_pool_entry(frame, value->class_index)->Class.name_index);
+	info_t *value = get_constant_pool_entry(frame, cp_index);
+	info_t *class_info = get_constant_pool_entry(frame, get_constant_pool_entry(frame, value->Fieldref.class_index)->Class.name_index);
 	char *classname = (char *) calloc(class_info->Utf8.length + 1, sizeof(char));
 	memcpy(classname, class_info->Utf8.bytes, class_info->Utf8.length);
 	if(!is_loaded(jvm->marea, classname)){
@@ -708,23 +811,9 @@ void GETSTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 		load_class(jvm->marea, classfilename);
 	}
 	free(classname);
-	/* TODO: falta resolver a referência e entender como fazer o tal do println */
-	/*
-		É basicamente ver se o campo existe e se a classe atual tem	(vamos assumir que sim ;p)
-		VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVpermissão de acessoVV
-		When resolving a field reference, field resolution first attempts to look up the referenced field in C and its superclasses:
-			If C declares a field with the name and descriptor specified by the field reference, field lookup succeeds. The declared field is the result of the field lookup.
-			Otherwise, field lookup is applied recursively to the direct superinterfaces of the specified class or interface C.
-			Otherwise, if C has a superclass S, field lookup is applied recursively to S.
-			Otherwise, field lookup fails.
-		Then:
-			If field lookup fails, field resolution throws a NoSuchFieldError.
-			Otherwise, if field lookup succeeds but the referenced field is not accessible (§5.4.4) to D, field resolution throws an IllegalAccessError.
-			Otherwise, let <E, L1> be the class or interface in which the referenced field is actually declared and let L2 be the defining loader of D.
-			Given that the type of the referenced field is Tf, let T be Tf if Tf is not an array type, and let T be the element type (§2.4) of Tf otherwise.
-			The Java Virtual Machine must impose the loading constraint that TL1 = TL2 (§5.3.4).
-	*/
-	cpush(frame->operands_stack, value);
+	objectref_t *ref = new_objectref();
+	reference_of(ref, REF_Fieldref, value);
+	cpush(frame->operands_stack, ref);
 }
 void GOTO_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1];
@@ -1105,7 +1194,9 @@ void INSTANCEOF_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 }
 void INVOKEDYNAMIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void INVOKEINTERFACE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void INVOKESPECIAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void INVOKESPECIAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	printf("Invokand especialmente\n");
+}
 void INVOKESTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
 	info_t *method_ref = get_constant_pool_entry(frame, cp_index);
@@ -1614,13 +1705,16 @@ void NEW_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 
 	u1 tag = get_constant_pool_tag(frame, cp_index);
 	info_t *template = get_constant_pool_entry(frame, cp_index);
-	object_t *object = new_object();
+	instance_t *inst = new_instance();
 	if(tag == CONSTANT_Class){
 		/* Falta inicializar o objeto (<init>) */
-		instantiate_by_index(object, jvm, template->Class.name_index, new_clist());
+		instantiate_by_index(inst, jvm, template->Class.name_index, new_clist());
 	}
-	cpush(jvm->heap, object);
-	cpush(frame->operands_stack, object);
+
+	objectref_t *ref = new_objectref();
+	reference_of(ref, REF_Instance, inst);
+	cpush(jvm->heap, ref);
+	cpush(frame->operands_stack, ref);
 }
 void NEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void NOP_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){

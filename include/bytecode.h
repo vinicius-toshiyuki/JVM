@@ -5,7 +5,8 @@
 #include "frame.h"
 #include "jvm.h"
 #include "constant_pool.h"
-#include "object.h"
+#include "objectref.h"
+#include "instance.h"
 
 #define NIL (void *) 0x1
 
@@ -31,7 +32,6 @@ void ATHROW_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm);
 void BALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm);
 void BASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm);
 void BIPUSH_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm);
-void BREAKPOINT_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm);
 void CALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm);
 void CASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm);
 void CHECKCAST_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm);

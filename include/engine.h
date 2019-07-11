@@ -5,6 +5,7 @@
 #include "classfile.h"
 #include "frame.h"
 #include "jvm.h"
+#include "array.h"
 
 typedef struct Method {
     u2 length;
@@ -17,4 +18,38 @@ void run_method(frame_t *, Method *, jvm_t *);
 /* Store @arguments in local variable array on @frame from @old_frame. @arguments is a char array of descriptors */
 void store_arguments(frame_t *frame, frame_t *old_frame, char *arguments);
 
+/**
+ *  Pop a java integer from the frame operands stack top
+ */
+integer pop_integer(frame_t *frame);
+
+/**
+ *  Pop a java byte from the frame operands stack top
+ */
+byte pop_byte(frame_t *frame);
+
+/**
+ *  Pop a java char from the frame operands stack top
+ */
+#define pop_char(frame) pop_byte(frame)
+
+/**
+ *  Pop a java boolean from the frame operands stack top
+ */
+#define pop_boolean(frame) pop_byte(frame)
+
+/**
+ *  Pop a java array reference from the frame operands stack top
+ */
+array_t * pop_array(frame_t *frame);
+
+/**
+ *  Pop a java double from the frame operands stack top
+ */
+double pop_double(frame_t *frame);
+
+/**
+ *  Push a java double into frame operands stack top
+ */
+void push_double(frame_t *frame, double dvalue);
 #endif

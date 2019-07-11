@@ -1,5 +1,5 @@
-#ifndef object_h
-#define object_h
+#ifndef instance_h
+#define instace_h
 
 #include "classfile.h"
 #include "clist.h"
@@ -8,30 +8,30 @@
 #include "constant_pool.h"
 #include <stdlib.h>
 
-typedef struct object_t {
+typedef struct instance_t {
     ClassFile *class;
-    clist_t *instance_variables;
-} object_t;
+    clist_t *variables;
+} instance_t;
 
 /**
  *  Create new object_t with null values
  */
-object_t * new_object(void);
+instance_t * new_instance(void);
 
 /**
  *  Destroy object_t
  */
-void destroy_object(object_t *object);
+void destroy_instance(instance_t *instance);
 
 /**
  *  Initialize object_t class from class classname in jvm method area marea and instance fields
  */
-void instantiate_by_name(object_t *object, method_area_t *marea, char *classname, clist_t *instance_variables);
+void instantiate_by_name(instance_t *instance, method_area_t *marea, char *classname, clist_t *variables);
 
 /**
  *  Initialize object_t class from class in jvm_t jvm top frame constant poll at index class_index and instance fields
  */
-void instantiate_by_index(object_t *object, jvm_t *jvm, u2 class_index, clist_t *instance_variables);
+void instantiate_by_index(instance_t *instance, jvm_t *jvm, u2 class_index, clist_t *variables);
 
 
 #endif
