@@ -662,7 +662,15 @@ void FSUB_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	fresult = fvalue2 - fvalue1;
 	push_float(frame, fresult);
 }
-void GETFIELD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void GETFIELD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
+	info_t *fieldref = get_constant_pool_entry(frame, cp_index);
+	info_t *fieldref_name_utf8 = get_constant_pool_entry(frame, fieldref->Fieldref.name_index);
+	char *fieldref_name = (char *) calloc(fieldref_name_utf8->Utf8.length + 1, sizeof(char));
+	memcpy(fieldref_name, fieldref_name_utf8->Utf8.bytes, fieldref_name_utf8->Utf8.length);
+	printf("%s\n", fieldref_name);
+	free(fieldref_name);
+}
 void GETSTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	// printf("Get static\n");
 	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
@@ -1548,12 +1556,13 @@ void MULTIANEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 
 	u1 i;
 	for(i = 0; i < dimensions; i++)
-		cpush(frame->operands_stack, cpop(frame->operands_stack));
+		cpush(count_frame.operands_stack, cpop(frame->operands_stack));
 
 	/* COM UM PASSO DE FÉ, DIZEMOS QUE ESTÁ CERTO */
 	/* Ao final de tudo ARRAY é pra ter o MULTIARRAY*/
 	array_t *array = new_array();
 	array_t *arrays = new_array();
+	array_t *next_arrays = NULL;
 	array_of(arrays, ARR_RefArray, 1);
 	put(arrays, 0, array);
 	for(i = 0; i < dimensions; i++){
