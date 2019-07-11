@@ -753,7 +753,13 @@ void IADD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	push_integer(frame, iresult);
 }
 void IALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void IAND_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IAND_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	integer value1 = pop_integer(frame);
+	integer value2 = pop_integer(frame);
+
+	integer result = value2 & value1;
+	push_integer(frame, result);
+}
 void IASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void ICONST_M1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *ivalue = (u4 *) calloc(1, sizeof(u4));
@@ -1198,7 +1204,13 @@ void INVOKEVIRTUAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 
 }
 
-void IOR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IOR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	integer value1 = pop_integer(frame);
+	integer value2 = pop_integer(frame);
+
+	integer result = value2 | value1;
+	push_integer(frame, result);
+}
 void IREM_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	integer ivalue1 = 0, ivalue2 = 0;
 	integer iresult;
@@ -1248,7 +1260,13 @@ void ISUB_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	push_integer(frame, iresult);
 }
 void IUSHR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void IXOR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IXOR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	integer value1 = pop_integer(frame);
+	integer value2 = pop_integer(frame);
+
+	integer result = value2 ^ value1;
+	push_integer(frame, result);
+}
 void JSR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void JSR_W_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void L2D_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
@@ -1263,7 +1281,13 @@ void LADD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	push_long(frame, lresult);
 }
 void LALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void LAND_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void LAND_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	long value1 = pop_long(frame);
+	long value2 = pop_long(frame);
+
+	long result = value2 & value1;
+	push_long(frame, result);
+}
 void LASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void LCMP_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void LCONST_0_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
@@ -1391,7 +1415,13 @@ void LNEG_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	push_long(frame, lresult);
 }
 void LOOKUPSWITCH_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void LOR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void LOR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	long value1 = pop_long(frame);
+	long value2 = pop_long(frame);
+
+	long result = value2 | value1;
+	push_long(frame, result);
+}
 void LREM_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	long lvalue1, lvalue2, lresult;
 	lvalue1 = pop_long(frame);
@@ -1447,7 +1477,13 @@ void LSUB_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	push_long(frame, lresult);
 }
 void LUSHR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void LXOR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void LXOR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	long value1 = pop_long(frame);
+	long value2 = pop_long(frame);
+
+	long result = value2 ^ value1;
+	push_long(frame, result);
+}
 void MONITORENTER_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void MONITOREXIT_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void MULTIANEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
