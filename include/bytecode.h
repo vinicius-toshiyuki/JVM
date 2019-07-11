@@ -6,6 +6,8 @@
 #include "jvm.h"
 #include "constant_pool.h"
 
+#define NIL (void *) 0x1
+
 typedef void (*handler)(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm);
 
 void AALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm);

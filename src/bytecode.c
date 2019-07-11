@@ -5,6 +5,7 @@
 #include "../include/method_area.h"
 #include "../include/jvm.h"
 #include "../include/info.h"
+#include <math.h>
 
 handler bytecode_handlers[] = {
   [0x32] = AALOAD_handler,
@@ -216,7 +217,9 @@ handler bytecode_handlers[] = {
 
 void AALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void AASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void ACONST_NULL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void ACONST_NULL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  cpush(frame->operands_stack, NIL);
+}
 void ALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u1 lv_index = (*pc + 1)[0]; ++*pc;
 	cpush(frame->operands_stack, cat(frame->local_variables, lv_index));
@@ -255,7 +258,14 @@ void ASTORE_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 void ATHROW_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void BALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void BASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void BIPUSH_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void BIPUSH_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  u4 *ivalue = (u4 *) calloc(1, sizeof(u4));
+  if((*pc + 1)[0] >> 7 & 0x01){
+    *ivalue |= 0xFFFFFFFF;
+  }
+  memcpy(ivalue, (*pc)++ + 1, 1);
+  cpush(frame->operands_stack, ivalue);
+}
 void BREAKPOINT_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void CALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void CASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
@@ -310,7 +320,33 @@ void DCONST_1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
   cpush(frame->operands_stack, dvalue_high);
   cpush(frame->operands_stack, dvalue_low);
 }
-void DDIV_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void DDIV_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  u4 *dvalue_low1 = NULL, *dvalue_high1 = NULL, *dvalue_low2 = NULL, *dvalue_high2 = NULL;
+	double dvalue1, dvalue2, dresult;
+	u8 value1 = 0x000000000000000, value2 = 0x000000000000000;
+
+	dvalue_low1 = cpop(frame->operands_stack);
+	dvalue_high1 = cpop(frame->operands_stack);
+	dvalue_low2 = cpop(frame->operands_stack);
+	dvalue_high2 = cpop(frame->operands_stack);
+
+	value1 = ((u8) *dvalue_high1) << 32 | *dvalue_low1;
+	memcpy(&dvalue1, &value1, 8);
+
+	value2 = ((u8) *dvalue_high2) << 32 | *dvalue_low2;
+	memcpy(&dvalue2, &value2, 8);
+
+	dresult = dvalue2 / dvalue1;
+	memcpy(&value1, &dresult, 8);
+
+	u4 *dresult_low = (u4 *) calloc(1, sizeof(u4));
+	u4 *dresult_high = (u4 *) calloc(1, sizeof(u4));
+	memcpy(dresult_low, &value1, 4);
+	value1 >>= 32;
+	memcpy(dresult_high, &value1, 4);
+	cpush(frame->operands_stack, dresult_high);
+	cpush(frame->operands_stack, dresult_low);
+}
 void DLOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u1 lv_index = (*pc + 1)[0]; ++*pc;
 	u4 *dvalue_high = (u4 *) cat(frame->local_variables, lv_index++);
@@ -342,9 +378,82 @@ void DLOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cpush(frame->operands_stack, dvalue_high);
 	cpush(frame->operands_stack, dvalue_low);
 }
-void DMUL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void DNEG_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void DREM_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void DMUL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  u4 *dvalue_low1 = NULL, *dvalue_high1 = NULL, *dvalue_low2 = NULL, *dvalue_high2 = NULL;
+	double dvalue1, dvalue2, dresult;
+	u8 value1 = 0x000000000000000, value2 = 0x000000000000000;
+
+	dvalue_low1 = cpop(frame->operands_stack);
+	dvalue_high1 = cpop(frame->operands_stack);
+	dvalue_low2 = cpop(frame->operands_stack);
+	dvalue_high2 = cpop(frame->operands_stack);
+
+	value1 = ((u8) *dvalue_high1) << 32 | *dvalue_low1;
+	memcpy(&dvalue1, &value1, 8);
+
+	value2 = ((u8) *dvalue_high2) << 32 | *dvalue_low2;
+	memcpy(&dvalue2, &value2, 8);
+
+	dresult = dvalue1 * dvalue2;
+	memcpy(&value1, &dresult, 8);
+
+	u4 *dresult_low = (u4 *) calloc(1, sizeof(u4));
+	u4 *dresult_high = (u4 *) calloc(1, sizeof(u4));
+	memcpy(dresult_low, &value1, 4);
+	value1 >>= 32;
+	memcpy(dresult_high, &value1, 4);
+	cpush(frame->operands_stack, dresult_high);
+	cpush(frame->operands_stack, dresult_low);
+}
+void DNEG_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  u4 *dvalue_low = NULL, *dvalue_high = NULL;
+	double dvalue1, dresult;
+	u8 value1 = 0x000000000000000;
+
+	dvalue_low = cpop(frame->operands_stack);
+	dvalue_high = cpop(frame->operands_stack);
+
+	value1 = ((u8) *dvalue_high) << 32 | *dvalue_low;
+	memcpy(&dvalue1, &value1, 8);
+
+	dresult = -dvalue1;
+	memcpy(&value1, &dresult, 8);
+
+	u4 *dresult_low = (u4 *) calloc(1, sizeof(u4));
+	u4 *dresult_high = (u4 *) calloc(1, sizeof(u4));
+	memcpy(dresult_low, &value1, 4);
+	value1 >>= 32;
+	memcpy(dresult_high, &value1, 4);
+	cpush(frame->operands_stack, dresult_high);
+	cpush(frame->operands_stack, dresult_low);
+}
+void DREM_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  u4 *dvalue_low1 = NULL, *dvalue_high1 = NULL, *dvalue_low2 = NULL, *dvalue_high2 = NULL;
+	double dvalue1, dvalue2, dresult;
+	u8 value1 = 0x000000000000000, value2 = 0x000000000000000;
+
+	dvalue_low1 = cpop(frame->operands_stack);
+	dvalue_high1 = cpop(frame->operands_stack);
+	dvalue_low2 = cpop(frame->operands_stack);
+	dvalue_high2 = cpop(frame->operands_stack);
+
+	value1 = ((u8) *dvalue_high1) << 32 | *dvalue_low1;
+	memcpy(&dvalue1, &value1, 8);
+
+	value2 = ((u8) *dvalue_high2) << 32 | *dvalue_low2;
+	memcpy(&dvalue2, &value2, 8);
+
+	dresult = fmod(dvalue2, dvalue1);
+	memcpy(&value1, &dresult, 8);
+
+	u4 *dresult_low = (u4 *) calloc(1, sizeof(u4));
+	u4 *dresult_high = (u4 *) calloc(1, sizeof(u4));
+	memcpy(dresult_low, &value1, 4);
+	value1 >>= 32;
+	memcpy(dresult_high, &value1, 4);
+	cpush(frame->operands_stack, dresult_high);
+	cpush(frame->operands_stack, dresult_low);
+}
 void DRETURN_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void DSTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u1 lv_index = (*pc + 1)[0]; ++*pc;
@@ -377,7 +486,33 @@ void DSTORE_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cinsert(frame->local_variables, 3, dvalue_high);
 	cinsert(frame->local_variables, 4, dvalue_low);
 }
-void DSUB_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void DSUB_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  u4 *dvalue_low1 = NULL, *dvalue_high1 = NULL, *dvalue_low2 = NULL, *dvalue_high2 = NULL;
+	double dvalue1, dvalue2, dresult;
+	u8 value1 = 0x000000000000000, value2 = 0x000000000000000;
+
+	dvalue_low1 = cpop(frame->operands_stack);
+	dvalue_high1 = cpop(frame->operands_stack);
+	dvalue_low2 = cpop(frame->operands_stack);
+	dvalue_high2 = cpop(frame->operands_stack);
+
+	value1 = ((u8) *dvalue_high1) << 32 | *dvalue_low1;
+	memcpy(&dvalue1, &value1, 8);
+
+	value2 = ((u8) *dvalue_high2) << 32 | *dvalue_low2;
+	memcpy(&dvalue2, &value2, 8);
+
+	dresult = dvalue2 - dvalue1;
+	memcpy(&value1, &dresult, 8);
+
+	u4 *dresult_low = (u4 *) calloc(1, sizeof(u4));
+	u4 *dresult_high = (u4 *) calloc(1, sizeof(u4));
+	memcpy(dresult_low, &value1, 4);
+	value1 >>= 32;
+	memcpy(dresult_high, &value1, 4);
+	cpush(frame->operands_stack, dresult_high);
+	cpush(frame->operands_stack, dresult_low);
+}
 void DUP_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
   void *top = frame->operands_stack->top;
   cpush(frame->operands_stack, top);
@@ -390,7 +525,22 @@ void DUP2_X2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void F2D_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void F2I_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void F2L_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void FADD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void FADD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  float *ivalue1 = NULL, *ivalue2 = NULL;
+	float *iresult;
+	u4 *value1 = NULL, *value2 = NULL;
+
+	value1 = (u4 *) cpop(frame->operands_stack);
+  ivalue1 = (float *) value1;
+
+	value2 = (u4 *) cpop(frame->operands_stack);
+	ivalue2 = (float *) value2;
+
+  iresult = calloc(1, sizeof(float));
+	*iresult = *ivalue2 + *ivalue1;
+
+	cpush(frame->operands_stack, iresult);
+}
 void FALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void FASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void FCMPG_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
@@ -410,7 +560,22 @@ void FCONST_2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
   *ivalue = 0x40000000; /* 2.0 IEEE-754 Float */
   cpush(frame->operands_stack, ivalue);
 }
-void FDIV_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void FDIV_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  float *ivalue1 = NULL, *ivalue2 = NULL;
+	float *iresult;
+	u4 *value1 = NULL, *value2 = NULL;
+
+	value1 = (u4 *) cpop(frame->operands_stack);
+  ivalue1 = (float *) value1;
+
+	value2 = (u4 *) cpop(frame->operands_stack);
+	ivalue2 = (float *) value2;
+
+  iresult = calloc(1, sizeof(float));
+	*iresult = *ivalue2 / *ivalue1;
+
+	cpush(frame->operands_stack, iresult);
+}
 void FLOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u1 lv_index = (*pc + 1)[0]; ++*pc;
 	u8 *fvalue = (u8 *) cat(frame->local_variables, lv_index);
@@ -432,9 +597,51 @@ void FLOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u8 *fvalue = (u8 *) cat(frame->local_variables, 3);
 	cpush(frame->operands_stack, fvalue);
 }
-void FMUL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void FNEG_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void FREM_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void FMUL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  float *ivalue1 = NULL, *ivalue2 = NULL;
+	float *iresult;
+	u4 *value1 = NULL, *value2 = NULL;
+
+	value1 = (u4 *) cpop(frame->operands_stack);
+  ivalue1 = (float *) value1;
+
+	value2 = (u4 *) cpop(frame->operands_stack);
+	ivalue2 = (float *) value2;
+
+  iresult = calloc(1, sizeof(float));
+	*iresult = *ivalue2 * *ivalue1;
+
+	cpush(frame->operands_stack, iresult);
+}
+void FNEG_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  float *ivalue1 = NULL;
+	float *iresult;
+	u4 *value1 = NULL;
+
+	value1 = (u4 *) cpop(frame->operands_stack);
+  ivalue1 = (float *) value1;
+
+  iresult = calloc(1, sizeof(float));
+	*iresult = -*ivalue1;
+
+	cpush(frame->operands_stack, iresult);
+}
+void FREM_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  float *ivalue1 = NULL, *ivalue2 = NULL;
+	float *iresult;
+	u4 *value1 = NULL, *value2 = NULL;
+
+	value1 = (u4 *) cpop(frame->operands_stack);
+  ivalue1 = (float *) value1;
+
+	value2 = (u4 *) cpop(frame->operands_stack);
+	ivalue2 = (float *) value2;
+
+  iresult = calloc(1, sizeof(float));
+	*iresult = (float) fmod(*ivalue2, *ivalue1);
+
+	cpush(frame->operands_stack, iresult);
+}
 void FRETURN_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void FSTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u1 lv_index = (*pc + 1)[0]; ++*pc;
@@ -457,7 +664,22 @@ void FSTORE_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	float *fvalue = (float *) cpop(frame->operands_stack);
 	cinsert(frame->local_variables, 3, fvalue);
 }
-void FSUB_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void FSUB_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  float *ivalue1 = NULL, *ivalue2 = NULL;
+	float *iresult;
+	u4 *value1 = NULL, *value2 = NULL;
+
+	value1 = (u4 *) cpop(frame->operands_stack);
+  ivalue1 = (float *) value1;
+
+	value2 = (u4 *) cpop(frame->operands_stack);
+	ivalue2 = (float *) value2;
+
+  iresult = calloc(1, sizeof(float));
+	*iresult = *ivalue2 - *ivalue1;
+
+	cpush(frame->operands_stack, iresult);
+}
 void GETFIELD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void GETSTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
@@ -493,7 +715,12 @@ void GETSTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	*/
 	cpush(frame->operands_stack, value);
 }
-void GOTO_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void GOTO_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
+  int16_t offset;
+  memcpy(&offset, &offset_bytes, 2);
+  *pc += offset;
+}
 void GOTO_W_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void I2B_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void I2C_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
@@ -501,15 +728,30 @@ void I2D_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void I2F_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void I2L_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void I2S_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void IADD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IADD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  int32_t *ivalue1 = NULL, *ivalue2 = NULL;
+	int32_t *iresult;
+	u4 *value1 = NULL, *value2 = NULL;
+
+	value1 = (u4 *) cpop(frame->operands_stack);
+  ivalue1 = (int32_t *) value1;
+
+	value2 = (u4 *) cpop(frame->operands_stack);
+	ivalue2 = (int32_t *) value2;
+
+  iresult = calloc(1, sizeof(int32_t));
+	*iresult = *ivalue2 + *ivalue1;
+
+	cpush(frame->operands_stack, iresult);
+}
 void IALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void IAND_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void IASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void ICONST_M1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
   u4 *ivalue = (u4 *) calloc(1, sizeof(u4));
-  *ivalue = 0xFFFFFFFF; /* -1 em complemento de dois */
-  cpush(frame->operands_stack, ivalue);
-}
+  *ivalue = 0xFFFFFFFF;
+  cpush(frame->operands_stack, ivalue);  
+}  
 void ICONST_0_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
   u4 *ivalue = (u4 *) calloc(1, sizeof(u4));
   *ivalue = 0;
@@ -540,14 +782,88 @@ void ICONST_5_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
   *ivalue = 5;
   cpush(frame->operands_stack, ivalue);
 }
-void IDIV_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void IF_ACMPEQ_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void IF_ACMPNE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void IF_ICMPEQ_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void IF_ICMPGE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void IF_ICMPGT_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void IF_ICMPLE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void IF_ICMPLT_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IDIV_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  int32_t *ivalue1 = NULL, *ivalue2 = NULL;
+	int32_t *iresult;
+	u4 *value1 = NULL, *value2 = NULL;
+
+	value1 = (u4 *) cpop(frame->operands_stack);
+  ivalue1 = (int32_t *) value1;
+
+	value2 = (u4 *) cpop(frame->operands_stack);
+	ivalue2 = (int32_t *) value2;
+
+  iresult = calloc(1, sizeof(int32_t));
+	*iresult = *ivalue2 / *ivalue1;
+
+	cpush(frame->operands_stack, iresult);
+}
+void IF_ACMPEQ_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
+  if(cpop(frame->operands_stack) == cpop(frame->operands_stack)){
+    int16_t offset;
+    memcpy(&offset, &offset_bytes, 2);
+    *pc += offset;
+  }
+}
+void IF_ACMPNE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
+  if(cpop(frame->operands_stack) != cpop(frame->operands_stack)){
+    int16_t offset;
+    memcpy(&offset, &offset_bytes, 2);
+    *pc += offset;
+  }
+}
+void IF_ICMPEQ_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
+  int32_t *ivalue1 = cpop(frame->operands_stack);
+  int32_t *ivalue2 = cpop(frame->operands_stack);
+  if(ivalue1 == ivalue2){
+    int16_t offset;
+    memcpy(&offset, &offset_bytes, 2);
+    *pc += offset;
+  }
+}
+void IF_ICMPGE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
+  int32_t *ivalue1 = cpop(frame->operands_stack);
+  int32_t *ivalue2 = cpop(frame->operands_stack);
+  if(ivalue1 >= ivalue2){
+    int16_t offset;
+    memcpy(&offset, &offset_bytes, 2);
+    *pc += offset;
+  }
+}
+void IF_ICMPGT_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
+  int32_t *ivalue1 = cpop(frame->operands_stack);
+  int32_t *ivalue2 = cpop(frame->operands_stack);
+  if(ivalue1 > ivalue2){
+    int16_t offset;
+    memcpy(&offset, &offset_bytes, 2);
+    *pc += offset;
+  }
+}
+void IF_ICMPLE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
+  int32_t *ivalue1 = cpop(frame->operands_stack);
+  int32_t *ivalue2 = cpop(frame->operands_stack);
+  if(ivalue1 <= ivalue2){
+    int16_t offset;
+    memcpy(&offset, &offset_bytes, 2);
+    *pc += offset;
+  }
+}
+void IF_ICMPLT_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
+  int32_t *ivalue1 = cpop(frame->operands_stack);
+  int32_t *ivalue2 = cpop(frame->operands_stack);
+  if(ivalue1 < ivalue2){
+    int16_t offset;
+    memcpy(&offset, &offset_bytes, 2);
+    *pc += offset;
+  }
+}
 void IF_ICMPNE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void IFEQ_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void IFGE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
@@ -581,12 +897,41 @@ void ILOAD_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 }
 void IMPDEP1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void IMPDEP2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void IMUL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void INEG_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IMUL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  int32_t *ivalue1 = NULL, *ivalue2 = NULL;
+	int32_t *iresult;
+	u4 *value1 = NULL, *value2 = NULL;
+
+	value1 = (u4 *) cpop(frame->operands_stack);
+  ivalue1 = (int32_t *) value1;
+
+	value2 = (u4 *) cpop(frame->operands_stack);
+	ivalue2 = (int32_t *) value2;
+
+  iresult = calloc(1, sizeof(int32_t));
+	*iresult = *ivalue2 * *ivalue1;
+
+	cpush(frame->operands_stack, iresult);
+}
+void INEG_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  int32_t *ivalue1 = NULL;
+	int32_t *iresult;
+	u4 *value1 = NULL;
+
+	value1 = (u4 *) cpop(frame->operands_stack);
+  ivalue1 = (int32_t *) value1;
+
+  iresult = calloc(1, sizeof(int32_t));
+	*iresult = -*ivalue1;
+
+	cpush(frame->operands_stack, iresult);
+}
 void INSTANCEOF_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void INVOKEDYNAMIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void INVOKEINTERFACE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void INVOKESPECIAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void INVOKESPECIAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  
+}
 void INVOKESTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 /*
 Na programação orientada a objetos uma função virtual ou método virtual é 
@@ -653,7 +998,7 @@ Otherwise, if the method handle to be invoked has no bytecode behavior, the Java
         printf("%ld\n", lvalue);
         break;
       case 'I':;
-        int ivalue;
+        int32_t ivalue;
         memcpy(&ivalue, cpop(frame->operands_stack), 4);
         printf("%d\n", ivalue);
         break;
@@ -668,24 +1013,63 @@ Otherwise, if the method handle to be invoked has no bytecode behavior, the Java
       case 'C':;
         int8_t cvalue;
         memcpy(&cvalue, cpop(frame->operands_stack), 1);
-        printf("%d\n", cvalue);
+        printf("%c\n", cvalue);
         break;
       case 'F':;
         float fvalue;
         memcpy(&fvalue, cpop(frame->operands_stack), 4);
-      case 'S':;
-        int16_t svalue;
-        memcpy(&svalue, cpop(frame->operands_stack), 2);
+        printf("%f\n", fvalue);
         break;
-      default:
-        exit(ERR_UNKTYPE);
-    }
-    /*pilha antesh= objectref, [arg1, arg2, ...] -> pilha depois = result*/
+      case 'S':;
+        short svalue;
+        memcpy(&svalue, cpop(frame->operands_stack), 2);
+        printf("%hi\n", svalue);
+        break;
+      default:;
+        /* printf("%s\n", method_descriptor_utf8->Utf8.bytes); */
+        char *descriptor_full = (char *) calloc(method_descriptor_utf8->Utf8.length, sizeof(char));
+        memcpy(descriptor_full, method_descriptor_utf8->Utf8.bytes + 1, method_descriptor_utf8->Utf8.length);
+        char *ponto_e_virgula = strtok(descriptor_full, ";");
+        if(ponto_e_virgula){
+          ponto_e_virgula[strlen(ponto_e_virgula) + 1] = '\0';
+          ponto_e_virgula[strlen(ponto_e_virgula)] = ';';
+        }
+        if(!strcmp(ponto_e_virgula, "Ljava/lang/String;")){
+          info_t *string_info = cpop(frame->operands_stack);
+          info_t *string_utf8 = get_constant_pool_entry(frame, string_info->String.string_index);
+          char *string_string = (char *) calloc(string_utf8->Utf8.length + 1, sizeof(char));
+          memcpy(string_string, string_utf8->Utf8.bytes, string_utf8->Utf8.length);
+          printf("%s\n", string_string);
+          free(string_string);
+          string_string = NULL;
+        }else{
+          printf("%s@%p\n", ponto_e_virgula, (void *) cpop(frame->operands_stack));
+        }
+    }/*else{
+      ; Aqui tinha que executar o método
+    }*/
+    /*pilha antes = objectref, [arg1, arg2, ...] -> pilha depois = result*/
   }
 
 }
+
 void IOR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void IREM_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IREM_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  int32_t *ivalue1 = NULL, *ivalue2 = NULL;
+	int32_t *iresult;
+	u4 *value1 = NULL, *value2 = NULL;
+
+	value1 = (u4 *) cpop(frame->operands_stack);
+  ivalue1 = (int32_t *) value1;
+
+	value2 = (u4 *) cpop(frame->operands_stack);
+	ivalue2 = (int32_t *) value2;
+
+  iresult = calloc(1, sizeof(int32_t));
+	*iresult = *ivalue2 % *ivalue1;
+
+	cpush(frame->operands_stack, iresult);
+}
 void IRETURN_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void ISHL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void ISHR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
@@ -710,7 +1094,22 @@ void ISTORE_3_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	int *ivalue = (int *) cpop(frame->operands_stack);
 	cinsert(frame->local_variables, 3, ivalue);
 }
-void ISUB_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void ISUB_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  int32_t *ivalue1 = NULL, *ivalue2 = NULL;
+	int32_t *iresult;
+	u4 *value1 = NULL, *value2 = NULL;
+
+	value1 = (u4 *) cpop(frame->operands_stack);
+  ivalue1 = (int32_t *) value1;
+
+	value2 = (u4 *) cpop(frame->operands_stack);
+	ivalue2 = (int32_t *) value2;
+
+  iresult = calloc(1, sizeof(int32_t));
+	*iresult = *ivalue2 - *ivalue1;
+
+	cpush(frame->operands_stack, iresult);
+}
 void IUSHR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void IXOR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void JSR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
@@ -885,7 +1284,9 @@ void POP2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 void PUTFIELD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void PUTSTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void RET_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void RETURN_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void RETURN_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+  *pc = NULL;
+}
 void SALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void SASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void SIPUSH_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}

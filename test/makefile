@@ -4,7 +4,7 @@ CFILES= $(SRC)/main.c $(SRC)/bread_constant_pool.c $(SRC)/bread_magic.c $(SRC)/b
 
 OFILES= ./main.o ./bread_constant_pool.o ./bread_magic.o ./bread_versions.o ./bread_interfaces.o ./bread_fields.o ./bread_attributes.o ./bread_methods.o ./bread_classfile.o ./bprint_classfile.o ./bfree_classfile.o ./mnemonic.o ./utils.o ./stack.o ./initialize.o ./cstack.o ./method_area.o ./jvm.o ./clist.o ./frame.o ./celement.o ./attributes.o ./constant_pool.o ./bytecode.o ./engine.o
 
-FLAGS= -g -std=c99 -Wall -pedantic -Wpedantic -Werror
+FLAGS= -g -std=c99 -Wall -pedantic -Wpedantic -Werror -lm
 
 ifeq ($(OS), Windows_NT)
 NAME= breader
