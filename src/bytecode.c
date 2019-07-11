@@ -1650,9 +1650,30 @@ void RET_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void RETURN_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	*pc = NULL;
 }
-void SALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void SASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void SIPUSH_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void SWAP_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void SALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	integer index = pop_integer(frame);
+	array_t *array = pop_array(frame);
+	short *svalue = (short *) at(array, index);
+	push_short(frame, *svalue);
+}
+void SASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	short *svalue = (short *) calloc(1, sizeof(short));
+	*svalue = pop_short(frame);
+	integer index = pop_integer(frame);
+	array_t *array = pop_array(frame);
+	put(array, index, svalue);
+}
+void SIPUSH_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	integer value = 0x00000000;
+	memcpy(&value, *pc + 1, 2);
+	*pc += 2;
+	push_integer(value);
+}
+void SWAP_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	void *value1 = cpop(frame->operands_stack);
+	void *value2 = cpop(frame->operands_stack);
+	cpush(frame->operands_stack, value1);
+	cpush(frame->operands_stack, value2);
+}
 void TABLESWITCH_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void WIDE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
