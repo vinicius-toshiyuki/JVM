@@ -1493,27 +1493,60 @@ void LXOR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 void MONITORENTER_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void MONITOREXIT_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void MULTIANEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1];
+	u1 dimensions = (*pc + 1)[2]; *pc += 3;
 
-
-	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
 	u1 ref_tag = get_constant_pool_tag(frame, cp_index);
-
 	if(ref_tag != CONSTANT_Class){
-		fprintf(stderr, "Invalid class reference in anewarray\n");
+		fprintf(stderr, "Invalid class reference in multianewarray\n");
 		exit(ERR_INVREF);
 	}
 	info_t *class_info = get_constant_pool_entry(frame, cp_index);
 	info_t *class_info_utf8 = get_constant_pool_entry(frame, class_info->Class.name_index);
 	char *class_name = (char *) calloc(class_info_utf8->Utf8.length + 1, sizeof(char));
 	memcpy(class_name, class_info_utf8->Utf8.bytes, class_info_utf8->Utf8.length);
-	int32_t *count = (int32_t *) cpop(frame->operands_stack);
 
+	frame_t count_frame;
+	cstack *counts = new_cstack();
+	count_frame.operands_stack = counts;
+
+	u1 i;
+	for(i = 0; i < dimensions; i++)
+		cpush(cpop(frame->operands_stack));
+
+	/* COM UM PASSO DE FÉ, DIZEMOS QUE ESTÁ CERTO */
+	/* Ao final de tudo ARRAY é pra ter o MULTIARRAY*/
 	array_t *array = new_array();
-	/* Tem que definir o tipo certinho */
-	array_of(array, ARR_RefClass, *count);
-	array_of_class(array, class_name);
+	array_t *arrays = new_array();
+	array_of(arrays, ARR_RefArray, 1);
+	put(arrays, 0, array);
+	for(i = 0; i < dimensions; i++){
+		integer k;
+		integer count = pop_integer(&count_frame);
+		next_arrays = new_array();
+		array_of(next_arrays, ARR_RefArray, count);
+		for(k = 0; k < arrays->size; k++){
+			/* TODO: devia fazer um iterator */
+			array_t *narray = at(arrays, k);
+			array_of(narray, ARR_RefArray, count);
+			integer j;
+			for(j = 0; j < count; j++){
+				array_t *nnarray = new_array();
+				put(narray, 0, nnarray);
+				put(next_arrays, 0, nnarray);
+				if(i + 1 == dimensions){
+					array_of(nnarray, ARR_RefClass, pop_integer(&count_frame));
+					array_of_class(nnarray, class_name);
+				}
+			}
+		}
+		destroy_array(arrays);
+		arrays = next_arrays;
+	}
+	destroy_array(arrays);
+
 	free(class_name);
-	
+
 	objectref_t *ref = new_objectref();
 	reference_of(ref, REF_Array, array);
 	cpush(frame->operands_stack, ref);
