@@ -21,7 +21,7 @@ Reads .class files and let you choose to prints it's structure as described in O
 ## TODO
 
 - [x] Print correctly non-ASCII Utf8 characters
-- [ ] Documentation
+- [X] Documentation
 - [x] Print constant pool value using opcode argument as index if needed
 - [x] Print jump destination on jump opcodes printing
 - [x] Fix consistency
@@ -70,7 +70,7 @@ Resumo: 100
 27.() operacoes de manipulacao de pilha
 28.(X) consistencia
 29.() exceptions
-30.(X) invokes - invokestatic e invokevirtual feitos
+30.(X) invokes - invokestatic, invokevirtual e invokespecial feitos
 31.() polimofismo e reescrita
 
 -------------------------
