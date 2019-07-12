@@ -14,6 +14,7 @@
 extern char *CLASSFILE;
 extern int MODE;
 extern int VERBOSE;
+extern int SECRET;
 
 int main(int argc, char **argv){
 	initialize(argc, argv);
@@ -39,7 +40,8 @@ int main(int argc, char **argv){
 	}else if(MODE == OPTION_interpreter){
 		jvm_t *jvm = new_jvm();
 		start_jvm(&jvm, class);
-		printf("Mainnnnnnnn\n");
+		if(SECRET)
+			printf("Mainnnnnnnn\n");
 	}
 
 	return 0;

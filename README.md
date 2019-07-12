@@ -16,7 +16,7 @@ Reads .class files and let you choose to prints it's structure as described in O
 
 ### Run
 
->$ ./breader.out (class file name)
+>$ ./breader.out <mode> <path> <file> [<options>]*
 
 ## TODO
 
@@ -41,9 +41,9 @@ Reads .class files and let you choose to prints it's structure as described in O
 
 Resumo: 100
 
-1.() array simples
+1.(X) array simples
 2.(X) arrays.length
-3.() arrays multidimensionais
+3.(X) arrays multidimensionais
 4.(X) arrays de referencia
 5.(X) doubles - dastore, daload
 6.(X) floats - fastore, faload
@@ -59,15 +59,15 @@ Resumo: 100
 16.(X) system.out.println (int, float, string e booleano)
 17.(X) conversao de e para cat 2
 18.() iteracao
-19.() switches
+19.(X) switches
 20.() fields
 21.() interfaces
 22.() recursao
 23.(X) metodos estaticos
-24.() metodos nao estaticos
+24.(X) metodos nao estaticos
 25.(X) objetos
-26.() operacoes de retorno
-27.() operacoes de manipulacao de pilha
+26.(X) operacoes de retorno
+27.(X) operacoes de manipulacao de pilha
 28.(X) consistencia
 29.() exceptions
 30.(X) invokes - invokestatic e invokevirtual feitos

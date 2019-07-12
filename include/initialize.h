@@ -16,7 +16,8 @@ typedef enum {
   ARG_PATH,
   ARG_FILE,
 	ARG_IGNORE,
-	ARG_JVM_ARGS
+	ARG_JVM_ARGS,
+	ARG_SECRET
 } ARG;
 
 /*

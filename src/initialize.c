@@ -14,8 +14,9 @@ char *CLASSFILE = NULL;
 int IGNORE = OPTION_off;
 int JVM_ARGC = 0;
 char **JVM_ARGV = NULL;
+int SECRET = OPTION_off;
 
-#define NOPTIONS 7
+#define NOPTIONS 8
 struct{
   int id;
   char *option1;
@@ -27,7 +28,8 @@ struct{
   {ARG_PATH      , "p" , "path"     },
   {ARG_FILE      , "f" , "file"     }, 
 	{ARG_IGNORE    , "i" , "ignore"   },
-	{ARG_JVM_ARGS  , "a" , "args"     }
+	{ARG_JVM_ARGS  , "a" , "args"     },
+	{ARG_SECRET    , "s" , "setosa"   }
 };
 
 /*
@@ -85,6 +87,7 @@ void initialize(int argc, char **argv){
             case ARG_PATH: PATH = opt_str[++i]; obgf |= 0x2; break;
             case ARG_FILE: CLASSFILE = opt_str[++i]; obgf |= 0x4; break;
             case ARG_IGNORE: IGNORE = OPTION_on; break;
+						case ARG_SECRET: SECRET = OPTION_on; break;
 						case ARG_JVM_ARGS:
 							/* SE TIVER ESSA FLAG VAI CONSIDERAR TODO O RESTO DOS ARGUMENTOS COMO ARGUMENTOS PARA O INTERPRETADOR */
 							JVM_ARGC = opt_qtd-i-1 < 0 ? 0 : opt_qtd-i-1;

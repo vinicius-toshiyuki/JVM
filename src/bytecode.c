@@ -837,7 +837,11 @@ void IADD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 
 	push_integer(frame, iresult);
 }
-void IALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	integer index = pop_integer(frame);
+	array_t *array = pop_array(frame);
+	push_integer(frame, *((integer *) at(array, index)));
+}
 void IAND_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	integer value1 = pop_integer(frame);
 	integer value2 = pop_integer(frame);
@@ -845,7 +849,14 @@ void IAND_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	integer result = value2 & value1;
 	push_integer(frame, result);
 }
-void IASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void IASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	integer ivalue = pop_integer(frame);
+	integer index = pop_integer(frame);
+	array_t *array = pop_array(frame);
+	integer *value = (integer *) calloc(1, sizeof(integer));
+	*value = ivalue;
+	put(array, index, value);
+}
 void ICONST_M1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *ivalue = (u4 *) calloc(1, sizeof(u4));
 	*ivalue = 0xFFFFFFFF;
@@ -1121,12 +1132,46 @@ void INEG_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	push_integer(frame, iresult);
 }
 void INSTANCEOF_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
-	/*u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
-	info_t *objectref = (info_t *) cpop(frame->operands_stack);
-	if(objectref != NIL){
-		info_t *cp_entry = get_constant_pool_entry(frame, cp_index);
-		u1 cp_tag = get_constant_pool_tag(frame, cp_index);
-	}*/
+	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
+	if(get_constant_pool_tag(frame, cp_index) != CONSTANT_Class){
+		fprintf(stderr, "Invalid reference in instanceof\n");
+		exit(ERR_INVREF);
+	}
+
+	objectref_t *ref = (objectref_t *) cpop(frame->operands_stack);
+	if(ref->tag == REF_Null){
+		push_integer(frame, 0);
+	}else{
+		ClassFile *refclass = ((instance_t *) ref->object)->class;
+		info_t *refnameutf8 = refclass->constant_pool[refclass->constant_pool[refclass->this_class - 1].info->Class.name_index].info;
+		char *refclassname = (char *) calloc(refnameutf8->Utf8.length + 1, sizeof(char));
+		memcpy(refclassname, refnameutf8->Utf8.bytes, refnameutf8->Utf8.length);
+
+		info_t *entry = get_constant_pool_entry(frame, cp_index);
+		info_t *entryutf8 = get_constant_pool_entry(frame, entry->Class.name_index);
+		char *entryname = (char *) calloc(entryutf8->Utf8.length + 1, sizeof(char));
+		memcpy(entryname, entryutf8->Utf8.bytes, entryutf8->Utf8.length);
+
+		if(!is_loaded(jvm->marea, entryname))
+			load_class(jvm->marea, entryname);
+
+		if(!strcmp(refclassname, entryname)){
+			push_integer(frame, 1);
+		}else{
+			u2 i;
+			for(i = 0; i < refclass->interfaces_count; i++){
+				u1 *bytes = refclass->constant_pool[refclass->constant_pool[refclass->interfaces[i] - 1].info->Class.name_index - 1].info->Utf8.bytes;
+				u2 length = refclass->constant_pool[refclass->constant_pool[refclass->interfaces[i] - 1].info->Class.name_index - 1].info->Utf8.length;
+				char *interfacename = (char *) calloc(length + 1, sizeof(char));
+				memcpy(interfacename, bytes, length);
+				if(!strcmp(refclassname, interfacename)){
+					push_integer(frame, 1);
+					return;
+				}
+			}
+		}
+		push_integer(frame, 0);
+	}
 }
 void INVOKEDYNAMIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
 void INVOKEINTERFACE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
