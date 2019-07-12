@@ -18,13 +18,14 @@ void destroy_method_area(method_area_t *ma){
 
 extern char *PATH;
 void load_class(method_area_t *marea, char *pathtoclass){
-	/* PATH + pathtoclass */
-	char *fullpath = (char *) calloc(strlen(PATH) + strlen(pathtoclass) + 1, sizeof(char));
+	/* PATH + pathtoclass + .class*/
+	char *fullpath = (char *) calloc(strlen(PATH) + strlen(pathtoclass) + 7, sizeof(char));
 	strcat(fullpath, PATH);
 	strcat(fullpath, pathtoclass);
+	strcat(fullpath, ".class");
 	FILE *classfile = fopen(fullpath, "rb");
 	if(!classfile){
-		fprintf(stderr, "Can not open specified file.\n");
+		fprintf(stderr, "Can not open specified file (%s).\n", fullpath);
 		exit(ERR_CANTOPENFILE);
 	}
 	ClassFile *class = bread_classfile(classfile, fullpath);
@@ -74,7 +75,6 @@ ClassFile * get_class_by_name(method_area_t *marea, char *classname){
 	if(!is_loaded(marea, classname)){
 		char *classpath = (char *) calloc(strlen(classname) + 7, sizeof(char));
 		strcpy(classpath, classname);
-		strcat(classpath, ".class");
 		load_class(marea, classpath);
 		free(classpath);
 	}

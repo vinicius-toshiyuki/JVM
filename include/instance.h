@@ -38,5 +38,9 @@ void instantiate_by_index(instance_t *instance, jvm_t *jvm, u2 class_index, clis
  */
 char * get_class_name(instance_t *instance);
 
+/**
+ *  Get a method of an instance
+ */
+method_info * get_method_info_by_name(instance_t *instance, char *method_name);
 
 #endif
