@@ -1,3 +1,10 @@
+/**
+ * @file attributes.h
+ * @author Henrique Mariano
+ * @author Vinicius Toshiyuki
+ * @date 11 Jul 2019
+ * @brief File contain the definition of an attribute.
+ */
 #ifndef attributes_h
 #define attributes_h
 
@@ -8,6 +15,10 @@
 #define ATT_C 7
 #define ATT_M_S 20
 
+/**
+ * \enum NUMBERS
+ * Number of the attribute.
+ */
 typedef enum {
   NUMBER_Invalid = -1,
   NUMBER_Code = 0,
@@ -19,6 +30,10 @@ typedef enum {
   NUMBER_SourceFile
 } NUMBERS;
 
+/**
+ * \struct exceptions_info
+ * Exception entry.
+ */
 typedef struct {
   u2 start_pc;
   u2 end_pc;
@@ -26,11 +41,19 @@ typedef struct {
   u2 catch_type;
 } exceptions_info;
 
+/**
+ * \struct line_number_table_info
+ * Line Number Table entry.
+ */
 typedef struct {
   u2 start_pc;
   u2 line_number;
 } line_number_table_info;
 
+/**
+ * \struct local_variable_table_info
+ * Local Variable Table entry.
+ */
 typedef struct {
   u2 start_pc;
   u2 length;
@@ -39,10 +62,18 @@ typedef struct {
   u2 index;
 } local_variable_table_info;
 
+/**
+ * \struct ConstantValue_attribute
+ * ConstantValue attribute.
+ */
 typedef struct {
   u2 constantvalue_index;
 } ConstantValue_attribute;
 
+/**
+ * \struct Code_attribute
+ * Code attribute.
+ */
 typedef struct {
   u2 max_stack;
   u2 max_locals;
@@ -54,6 +85,10 @@ typedef struct {
   attribute_info *attributes;
 } Code_attribute;
 
+/**
+ * \struct Exceptions_attribute
+ * Exceptions attribute.
+ */
 typedef struct {
   u2 attribute_name_index;
   u4 attribute_length;
@@ -61,15 +96,27 @@ typedef struct {
   u2 *exception_index_table;
 } Exceptions_attribute;
 
+/**
+ * \struct SourceFile_attribute
+ * SourceFile attribute.
+ */
 typedef struct {
   u2 sourcefile_index;
 } SourceFile_attribute;
 
+/**
+ * \struct LineNumberTable_attribute
+ * Line Number Table attribute.
+ */
 typedef struct {
   u2 line_number_table_length;
   line_number_table_info *line_number_table;
 } LineNumberTable_attribute;
 
+/**
+ * \struct LocalVariableTable_attribute
+ * Local Variable Table attribute.
+ */
 typedef struct {
   u2 local_variable_table_length;
   local_variable_table_info *local_variable_table;
@@ -77,6 +124,10 @@ typedef struct {
 
 // typedef struct {} Deprecated_attribute;
 
+/**
+ * \union Attributes
+ * Union of all attributes structs.
+ */
 typedef union {
   ConstantValue_attribute ConstantValue;
   Code_attribute Code;
@@ -86,6 +137,9 @@ typedef union {
   LocalVariableTable_attribute LocalVariableTable;
 } Attributes;
 
+/**
+ * Return the attribute by passing his entry.
+ */
 void get_attribute_from_info(u1 *, Attributes *, u2, ClassFile *);
 
 #define u2_flip(__bytes) __bytes = (__bytes << 8) | (__bytes >> 8)

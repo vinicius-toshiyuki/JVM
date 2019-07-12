@@ -1,3 +1,10 @@
+/**
+ * @file constant_pool.h
+ * @author Henrique Mariano
+ * @author Vinicius Toshiyuki
+ * @date 11 Jul 2019
+ * @brief File contain methods to get the constants from constant pool.
+ */
 #ifndef constant_pool_h
 #define constant_pool_h
 

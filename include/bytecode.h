@@ -1,3 +1,10 @@
+/**
+ * @file bytecode.h
+ * @author Henrique Mariano
+ * @author Vinicius Toshiyuki
+ * @date 11 Jul 2019
+ * @brief File contain the implementation of the java machine instructions.
+ */
 #ifndef bytecode_h
 #define bytecode_h
 
