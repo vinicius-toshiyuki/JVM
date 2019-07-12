@@ -18,7 +18,7 @@ extern int VERBOSE;
 int main(int argc, char **argv){
 	initialize(argc, argv);
 	
-	setlocale(LC_ALL, ""); /**< Allows the location of the program in the language in which the operating system is selected so that characters like 'ç' are displayed in the program if the OS is in portuguese */
+	setlocale(LC_ALL, ""); /* Allows the location of the program in the language in which the operating system is selected so that characters like 'ç' are displayed in the program if the OS is in portuguese */
 	char *filename = CLASSFILE;
 	FILE *classfile = fopen(filename, "rb");
 	if(classfile == NULL){

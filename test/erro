@@ -1,3 +1,0 @@
-gcc -c ../src/bread_constant_pool.c ../src/bread_magic.c ../src/bread_versions.c ../src/bread_interfaces.c ../src/main.c ../src/bread_fields.c ../src/bread_attributes.c ../src/bread_methods.c ../src/bprint_classfile.c ../src/bread_classfile.c ../src/bfree_classfile.c ../src/mnemonic.c ../src/utils.c ../src/stack.c ../src/initialize.c -g -std=c99 -Wall -pedantic -Wpedantic -Werror
-gcc -o ./breader.out ./main.o ./bread_constant_pool.o ./bread_magic.o ./bread_versions.o ./bread_interfaces.o ./bread_fields.o ./bread_attributes.o ./bread_methods.o ./bread_classfile.o ./bprint_classfile.o ./bfree_classfile.o ./mnemonic.o ./utils.o ./stack.o ./initialize.o -g -std=c99 -Wall -pedantic -Wpedantic -Werror
-rm *.o
