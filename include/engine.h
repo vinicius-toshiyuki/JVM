@@ -137,4 +137,14 @@ short pop_short(frame_t *frame);
  *  Push a java short into frame operands stack top.
  */
 void push_short(frame_t *frame, short svalue);
+
+/**
+ *  Push a java return address value into frame operands stack top
+ */
+void push_returnAddress(frame_t *frame, u1 *address);
+
+/**
+ *  Pop a java return address from the frame operands stack top
+ */
+u1 * pop_returnAddress(frame_t *frame);
 #endif

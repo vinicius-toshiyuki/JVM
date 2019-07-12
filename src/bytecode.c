@@ -547,9 +547,48 @@ void DUP_X2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cpush(frame->operands_stack, sec);
 	cpush(frame->operands_stack, top);
 }
-void DUP2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void DUP2_X1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void DUP2_X2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void DUP2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	u4 *value1 = (u4 *) cpop(frame->operands_stack);
+	u4 *value2 = (u4 *) cpop(frame->operands_stack);
+	u4 *value1c = (u4 *) calloc(1, sizeof(u4));
+	u4 *value2c = (u4 *) calloc(1, sizeof(u4));
+	memcpy(value1c, value1, 4);
+	memcpy(value2c, value2, 4);
+	cpush(frame->operands_stack, value2);
+	cpush(frame->operands_stack, value1);
+	cpush(frame->operands_stack, value2c);
+	cpush(frame->operands_stack, value1c);
+}
+void DUP2_X1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	u4 *value1 = (u4 *) cpop(frame->operands_stack);
+	u4 *value2 = (u4 *) cpop(frame->operands_stack);
+	u4 *value3 = (u4 *) cpop(frame->operands_stack);
+	u4 *value1c = (u4 *) calloc(1, sizeof(u4));
+	u4 *value2c = (u4 *) calloc(1, sizeof(u4));
+	memcpy(value1c, value1, 4);
+	memcpy(value2c, value2, 4);
+	cpush(frame->operands_stack, value2);
+	cpush(frame->operands_stack, value1);
+	cpush(frame->operands_stack, value3);
+	cpush(frame->operands_stack, value2c);
+	cpush(frame->operands_stack, value1c);
+}
+void DUP2_X2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	u4 *value1 = (u4 *) cpop(frame->operands_stack);
+	u4 *value2 = (u4 *) cpop(frame->operands_stack);
+	u4 *value3 = (u4 *) cpop(frame->operands_stack);
+	u4 *value4 = (u4 *) cpop(frame->operands_stack);
+	u4 *value1c = (u4 *) calloc(1, sizeof(u4));
+	u4 *value2c = (u4 *) calloc(1, sizeof(u4));
+	memcpy(value1c, value1, 4);
+	memcpy(value2c, value2, 4);
+	cpush(frame->operands_stack, value2);
+	cpush(frame->operands_stack, value1);
+	cpush(frame->operands_stack, value4);
+	cpush(frame->operands_stack, value3);
+	cpush(frame->operands_stack, value2c);
+	cpush(frame->operands_stack, value1c);
+}
 void F2D_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	float value = pop_float(frame);
 	double rvalue = (double) value;
@@ -574,8 +613,19 @@ void FADD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	fresult = fvalue2 + fvalue1;
 	push_float(frame, fresult);
 }
-void FALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void FASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void FALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	integer index = pop_integer(frame);
+	array_t *array = pop_array(frame);
+	push_float(frame, *((float *) at(array, index)));
+}
+void FASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	float fvalue = pop_float(frame);
+	integer index = pop_integer(frame);
+	array_t *array = pop_array(frame);
+	float *value = (float *) calloc(1, sizeof(float));
+	*value = fvalue;
+	put(array, index, value);
+}
 void FCMPG_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	float value1 = pop_float(frame);
 	float value2 = pop_float(frame);
@@ -1527,8 +1577,16 @@ void IXOR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	integer result = value2 ^ value1;
 	push_integer(frame, result);
 }
-void JSR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void JSR_W_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void JSR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	int16_t offset = (*pc + 1)[0] << 8 | (*pc + 1)[1];
+	push_returnAddress(frame, *pc);
+	*pc += offset - 1;
+}
+void JSR_W_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	integer offset = (*pc + 1)[0] << 24 | (*pc + 1)[1] << 16 | (*pc + 1)[2] << 8 | (*pc + 1)[3];
+	push_returnAddress(frame, *pc);
+	*pc += offset - 1;
+}
 void L2D_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	long value = pop_long(frame);
 	double rvalue = (double) value;
@@ -1552,7 +1610,11 @@ void LADD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	lresult = lvalue2 + lvalue1;
 	push_long(frame, lresult);
 }
-void LALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void LALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	integer index = pop_integer(frame);
+	array_t *array = pop_array(frame);
+	push_long(frame, *((long int *) at(array, index)));
+}
 void LAND_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	long value1 = pop_long(frame);
 	long value2 = pop_long(frame);
@@ -1560,7 +1622,14 @@ void LAND_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	long result = value2 & value1;
 	push_long(frame, result);
 }
-void LASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void LASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	long int lvalue = pop_long(frame);
+	integer index = pop_integer(frame);
+	array_t *array = pop_array(frame);
+	long int *value = (long int *) calloc(1, sizeof(long int));
+	*value = lvalue;
+	put(array, index, value); 
+}
 void LCMP_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	long value1 = pop_long(frame);
 	long value2 = pop_long(frame);
@@ -1980,7 +2049,11 @@ void PUTFIELD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	free(fieldref_descriptor);
 }
 void PUTSTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
-void RET_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void RET_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	u1 index = (*pc + 1)[0];
+	u1 *returnAddress = (u1 *) cat(frame->local_variables, index);
+	*pc = returnAddress - 1;
+}
 void RETURN_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	*pc = NULL;
 }
