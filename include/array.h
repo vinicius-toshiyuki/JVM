@@ -1,3 +1,10 @@
+/**
+ * @file array.h
+ * @author Henrique Mariano
+ * @author Vinicius Toshiyuki
+ * @date 11 Jul 2019
+ * @brief File contain the definition of an array.
+ */
 #ifndef array_h
 #define array_h
 
@@ -7,7 +14,8 @@
 #include "objectref.h"
 
 /**
- *  Defines the array structure, which is a encapsulation of clist structure
+ * \struct array_t
+ *  Defines the array structure, which is a encapsulation of clist structure.
  */
 typedef struct array_t{
     int32_t length;
@@ -18,7 +26,8 @@ typedef struct array_t{
 } array_t;
 
 /**
- *  Definition of array types
+ * \enum ARR
+ *  Definition of array types.
  */
 typedef enum{
     ARR_Null = -1,
@@ -38,37 +47,37 @@ typedef enum{
 } ARR;
 
 /**
- *  Creates a new array_t
+ *  Creates a new array_t.
  */
 array_t * new_array(void);
 
 /**
- *  Defines the type of an array and it's max length
+ *  Defines the type of an array and it's max length.
  */
 void array_of(array_t *array, int tag, int max_length);
 
 /**
- *  If array tag is a class reference tag, set array class name to class_name (copying)
+ *  If array tag is a class reference tag, set array class name to class_name (copying).
  */
 void array_of_class(array_t *array, char *class_name);
 
 /**
- *  Destroys an array_t
+ *  Destroys an array_t.
  */
 void destroy_array(array_t *array);
 
 /**
- *  Returns element at index if exists, else, returns NULL
+ *  Returns element at index if exists, else, returns NULL.
  */
 void * at(array_t *array, int index);
 
 /**
- *  If possible, puts value in array at index
+ *  If possible, puts value in array at index.
  */
 void put(array_t *array, int index, void *value);
 
 /**
- *  Removes and get element in array at index, if possible
+ *  Removes and get element in array at index, if possible.
  */
 void * get(array_t *array, int index);
 

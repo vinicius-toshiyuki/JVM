@@ -222,4 +222,4 @@ void SWAP_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm);
 void TABLESWITCH_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm);
 void WIDE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm);
 
-#endif
+#endif /* bytecode_h */

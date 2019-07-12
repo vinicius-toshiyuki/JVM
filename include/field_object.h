@@ -1,3 +1,10 @@
+/**
+ * @file field_object.h
+ * @author Henrique Mariano
+ * @author Vinicius Toshiyuki
+ * @date 11 Jul 2019
+ * @brief File contain the struct of a field object reference.
+ */
 #ifndef field_object_h
 #define field_object_h
 
@@ -6,7 +13,7 @@
 #include "objectref.h"
 
 /**
- *  Defines a field object reference structure
+ *  Defines a field object reference structure.
  */
 typedef struct field_object_t {
 	info_t *ref;
@@ -26,7 +33,7 @@ typedef struct field_object_t {
 } field_object_t;
 
 /**
- *  Define an enum of field tags
+ *  Define an enum of field tags.
  */
 typedef enum {
 	FIELD_Null = -1,
@@ -42,13 +49,13 @@ typedef enum {
 	FIELD_ObjectRef
 } FIELD;
 /**
- *  Create a new field_object_t
+ *  Create a new field_object_t.
  */
 field_object_t * new_field_object(void);
 
 /**
- *  Destroys a field_object_t
+ *  Destroys a field_object_t.
  */
 void destroy_field_object(field_object_t *field_object);
 
-#endif
+#endif /* field_object_h */

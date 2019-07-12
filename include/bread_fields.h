@@ -1,3 +1,10 @@
+/**
+ * @file bread_fields.h
+ * @author Henrique Mariano
+ * @author Vinicius Toshiyuki
+ * @date 11 Jul 2019
+ * @brief File contain the methods to read the classfile.
+ */
 #ifndef bread_fields_h
 #define bread_fields_h
 

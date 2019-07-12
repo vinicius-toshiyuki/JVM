@@ -10,6 +10,7 @@
 #include "../include/field_object.h"
 #include <math.h>
 
+/**< Map of bytecode-handler */
 handler bytecode_handlers[] = {
   [0x32] = AALOAD_handler,
   [0x53] = AASTORE_handler,
