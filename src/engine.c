@@ -59,7 +59,6 @@ void store_arguments(cstack_t *args, frame_t *old_frame, char *arguments){
             case 'S':
             case 'Z':;
                 u4 *value = (u4 *) cpop(old_frame->operands_stack);
-								printf("%x\n", *value);
 								cpush(args, value);
                 break;
             case 'L':

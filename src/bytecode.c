@@ -1208,9 +1208,7 @@ void INVOKESPECIAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	load_arguments(args, nf);
 	destroy_cstack(args);
 
-	printf("Running\n");
 	run_method(nf, &specialmethod, jvm);
-	printf("Ran.\n");
 
 	destroy_frame(nf);
 	cpop(jvm->frame_stack);
@@ -1277,6 +1275,7 @@ void INVOKEVIRTUAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	info_t *method_name_utf8 = get_constant_pool_entry(frame, get_constant_pool_entry(frame, methodref->Methodref.name_and_type_index)->NameAndType.name_index);
 	char *method_name = (char *) calloc(method_name_utf8->Utf8.length + 1, sizeof(char));
 	memcpy(method_name, method_name_utf8->Utf8.bytes, method_name_utf8->Utf8.length);
+
 	if(!strcmp(method_name, "println")){
 		/* Descobre o que é que é pra imprimir (int, float, bool etc.) */
 		info_t *method_descriptor_utf8 = get_constant_pool_entry(frame, get_constant_pool_entry(frame, methodref->Methodref.name_and_type_index)->NameAndType.descriptor_index);
@@ -1347,13 +1346,57 @@ void INVOKEVIRTUAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 					printf("%s@%p\n", ponto_e_virgula, (void *) cpop(frame->operands_stack));
 				}
 		}
-		/*pilha antes = objectref, [arg1, arg2, ...] -> pilha depois = result*/
 	}else{
-		printf("Executar método\n");
-		printf("%s\n", method_name);
-		exit(-1);
-	}
+		if(!is_loaded(jvm->marea, method_name))
+			load_class(jvm->marea, method_name);
 
+		info_t *method_descriptor_utf8 = \
+			get_constant_pool_entry(
+					frame,
+					get_constant_pool_entry(
+						frame,
+						methodref->Methodref.name_and_type_index
+					)->NameAndType.descriptor_index
+			);
+		char *method_descriptor = (char *) calloc(method_descriptor_utf8->Utf8.length + 1, sizeof(char));
+		memcpy(method_descriptor, method_descriptor_utf8->Utf8.bytes, method_descriptor_utf8->Utf8.length);
+
+		cstack_t *args = new_cstack();
+		store_arguments(args, frame, method_descriptor);
+
+		objectref_t *ref = (objectref_t *) cpop(frame->operands_stack);
+		ClassFile *class = ((instance_t *) ref->object)->class;
+		info_t *classname_utf8 = class->constant_pool[class->constant_pool[class->this_class - 1].info->Class.name_index - 1].info;
+		char *classname = (char *) calloc(classname_utf8->Utf8.length + 1, sizeof(char));
+		memcpy(classname, classname_utf8->Utf8.bytes, classname_utf8->Utf8.length);
+
+		frame_t *nf = new_frame();
+		cpush(jvm->frame_stack, nf);
+		nf->constant_pool = class->constant_pool;
+		Method virtualmethod = get_method_by_name(class, method_name);
+		nf->pc = virtualmethod.code;
+
+		instance_t *inst = new_instance();
+		instantiate_by_name(inst, jvm->marea, classname, new_clist());
+		objectref_t *this = new_objectref();
+		reference_of(this, REF_Instance, inst);
+		cappend(nf->local_variables, this);
+
+		load_arguments(args, nf);
+
+		run_method(nf, &virtualmethod, jvm);
+
+		free(classname);
+		destroy_instance(inst);
+		destroy_objectref(this);
+		destroy_frame(nf);
+		cpop(jvm->frame_stack);
+
+		/*printf("Executar método\n");
+		printf("%s\n", method_name);
+		exit(-1);*/
+	}
+	free(method_name);
 }
 
 void IOR_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
