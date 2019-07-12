@@ -1,0 +1,12 @@
+<map id="/home/henrique/Documentos/JVM/include/method_area.h" name="/home/henrique/Documentos/JVM/include/method_area.h">
+<area shape="rect" id="node2" href="$jvm_8h.html" title="File contains the struct of the java machine and the methods to create and start the jvm..." alt="" coords="401,95,591,136"/>
+<area shape="rect" id="node4" href="$bytecode_8c.html" title="/home/henrique/Documentos\l/JVM/src/bytecode.c" alt="" coords="484,363,673,404"/>
+<area shape="rect" id="node6" href="$instance_8h.html" title="File contain the definition of an instance of a object. " alt="" coords="5,184,195,225"/>
+<area shape="rect" id="node9" href="$jvm_8c.html" title="/home/henrique/Documentos\l/JVM/src/jvm.c" alt="" coords="635,273,824,315"/>
+<area shape="rect" id="node11" href="$method__area_8c.html" title="/home/henrique/Documentos\l/JVM/src/method_area.c" alt="" coords="899,95,1088,136"/>
+<area shape="rect" id="node3" href="$bytecode_8h.html" title="File contain the implementation of the java machine instructions. " alt="" coords="219,273,408,315"/>
+<area shape="rect" id="node8" href="$engine_8h.html" title="File contain the method struct and functions to implementate the methods. " alt="" coords="533,184,723,225"/>
+<area shape="rect" id="node10" href="$main_8c.html" title="/home/henrique/Documentos\l/JVM/src/main.c" alt="" coords="219,184,408,225"/>
+<area shape="rect" id="node5" href="$engine_8c.html" title="/home/henrique/Documentos\l/JVM/src/engine.c" alt="" coords="236,363,425,404"/>
+<area shape="rect" id="node7" href="$instance_8c.html" title="/home/henrique/Documentos\l/JVM/src/instance.c" alt="" coords="5,273,195,315"/>
+</map>

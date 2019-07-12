@@ -1,3 +1,10 @@
+/**
+ * @file bprint_classfile.h
+ * @author Henrique Mariano
+ * @author Vinicius Toshiyuki
+ * @date 11 Jul 2019
+ * @brief File contain the methods to print the classfile.
+ */
 #ifndef bprint_classfile_h
 #define bprint_classfile_h
 

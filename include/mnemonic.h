@@ -1,8 +1,19 @@
+/**
+ * @file mnemonic.h
+ * @author Henrique Mariano
+ * @author Vinicius Toshiyuki
+ * @date 11 Jul 2019
+ * @brief File contain the definition the corresponding mnemonics bytecode and the methods to print every mnemonic.
+ */
 #ifndef mnemonic_h
 #define mnemonic_h
 
 #include "breads.h"
 
+/**
+ * \enum OPCODES
+ * All the jvm opcodes mnemonics.
+ */
 typedef enum {
   AALOAD = 0x32,
   AASTORE = 0x53,
@@ -211,6 +222,9 @@ typedef enum {
   WIDE = 0xc4
 } OPCODES;
 
+/**
+ * Print the correspond mnemonic.
+ */
 typedef int (*printer)(u1 *);
 
 int AALOAD_printer(u1 *);
@@ -419,4 +433,4 @@ int SWAP_printer(u1 *);
 int TABLESWITCH_printer(u1 *);
 int WIDE_printer(u1 *);
 
-#endif
+#endif /* mnemonic_h */

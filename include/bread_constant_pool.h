@@ -1,3 +1,10 @@
+/**
+ * @file bread_constant_pool.h
+ * @author Henrique Mariano
+ * @author Vinicius Toshiyuki
+ * @date 11 Jul 2019
+ * @brief File contain the methods to read the classfile.
+ */
 #ifndef bread_constant_pool_h
 #define bread_constant_pool_h
 

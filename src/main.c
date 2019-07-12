@@ -19,9 +19,7 @@ extern int SECRET;
 int main(int argc, char **argv){
 	initialize(argc, argv);
 	
-	/*Permite a localização do programa na lingua em que o sistema operacional esta selecionada
-	  isso faz com que caracteres como 'ç' sejam exibidas no programa caso o SO esteja em pt-br*/
-	setlocale(LC_ALL, "");
+	setlocale(LC_ALL, ""); /* Allows the location of the program in the language in which the operating system is selected so that characters like 'ç' are displayed in the program if the OS is in portuguese */
 	char *filename = CLASSFILE;
 	FILE *classfile = fopen(filename, "rb");
 	if(classfile == NULL){

@@ -1,3 +1,10 @@
+/**
+ * @file colors.h
+ * @author Henrique Mariano
+ * @author Vinicius Toshiyuki
+ * @date 11 Jul 2019
+ * @brief File contain colors used to print the classfile.
+ */
 #ifndef colors_h
 #define colors_h
 
@@ -15,5 +22,5 @@
 	#define CLEARN "\n"
 #endif
 
-#endif
+#endif /* colors_h */
 

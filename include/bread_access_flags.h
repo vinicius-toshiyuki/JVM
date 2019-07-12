@@ -1,3 +1,10 @@
+/**
+ * @file bread_access_flags.h
+ * @author Henrique Mariano
+ * @author Vinicius Toshiyuki
+ * @date 11 Jul 2019
+ * @brief File contain the methods to read the classfile.
+ */
 #ifndef bread_access_flags_h
 #define bread_access_flags_h
 

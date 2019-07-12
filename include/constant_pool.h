@@ -11,7 +11,14 @@
 #include "info.h"
 #include "frame.h"
 
+/**
+ * Get an constant pool entry from the passed frame.
+ */
 info_t * get_constant_pool_entry(frame_t *frame, u2 index);
+
+/**
+ * Get an constant pool tag from the passed frame.
+ */
 int get_constant_pool_tag(frame_t *, u2);
 
-#endif
+#endif /* constant_pool_h */
