@@ -37,3 +37,20 @@ char * get_class_name(instance_t *instance){
 	memcpy(classname, classname_utf8->Utf8.bytes, classname_utf8->Utf8.length);
 	return classname;
 }
+
+method_info * get_method_info_by_name(instance_t *instance, char *method_name){
+	method_info *method = NULL;
+	ClassFile *class = instance->class;
+	method_info *methods = class->methods;
+	int i;
+	for(i = 0; i < class->methods_count; i++){
+		info_t *methodbytes = class->constant_pool[methods[i].name_index - 1].info;
+		char *methodname = (char *) calloc(methodbytes->Utf8.length + 1, sizeof(char));
+		memcpy(methodname, methodbytes->Utf8.bytes, methodbytes->Utf8.length);
+		if(!strcmp(method_name, method_name)){
+			method = &methods[i];
+			break;
+		}
+	}
+	return method;
+}

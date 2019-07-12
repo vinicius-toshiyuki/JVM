@@ -45,7 +45,8 @@ void run_method(frame_t *frame, Method *method, jvm_t *jvm){
     do bytecode_handlers[(*pc)[0]](pc, method->code, frame, jvm);
     while((*pc)++ != NULL);
 }
-void store_arguments(frame_t *frame, frame_t *old_frame, char *arguments){
+
+void store_arguments(cstack_t *args, frame_t *old_frame, char *arguments){
     int i;
     for(i = 0; i < strlen(arguments); i++){
         switch(arguments[i]){
@@ -58,17 +59,18 @@ void store_arguments(frame_t *frame, frame_t *old_frame, char *arguments){
             case 'S':
             case 'Z':;
                 u4 *value = (u4 *) cpop(old_frame->operands_stack);
-                cappend(frame->local_variables, value);
+								printf("%x\n", *value);
+								cpush(args, value);
                 break;
             case 'L':
                 while(arguments[i++] != ';');
-                cappend(frame->local_variables, cpop(old_frame->operands_stack));
+                cpush(args, cpop(old_frame->operands_stack));
                 break;
             case 'J':
             case 'D':;
                 void *low = cpop(old_frame->operands_stack);
-                cappend(frame->local_variables, cpop(old_frame->operands_stack));
-                cappend(frame->local_variables, low);
+                cpush(args, cpop(old_frame->operands_stack));
+                cpush(args, low);
                 break;
             case '(':
                 break;
@@ -80,6 +82,11 @@ void store_arguments(frame_t *frame, frame_t *old_frame, char *arguments){
                 exit(ERR_UNKTYPE);
         }
     }
+}
+
+void load_arguments(cstack_t *args, frame_t *frame){
+	while(args->size)
+		cappend(frame->local_variables, cpop(args));
 }
 
 integer pop_integer(frame_t *frame){
