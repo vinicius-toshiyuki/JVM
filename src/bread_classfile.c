@@ -22,9 +22,9 @@ ClassFile * bread_classfile(FILE *classfile, char *filename){
 
 		/* Minor and major versions */
 	if(bread_minor(class, classfile) > JAVAVERSION){
-		fprintf(stderr, "Minor version superior to %s\n", java_version[JAVAVERSION]);
 		//setbuf(stdin, NULL);
 		if(!IGNORE){
+			fprintf(stderr, "Minor version superior to %s\n", java_version[JAVAVERSION]);
 			fclose(classfile);
 			free(class);
 			exit(ERR_MINOR);
@@ -32,9 +32,9 @@ ClassFile * bread_classfile(FILE *classfile, char *filename){
 	}
 	if(VERBOSE) printf("Read minor version\n");
 	if(bread_major(class, classfile) < JAVAVERSION){
-		fprintf(stderr, "Major version inferior to %s\n", java_version[JAVAVERSION]);
 		//setbuf(stdin, NULL);
 		if(!IGNORE){
+			fprintf(stderr, "Major version inferior to %s\n", java_version[JAVAVERSION]);
 			fclose(classfile);
 			free(class);
 			exit(ERR_MAJOR);

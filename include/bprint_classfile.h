@@ -11,12 +11,14 @@
 #include "breads.h"
 #include "colors.h"
 #include "attributes.h"
+#include "utils.h"
+#include "mnemonic.h"
+#include <wchar.h>
 #include <string.h>
 
 void bprint_classfile(ClassFile *class);
 int bprint_info(ClassFile *class, int index, const char *prefix, int inner);
 void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char prefix[]);
-int charcmp(const void *a, const void *b);
 
 enum {
 	ACC_PUBLIC     = 0x0001,

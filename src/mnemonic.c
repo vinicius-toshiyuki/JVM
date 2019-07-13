@@ -442,10 +442,10 @@ int ACONST_NULL_printer(u1 *bytestream){
 }
 int ALOAD_printer(u1 *bytestream){
 	if(!_wide_index){
-	  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
+	  printf("%s %d\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
  		return 1;
 	} else {
-		printf("%s 0x%04x\n",
+		printf("%s %d\n",
 				opcode_to_mnemonic[bytestream[0]],
 				(bytestream[1] << 8) | bytestream[2]
 		);
@@ -488,10 +488,10 @@ int ARRAYLENGTH_printer(u1 *bytestream){
 }
 int ASTORE_printer(u1 *bytestream){
 	if(!_wide_index){
-	  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
+	  printf("%s %d\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
  		return 1;
 	} else {
-		printf("%s 0x%04x\n",
+		printf("%s %d\n",
 				opcode_to_mnemonic[bytestream[0]],
 				(bytestream[1] << 8) | bytestream[2]
 		);
@@ -527,7 +527,7 @@ int BASTORE_printer(u1 *bytestream){
   return 0;
 }
 int BIPUSH_printer(u1 *bytestream){
-  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
+  printf("%s %d\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
   return 1;
 }
 int BREAKPOINT_printer(u1 *bytestream){
@@ -598,10 +598,10 @@ int DDIV_printer(u1 *bytestream){
 }
 int DLOAD_printer(u1 *bytestream){
 	if(!_wide_index){
-	  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
+	  printf("%s %d\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
  		return 1;
 	} else {
-		printf("%s 0x%04x\n",
+		printf("%s %d\n",
 				opcode_to_mnemonic[bytestream[0]],
 				(bytestream[1] << 8) | bytestream[2]
 		);
@@ -642,10 +642,10 @@ int DRETURN_printer(u1 *bytestream){
 }
 int DSTORE_printer(u1 *bytestream){
 	if(!_wide_index){
-	  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
+	  printf("%s %d\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
  		return 1;
 	} else {
-		printf("%s 0x%04x\n",
+		printf("%s %d\n",
 				opcode_to_mnemonic[bytestream[0]],
 				(bytestream[1] << 8) | bytestream[2]
 		);
@@ -746,10 +746,10 @@ int FDIV_printer(u1 *bytestream){
 }
 int FLOAD_printer(u1 *bytestream){
 	if(!_wide_index){
-	  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
+	  printf("%s %d\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
  		return 1;
 	} else {
-		printf("%s 0x%04x\n",
+		printf("%s %d\n",
 				opcode_to_mnemonic[bytestream[0]],
 				(bytestream[1] << 8) | bytestream[2]
 		);
@@ -790,10 +790,10 @@ int FRETURN_printer(u1 *bytestream){
 }
 int FSTORE_printer(u1 *bytestream){
 	if(!_wide_index){
-	  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
+	  printf("%s %d\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
  		return 1;
 	} else {
-		printf("%s 0x%04x\n",
+		printf("%s %d\n",
 				opcode_to_mnemonic[bytestream[0]],
 				(bytestream[1] << 8) | bytestream[2]
 		);
@@ -1096,23 +1096,23 @@ int IINC_printer(u1 *bytestream){
 	if(!_wide_index){
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		for(int i = 0; i < 2; i++)
-			printf("0x%02x ", bytestream[i + 1]);
+			printf("%d ", bytestream[i + 1]);
 		printf("\b\n");
 		return 2;
 	} else {
 		printf("%s ", opcode_to_mnemonic[bytestream[0]]);
 		for(int i = 0; i < 2; i++)
-			printf("0x%04x ", (bytestream[2 * i + 1] << 8) | bytestream[2 * i + 2]);
+			printf("%d ", (bytestream[2 * i + 1] << 8) | bytestream[2 * i + 2]);
 		printf("\b\n");
 		return 4;
 	}
 }
 int ILOAD_printer(u1 *bytestream){
 	if(!_wide_index){
-	  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
+	  printf("%s %d\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
  		return 1;
 	} else {
-		printf("%s 0x%04x\n",
+		printf("%s %d\n",
 				opcode_to_mnemonic[bytestream[0]],
 				(bytestream[1] << 8) | bytestream[2]
 		);
@@ -1233,10 +1233,10 @@ int ISHR_printer(u1 *bytestream){
 }
 int ISTORE_printer(u1 *bytestream){
 	if(!_wide_index){
-	  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
+	  printf("%s %d\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
  		return 1;
 	} else {
-		printf("%s 0x%04x\n",
+		printf("%s %d\n",
 				opcode_to_mnemonic[bytestream[0]],
 				(bytestream[1] << 8) | bytestream[2]
 		);
@@ -1367,10 +1367,10 @@ int LDIV_printer(u1 *bytestream){
 }
 int LLOAD_printer(u1 *bytestream){
 	if(!_wide_index){
-	  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
+	  printf("%s %d\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
  		return 1;
 	} else {
-		printf("%s 0x%04x\n",
+		printf("%s %d\n",
 				opcode_to_mnemonic[bytestream[0]],
 				(bytestream[1] << 8) | bytestream[2]
 		);
@@ -1463,10 +1463,10 @@ int LSHR_printer(u1 *bytestream){
 }
 int LSTORE_printer(u1 *bytestream){
 	if(!_wide_index){
-	  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
+	  printf("%s %d\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
  		return 1;
 	} else {
-		printf("%s 0x%04x\n",
+		printf("%s %d\n",
 				opcode_to_mnemonic[bytestream[0]],
 				(bytestream[1] << 8) | bytestream[2]
 		);
@@ -1530,7 +1530,7 @@ int NEW_printer(u1 *bytestream){
 	return 2;
 }
 int NEWARRAY_printer(u1 *bytestream){
-  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
+  printf("%s %d\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
 	return 1;
 }
 int NOP_printer(u1 *bytestream){
@@ -1567,10 +1567,10 @@ int PUTSTATIC_printer(u1 *bytestream){
 }
 int RET_printer(u1 *bytestream){
 	if(!_wide_index){
-	  printf("%s 0x%02x\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
+	  printf("%s %d\n", opcode_to_mnemonic[bytestream[0]], bytestream[1]);
  		return 1;
 	} else {
-		printf("%s 0x%04x\n",
+		printf("%s %d\n",
 				opcode_to_mnemonic[bytestream[0]],
 				(bytestream[1] << 8) | bytestream[2]
 		);
@@ -1592,7 +1592,7 @@ int SASTORE_printer(u1 *bytestream){
 int SIPUSH_printer(u1 *bytestream){
   printf("%s ", opcode_to_mnemonic[bytestream[0]]);
   for(int i = 0; i < 2; i++)
-    printf("0x%02x ", bytestream[i + 1]);
+    printf("%d ", bytestream[i + 1]);
   printf("\b\n");
 	return 2;
 }
@@ -1623,14 +1623,14 @@ int TABLESWITCH_printer(u1 *bytestream){
 			(paddedstream[6] << 16) | \
 			(paddedstream[7] << 8) | \
 			paddedstream[8];
-	// printf("0x%08x ", low);
+	// printf("%d ", low);
 	// High bytes (1-4)
 	u4 high = \
 			(paddedstream[9] << 24) | \
 			(paddedstream[10] << 16) | \
 			(paddedstream[11] << 8) | \
 			paddedstream[12];
-	// printf("0x%08x ", high);
+	// printf("%d ", high);
 	// Offsets (x)
 	u4 x = high - low + 1;
 	lookup_result.npairs = x;
