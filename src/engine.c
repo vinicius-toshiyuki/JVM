@@ -92,7 +92,7 @@ integer pop_integer(frame_t *frame){
 	void *value = cpop(frame->operands_stack);
 	integer ivalue;
 	memcpy(&ivalue, value, 4);
-	free(value);
+//	free(value);
 	return ivalue;
 }
 
@@ -108,7 +108,7 @@ byte pop_byte(frame_t *frame){
 	void *value = cpop(frame->operands_stack);
 	byte bvalue;
 	memcpy(&bvalue, value, 1);
-	free(value);
+//	free(value);
 	return bvalue;
 }
 
@@ -130,8 +130,8 @@ double pop_double(frame_t *frame){
 	u8 value = ((u8) *high_value << 32) | *low_value;
 	double dvalue;
 	memcpy(&dvalue, &value, 8);
-	free(low_value);
-	free(high_value);
+//	free(low_value);
+//	free(high_value);
 	return dvalue;
 }
 
@@ -160,8 +160,8 @@ long pop_long(frame_t *frame){
 	u8 value = ((u8) *high_value << 32) | *low_value;
 	long lvalue;
 	memcpy(&lvalue, &value, 8);
-	free(low_value);
-	free(high_value);
+//	free(low_value);
+//	free(high_value);
 	return lvalue;
 }
 
@@ -188,7 +188,7 @@ float pop_float(frame_t *frame){
 	void *value = cpop(frame->operands_stack);
 	float fvalue;
 	memcpy(&fvalue, value, 4);
-	free(value);
+//	free(value);
 	return fvalue;
 }
 
@@ -204,7 +204,7 @@ short pop_short(frame_t *frame){
 	void *value = cpop(frame->operands_stack);
 	short svalue;
 	memcpy(&svalue, value, 2);
-	free(value);
+//	free(value);
 	return svalue;
 }
 
@@ -226,6 +226,6 @@ u1 * pop_returnAddress(frame_t *frame){
 	u4 *value = (u4 *) cpop(frame->operands_stack);
 	u1 *rvalue;
 	memcpy(&rvalue, value, 1);
-	free(value);
+//	free(value);
 	return rvalue;
 }
