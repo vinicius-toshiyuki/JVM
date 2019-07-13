@@ -16,7 +16,7 @@ Reads .class files and let you choose to prints it's structure as described in O
 
 ### Run
 
->$ ./breader.out <mode> <path> <file> [<options>]*
+>$ ./breader.out <\mode> <\path> <\file> [<\options>]*
 
 ## TODO
 
@@ -100,14 +100,14 @@ Todas as demais instruções.
 -------------------------
 
 Atribuição de nota para a JVM
-0,1*leitor_exibidor + 0,4*corretude + 0,4*defesa do interpretador + 0,1*site
+0,1\*leitor_exibidor + 0,4\*corretude + 0,4\*defesa do interpretador + 0,1\*site
 
 Site: 100
 
-- Apresenta o DCM e a descrição de cada função?
-- Contem a relação das estruturas de dados e os arquivos?
-- Está atualizado?
-- Corretude?
+- Apresenta o DCM e a descrição de cada função? Sim
+- Contem a relação das estruturas de dados e os arquivos? Sim
+- Está atualizado? 100% Atualizado
+- Corretude? Correto
 
 ## Authors
 
