@@ -19,6 +19,8 @@ void destroy_method_area(method_area_t *ma){
 extern char *PATH;
 void load_class(method_area_t *marea, char *pathtoclass){
 	/* PATH + pathtoclass + .class*/
+	if(!strcmp(pathtoclass, "java/lang/StringBuilder"))
+			return;
 	char *fullpath = NULL;
 	if(strcmp(pathtoclass, "java/lang/Object")){
 		fullpath = (char *) calloc(strlen(PATH) + strlen(pathtoclass) + 7, sizeof(char));

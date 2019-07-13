@@ -8,6 +8,7 @@
 #include "../include/engine.h"
 #include "../include/array.h"
 #include "../include/field_object.h"
+#include "../include/string.h"
 #include <math.h>
 
 /**< Map of bytecode-handler */
@@ -1242,67 +1243,68 @@ void INVOKESPECIAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 		printf("MethodRef type %s\n", methodref_descriptor);
 	}
 
-	if(!is_loaded(jvm->marea, methodref_classname))
-		load_class(jvm->marea, methodref_classname);
+	if(strcmp(methodref_classname, "java/lang/StringBuilder")){
+		if(!is_loaded(jvm->marea, methodref_classname))
+			load_class(jvm->marea, methodref_classname);
 
-	frame_t *nf = new_frame();
-	cpush(jvm->frame_stack, nf);
-	cstack_t *args = new_cstack();
-	store_arguments(args, frame, methodref_descriptor);
+		frame_t *nf = new_frame();
+		cpush(jvm->frame_stack, nf);
+		cstack_t *args = new_cstack();
+		store_arguments(args, frame, methodref_descriptor);
 
-	objectref_t *ref = (objectref_t *) cpop(frame->operands_stack);
-	if(ref->tag != REF_Instance){
-		fprintf(stderr, "Invalid object reference to invoke special\n");
-		exit(ERR_INVREF);
+		objectref_t *ref = (objectref_t *) cpop(frame->operands_stack);
+		if(ref->tag != REF_Instance){
+			fprintf(stderr, "Invalid object reference to invoke special\n");
+			exit(ERR_INVREF);
+		}
+
+		char *objectref_classname = get_class_name(ref->object);
+		method_info *objectref_method = get_method_info_by_name(ref->object, methodref_nameandtype);
+		ClassFile *objectref_class = ((instance_t *) ref->object)->class;
+
+		info_t *objectref_method_descriptorutf8 = objectref_class->constant_pool[objectref_method->descriptor_index - 1].info;
+		char *objectref_method_descriptor = (char *) calloc(objectref_method_descriptorutf8->Utf8.length + 1, sizeof(char));
+		memcpy(objectref_method_descriptor, objectref_method_descriptorutf8->Utf8.bytes, objectref_method_descriptorutf8->Utf8.length);
+		
+		if(VERBOSE){
+			printf("ObjectRef classname %s\n", objectref_classname);
+			printf("ObjectRef type %s\n", objectref_method_descriptor);
+		}
+
+		nf->constant_pool = ((instance_t *) ref->object)->class->constant_pool;
+		Method specialmethod = get_method_by_name(((instance_t *) ref->object)->class, methodref_nameandtype);
+		nf->pc = specialmethod.code;
+
+		ClassFile *invokingclass = ((instance_t *) ref->object)->class;
+
+		if(invokingclass->super_class){
+			objectref_t *mref = new_objectref();
+			instance_t *inst = new_instance();
+
+			info_t *super = invokingclass->constant_pool[invokingclass->super_class - 1].info;
+			info_t *super_utf8 = invokingclass->constant_pool[super->Class.name_index - 1].info;
+			char *super_name = (char *) calloc(super_utf8->Utf8.length + 1, sizeof(char));
+			memcpy(super_name, super_utf8->Utf8.bytes, super_utf8->Utf8.length);
+
+			instantiate_by_name(inst, jvm->marea, super_name, new_clist());
+			reference_of(mref, REF_Instance, inst);
+			free(super_name);
+			cappend(nf->local_variables, mref);
+		}
+		load_arguments(args, nf);
+		destroy_cstack(args);
+
+		run_method(nf, &specialmethod, jvm);
+
+		destroy_frame(nf);
+		cpop(jvm->frame_stack);
+
+		free(objectref_classname);
+		free(objectref_method_descriptor);
+		free(methodref_classname);
+		free(methodref_nameandtype);
+		free(methodref_descriptor);
 	}
-
-	char *objectref_classname = get_class_name(ref->object);
-	method_info *objectref_method = get_method_info_by_name(ref->object, methodref_nameandtype);
-	ClassFile *objectref_class = ((instance_t *) ref->object)->class;
-
-	info_t *objectref_method_descriptorutf8 = objectref_class->constant_pool[objectref_method->descriptor_index - 1].info;
-	char *objectref_method_descriptor = (char *) calloc(objectref_method_descriptorutf8->Utf8.length + 1, sizeof(char));
-	memcpy(objectref_method_descriptor, objectref_method_descriptorutf8->Utf8.bytes, objectref_method_descriptorutf8->Utf8.length);
-	
-	if(VERBOSE){
-		printf("ObjectRef classname %s\n", objectref_classname);
-		printf("ObjectRef type %s\n", objectref_method_descriptor);
-	}
-
-	nf->constant_pool = ((instance_t *) ref->object)->class->constant_pool;
-	Method specialmethod = get_method_by_name(((instance_t *) ref->object)->class, methodref_nameandtype);
-	nf->pc = specialmethod.code;
-
-	ClassFile *invokingclass = ((instance_t *) ref->object)->class;
-
-	if(invokingclass->super_class){
-		objectref_t *mref = new_objectref();
-		instance_t *inst = new_instance();
-
-		info_t *super = invokingclass->constant_pool[invokingclass->super_class - 1].info;
-		info_t *super_utf8 = invokingclass->constant_pool[super->Class.name_index - 1].info;
-		char *super_name = (char *) calloc(super_utf8->Utf8.length + 1, sizeof(char));
-		memcpy(super_name, super_utf8->Utf8.bytes, super_utf8->Utf8.length);
-
-		instantiate_by_name(inst, jvm->marea, super_name, new_clist());
-		reference_of(mref, REF_Instance, inst);
-		free(super_name);
-		cappend(nf->local_variables, mref);
-	}
-	load_arguments(args, nf);
-	destroy_cstack(args);
-
-	run_method(nf, &specialmethod, jvm);
-
-	destroy_frame(nf);
-	cpop(jvm->frame_stack);
-
-	free(objectref_classname);
-	free(objectref_method_descriptor);
-	free(methodref_classname);
-	free(methodref_nameandtype);
-	free(methodref_descriptor);
-
 	/* cpop(frame->operands_stack); */
 }
 void INVOKESTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
@@ -1364,6 +1366,7 @@ void INVOKESTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	cpop(jvm->frame_stack);
 }
 
+#include "../include/string.h"
 void INVOKEVIRTUAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
 	info_t *methodref = get_constant_pool_entry(frame, cp_index);
@@ -1372,105 +1375,23 @@ void INVOKEVIRTUAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	char *method_name = (char *) calloc(method_name_utf8->Utf8.length + 1, sizeof(char));
 	memcpy(method_name, method_name_utf8->Utf8.bytes, method_name_utf8->Utf8.length);
 
-	if(!strcmp(method_name, "println") || !strcmp(method_name, "print")){
+	if(!strcmp(method_name, "println") || !strcmp(method_name, "print") || !strcmp(method_name, "append")){
 		/* Descobre o que é que é pra imprimir (int, float, bool etc.) */
 		info_t *method_descriptor_utf8 = get_constant_pool_entry(frame, get_constant_pool_entry(frame, methodref->Methodref.name_and_type_index)->NameAndType.descriptor_index);
-		char method_descriptor = method_descriptor_utf8->Utf8.bytes[1];
-		switch(method_descriptor){
-			case 'D':;
-				u4 *dvalue_low = cpop(frame->operands_stack);
-				u4 *dvalue_high = cpop(frame->operands_stack);
-				u8 value = ((u8) *dvalue_high) << 32 | *dvalue_low;
-				double dvalue;
-				memcpy(&dvalue, &value, 8);
-				if(!strcmp(method_name, "println"))
-					printf("%0.16lf\n", dvalue);
-				else
-					printf("%0.16lf", dvalue);
-				
-				break;
-			case 'J':;
-				u4 *lvalue_low = cpop(frame->operands_stack);
-				u4 *lvalue_high = cpop(frame->operands_stack);
-				u8 value_l = ((u8) *lvalue_high) << 32 | *lvalue_low;
-				long lvalue;
-				memcpy(&lvalue, &value_l, 8);
-				if(!strcmp(method_name, "println"))
-					printf("%ld\n", lvalue);
-				else
-					printf("%ld", lvalue);
-				break;
-			case 'I':;
-				int32_t ivalue;
-				memcpy(&ivalue, cpop(frame->operands_stack), 4);
-				if(!strcmp(method_name, "println"))
-					printf("%d\n", ivalue);
-				else
-					printf("%d", ivalue);
-				break;
-			case 'Z':
-				if(!strcmp(method_name, "println"))
-					printf("%s\n", *((u4 *) cpop(frame->operands_stack)) ? "True" : "False");
-				else
-					printf("%s", *((u4 *) cpop(frame->operands_stack)) ? "True" : "False");
-				break;
-			case 'B':;
-				int8_t bvalue;
-				memcpy(&bvalue, cpop(frame->operands_stack), 1);
-				if(!strcmp(method_name, "println"))
-					printf("%hhx\n", bvalue);
-				else
-					printf("%hhx", bvalue);
-				break;
-			case 'C':;
-				int8_t cvalue;
-				memcpy(&cvalue, cpop(frame->operands_stack), 1);
-				if(!strcmp(method_name, "println"))
-					printf("%c\n", cvalue);
-				else
-					printf("%c", cvalue);
-				break;
-			case 'F':;
-				float fvalue;
-				memcpy(&fvalue, cpop(frame->operands_stack), 4);
-				if(!strcmp(method_name, "println"))
-					printf("%f\n", fvalue);
-				else
-					printf("%f", fvalue);
-				break;
-			case 'S':;
-				short svalue;
-				memcpy(&svalue, cpop(frame->operands_stack), 2);
-				if(!strcmp(method_name, "println"))
-					printf("%hi\n", svalue);
-				else
-					printf("%hi", svalue);
-				break;
-			case ')':
-				break;
-			default:;
-				char *descriptor_full = (char *) calloc(method_descriptor_utf8->Utf8.length, sizeof(char));
-				memcpy(descriptor_full, method_descriptor_utf8->Utf8.bytes + 1, method_descriptor_utf8->Utf8.length);
-				char *ponto_e_virgula = strtok(descriptor_full, ";");
-				if(ponto_e_virgula){
-					ponto_e_virgula[strlen(ponto_e_virgula) + 1] = '\0';
-					ponto_e_virgula[strlen(ponto_e_virgula)] = ';';
-				}
-				if(!strcmp(ponto_e_virgula, "Ljava/lang/String;")){
-					info_t *string_info = cpop(frame->operands_stack);
-					info_t *string_utf8 = get_constant_pool_entry(frame, string_info->String.string_index);
-					print_utf8(string_utf8);
-					/*char *string_string = (char *) calloc(string_utf8->Utf8.length + 1, sizeof(char));
-					memcpy(string_string, string_utf8->Utf8.bytes, string_utf8->Utf8.length);
-					printf("%s\n", string_string);
-					free(string_string);
-					string_string = NULL;*/
-				}else{
-					printf("%s@%p\n", ponto_e_virgula, (void *) cpop(frame->operands_stack));
-				}
+		char *method_descriptor_str = (char *) calloc(method_descriptor_utf8->Utf8.length, sizeof(char));
+		memcpy(method_descriptor_str, method_descriptor_utf8->Utf8.bytes, method_descriptor_utf8->Utf8.length);
+		if(strcmp(method_name, "append")){
+			invoke_print(frame, method_descriptor_str);
+		}else{
+			invoke_append(frame, method_descriptor_str);
 		}
+		free(method_descriptor_str);
 		if(!strcmp(method_name, "println"))
 			printf("\n");
+	}else if(!strcmp(method_name, "toString")){
+		void *builder = cpop(frame->operands_stack);
+		cpop(frame->operands_stack);
+		cpush(frame->operands_stack, builder);
 	}else{
 		info_t *method_class_utf8 = get_constant_pool_entry(frame, get_constant_pool_entry(frame, methodref->Methodref.class_index)->Class.name_index);
 		char *method_class_name = (char *) calloc(method_class_utf8->Utf8.length + 1, sizeof(char));
@@ -1984,31 +1905,41 @@ void MULTIANEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 void NEW_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
 
-	u1 tag = get_constant_pool_tag(frame, cp_index);
 	info_t *template = get_constant_pool_entry(frame, cp_index);
-	instance_t *inst = new_instance();
-	if(tag == CONSTANT_Class){
-		/* Falta inicializar o objeto (<init>) */
-		instantiate_by_index(inst, jvm, template->Class.name_index, new_clist());
 
-		/*frame_t *init_frame = new_frame();
-		cpush(jvm->frame_stack, init_frame);
-		init_frame->constant_pool = inst->class->constant_pool;
-		objectref_t *init_this_ref = new_objectref();
-
-		reference_of(init_this_ref, REF_Instance, inst);
-		cappend(init_frame->local_variables, init_this_ref);
-		Method method_init = get_method_by_name(inst->class, "<init>");
-		init_frame->pc = method_init.code;
-		run_method(init_frame, &method_init, jvm);
-		destroy_frame(init_frame);
-		cpop(jvm->frame_stack);*/
-	}
+	char *template_classname = (char *) calloc(get_constant_pool_entry(frame, template->Class.name_index)->Utf8.length + 1, sizeof(char));
+	memcpy(template_classname, get_constant_pool_entry(frame, template->Class.name_index)->Utf8.bytes, get_constant_pool_entry(frame, template->Class.name_index)->Utf8.length);
 
 	objectref_t *ref = new_objectref();
-	reference_of(ref, REF_Instance, inst);
+	if(strcmp(template_classname, "java/lang/StringBuilder")){
+		u1 tag = get_constant_pool_tag(frame, cp_index);
+		instance_t *inst = new_instance();
+		if(tag == CONSTANT_Class){
+			/* Falta inicializar o objeto (<init>) */
+			instantiate_by_index(inst, jvm, template->Class.name_index, new_clist());
+
+			/*frame_t *init_frame = new_frame();
+			cpush(jvm->frame_stack, init_frame);
+			init_frame->constant_pool = inst->class->constant_pool;
+			objectref_t *init_this_ref = new_objectref();
+
+			reference_of(init_this_ref, REF_Instance, inst);
+			cappend(init_frame->local_variables, init_this_ref);
+			Method method_init = get_method_by_name(inst->class, "<init>");
+			init_frame->pc = method_init.code;
+			run_method(init_frame, &method_init, jvm);
+			destroy_frame(init_frame);
+			cpop(jvm->frame_stack);*/
+			reference_of(ref, REF_Instance, inst);
+		}
+	}else{
+		String *builder = (String *) calloc(1, sizeof(String));
+		string_of(builder, STR_Builder, new_clist());
+		reference_of(ref, REF_String, builder);
+	}
 	cpush(jvm->heap, ref);
 	cpush(frame->operands_stack, ref);
+	free(template_classname);
 }
 void NEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u1 tag = (*pc + 1)[0]; ++*pc;

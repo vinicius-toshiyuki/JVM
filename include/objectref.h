@@ -29,7 +29,8 @@ typedef enum {
     REF_Array = 1,
     REF_Fieldref,
     REF_Methodref,
-    REF_Class
+    REF_Class,
+		REF_String
 } REF;
 
 /**

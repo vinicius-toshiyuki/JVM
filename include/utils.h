@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "info.h"
+#include "frame.h"
 
 extern int VERBOSE;
 
@@ -24,5 +25,7 @@ int comp(const void *a, const void *b);
 int charcmp(const void *a, const void *b);
 #define printv(...) if(VERBOSE) printf(__VA_ARGS__);
 void print_utf8(info_t *string_utf8);
+void invoke_print(frame_t *frame, char *descriptor);
+void invoke_append(frame_t *frame, char *descriptor);
 
 #endif /* __UTILS_H__ */
