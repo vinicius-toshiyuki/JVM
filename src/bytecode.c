@@ -1469,6 +1469,8 @@ void INVOKEVIRTUAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 					printf("%s@%p\n", ponto_e_virgula, (void *) cpop(frame->operands_stack));
 				}
 		}
+		if(!strcmp(method_name, "println"))
+			printf("\n");
 	}else{
 		info_t *method_class_utf8 = get_constant_pool_entry(frame, get_constant_pool_entry(frame, methodref->Methodref.class_index)->Class.name_index);
 		char *method_class_name = (char *) calloc(method_class_utf8->Utf8.length + 1, sizeof(char));

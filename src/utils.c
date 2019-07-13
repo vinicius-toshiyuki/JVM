@@ -7,16 +7,18 @@ int charcmp(const void *a, const void *b){
 }
 
 void print_utf8(info_t *string_utf8){
-
-    setlocale(LC_ALL, "");
 	static char escapes[7][4] = {"\aa", "\bb", "\tt", "\nn", "\vv", "\ff", "\rr"};
 	u1 *bytes = string_utf8->Utf8.bytes;
+	//11110000 10100000 10011100 10001110;
+	//00000010 00000111 00001110;
+	wchar_t ass[3] = {0x00000010, 0x00000111, 0x00001110};
+	printf("%ls\n", ass);
 	for(int i = 0; i < string_utf8->Utf8.length; i++){
-		wchar_t utf8char;
+		wchar_t utf8char = 0x00000000;
 		if((bytes[i] & 0x80) == 0x00){
 			char c[] = {bytes[i], '\0'}, *c1;
 			c1 = bsearch(c, escapes, 7, 4, charcmp);
-			if(c1){
+			if(c1 && 0){
 				printf("\\%c", *++c1);
 				utf8char = *++c1;
 			}else{
@@ -26,8 +28,10 @@ void print_utf8(info_t *string_utf8){
 			utf8char = (wchar_t) (((bytes[i] & 0x1F) << 6) | (bytes[i + 1] & 0x3F)), i++;
 		else if((bytes[i] & 0xF0) == 0xE0)
 			utf8char = (wchar_t) (((bytes[i] & 0x0F) << 12) | ((bytes[i + 1] & 0x3F) << 6) | (bytes[i + 2] & 0x3F)), i += 2;
-		else if((bytes[i] & 0xF8) == 0xF0)
+		else if((bytes[i] & 0xF8) == 0xF0){
 			utf8char = (wchar_t) (((bytes[i] & 0x07) << 18) | ((bytes[i + 1] & 0x3F) << 12) | ((bytes[i + 2] & 0x4F) << 6) | (bytes[i + 3] & 0x3F)), i += 3;
+			printf("alo\n");
+		}
 		else
 			printf("0x%02x ", bytes[i]);
 		printf("%lc", utf8char);
