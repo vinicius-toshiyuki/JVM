@@ -14,6 +14,7 @@
 #include "constant_pool.h"
 #include "objectref.h"
 #include "instance.h"
+#include "utils.h"
 
 #define NIL (void *) 0x1
 

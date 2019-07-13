@@ -1,7 +1,4 @@
 #include "../include/bprint_classfile.h"
-#include "../include/mnemonic.h"
-
-#include <wchar.h>
 
 extern int VERBOSE, CONSTPOOL;
 extern printer opcode_printers[];
@@ -54,10 +51,6 @@ void bprint_classfile(ClassFile *class){
   bprint_attributes_count(class);
   bprint_attributes(class->attributes, class->attributes_count, "");
   return;
-}
-
-int charcmp(const void *a, const void *b){
-	return *((char *) a) - *((char *) b);
 }
 
 int bprint_info(ClassFile *class, int index, const char *prefix, int inner){
@@ -282,14 +275,15 @@ void bprint_att_info(u1 *u1_stream, int name_index, ClassFile *class, const char
           "%s\tLine number table:\n",
           prefix, att_info.LineNumberTable.line_number_table_length, prefix
       );
+      printf("%s\t\tEntry |   PC  | Line number\n", prefix);
       for(int i = 0; i < att_info.LineNumberTable.line_number_table_length; i++)
         printf(
-            "%s\t\tLine number %d:\n"
+            "%s\t\t%5d | %5d | %5d\n"/*
             "%s\t\tStart PC: 0x%04x\n"
-            "%s\t\tLine number: %d\n",
+            "%s\t\tLine number: %d\n"*/,
             prefix, i,
-            prefix, att_info.LineNumberTable.line_number_table[i].start_pc,
-            prefix, att_info.LineNumberTable.line_number_table[i].line_number
+            att_info.LineNumberTable.line_number_table[i].start_pc,
+            att_info.LineNumberTable.line_number_table[i].line_number
         );
       break;
     case NUMBER_LocalVariableTable:

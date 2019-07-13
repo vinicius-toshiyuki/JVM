@@ -550,44 +550,32 @@ void DUP_X2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 void DUP2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *value1 = (u4 *) cpop(frame->operands_stack);
 	u4 *value2 = (u4 *) cpop(frame->operands_stack);
-	u4 *value1c = (u4 *) calloc(1, sizeof(u4));
-	u4 *value2c = (u4 *) calloc(1, sizeof(u4));
-	memcpy(value1c, value1, 4);
-	memcpy(value2c, value2, 4);
 	cpush(frame->operands_stack, value2);
 	cpush(frame->operands_stack, value1);
-	cpush(frame->operands_stack, value2c);
-	cpush(frame->operands_stack, value1c);
+	cpush(frame->operands_stack, value2);
+	cpush(frame->operands_stack, value1);
 }
 void DUP2_X1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *value1 = (u4 *) cpop(frame->operands_stack);
 	u4 *value2 = (u4 *) cpop(frame->operands_stack);
 	u4 *value3 = (u4 *) cpop(frame->operands_stack);
-	u4 *value1c = (u4 *) calloc(1, sizeof(u4));
-	u4 *value2c = (u4 *) calloc(1, sizeof(u4));
-	memcpy(value1c, value1, 4);
-	memcpy(value2c, value2, 4);
 	cpush(frame->operands_stack, value2);
 	cpush(frame->operands_stack, value1);
 	cpush(frame->operands_stack, value3);
-	cpush(frame->operands_stack, value2c);
-	cpush(frame->operands_stack, value1c);
+	cpush(frame->operands_stack, value2);
+	cpush(frame->operands_stack, value1);
 }
 void DUP2_X2_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *value1 = (u4 *) cpop(frame->operands_stack);
 	u4 *value2 = (u4 *) cpop(frame->operands_stack);
 	u4 *value3 = (u4 *) cpop(frame->operands_stack);
 	u4 *value4 = (u4 *) cpop(frame->operands_stack);
-	u4 *value1c = (u4 *) calloc(1, sizeof(u4));
-	u4 *value2c = (u4 *) calloc(1, sizeof(u4));
-	memcpy(value1c, value1, 4);
-	memcpy(value2c, value2, 4);
 	cpush(frame->operands_stack, value2);
 	cpush(frame->operands_stack, value1);
 	cpush(frame->operands_stack, value4);
 	cpush(frame->operands_stack, value3);
-	cpush(frame->operands_stack, value2c);
-	cpush(frame->operands_stack, value1c);
+	cpush(frame->operands_stack, value2);
+	cpush(frame->operands_stack, value1);
 }
 void F2D_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	float value = pop_float(frame);
@@ -824,7 +812,7 @@ void GETSTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	info_t *class_info = get_constant_pool_entry(frame, get_constant_pool_entry(frame, value->Fieldref.class_index)->Class.name_index);
 	char *classname = (char *) calloc(class_info->Utf8.length + 1, sizeof(char));
 	memcpy(classname, class_info->Utf8.bytes, class_info->Utf8.length);
-	if(!is_loaded(jvm->marea, classname)){
+	if(strcmp(classname, "java/lang/System") && !is_loaded(jvm->marea, classname)){
 		char *classfilename = (char *) calloc(strlen(classname) + 7 /* '.class\0' */, sizeof(char));
 		strcat(classfilename, classname);
 		load_class(jvm->marea, classfilename);
@@ -1371,7 +1359,7 @@ void INVOKEVIRTUAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	char *method_name = (char *) calloc(method_name_utf8->Utf8.length + 1, sizeof(char));
 	memcpy(method_name, method_name_utf8->Utf8.bytes, method_name_utf8->Utf8.length);
 
-	if(!strcmp(method_name, "println")){
+	if(!strcmp(method_name, "println") || !strcmp(method_name, "print")){
 		/* Descobre o que é que é pra imprimir (int, float, bool etc.) */
 		info_t *method_descriptor_utf8 = get_constant_pool_entry(frame, get_constant_pool_entry(frame, methodref->Methodref.name_and_type_index)->NameAndType.descriptor_index);
 		char method_descriptor = method_descriptor_utf8->Utf8.bytes[1];
@@ -1382,7 +1370,11 @@ void INVOKEVIRTUAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 				u8 value = ((u8) *dvalue_high) << 32 | *dvalue_low;
 				double dvalue;
 				memcpy(&dvalue, &value, 8);
-				printf("%0.16lf\n", dvalue);
+				if(!strcmp(method_name, "println"))
+					printf("%0.16lf\n", dvalue);
+				else
+					printf("%0.16lf", dvalue);
+				
 				break;
 			case 'J':;
 				u4 *lvalue_low = cpop(frame->operands_stack);
@@ -1390,38 +1382,60 @@ void INVOKEVIRTUAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 				u8 value_l = ((u8) *lvalue_high) << 32 | *lvalue_low;
 				long lvalue;
 				memcpy(&lvalue, &value_l, 8);
-				printf("%ld\n", lvalue);
+				if(!strcmp(method_name, "println"))
+					printf("%ld\n", lvalue);
+				else
+					printf("%ld", lvalue);
 				break;
 			case 'I':;
 				int32_t ivalue;
 				memcpy(&ivalue, cpop(frame->operands_stack), 4);
-				printf("%d\n", ivalue);
+				if(!strcmp(method_name, "println"))
+					printf("%d\n", ivalue);
+				else
+					printf("%d", ivalue);
 				break;
 			case 'Z':
-				printf("%s\n", *((u4 *) cpop(frame->operands_stack)) ? "True" : "False");
+				if(!strcmp(method_name, "println"))
+					printf("%s\n", *((u4 *) cpop(frame->operands_stack)) ? "True" : "False");
+				else
+					printf("%s", *((u4 *) cpop(frame->operands_stack)) ? "True" : "False");
 				break;
 			case 'B':;
 				int8_t bvalue;
 				memcpy(&bvalue, cpop(frame->operands_stack), 1);
-				printf("%hhx\n", bvalue);
+				if(!strcmp(method_name, "println"))
+					printf("%hhx\n", bvalue);
+				else
+					printf("%hhx", bvalue);
 				break;
 			case 'C':;
 				int8_t cvalue;
 				memcpy(&cvalue, cpop(frame->operands_stack), 1);
-				printf("%c\n", cvalue);
+				if(!strcmp(method_name, "println"))
+					printf("%c\n", cvalue);
+				else
+					printf("%c", cvalue);
 				break;
 			case 'F':;
 				float fvalue;
 				memcpy(&fvalue, cpop(frame->operands_stack), 4);
-				printf("%f\n", fvalue);
+				if(!strcmp(method_name, "println"))
+					printf("%f\n", fvalue);
+				else
+					printf("%f", fvalue);
 				break;
 			case 'S':;
 				short svalue;
 				memcpy(&svalue, cpop(frame->operands_stack), 2);
-				printf("%hi\n", svalue);
+				if(!strcmp(method_name, "println"))
+					printf("%hi\n", svalue);
+				else
+					printf("%hi", svalue);
+				break;
+			case ')':
 				break;
 			default:;
-				/* printf("%s\n", method_descriptor_utf8->Utf8.bytes); */
 				char *descriptor_full = (char *) calloc(method_descriptor_utf8->Utf8.length, sizeof(char));
 				memcpy(descriptor_full, method_descriptor_utf8->Utf8.bytes + 1, method_descriptor_utf8->Utf8.length);
 				char *ponto_e_virgula = strtok(descriptor_full, ";");
@@ -1432,11 +1446,12 @@ void INVOKEVIRTUAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 				if(!strcmp(ponto_e_virgula, "Ljava/lang/String;")){
 					info_t *string_info = cpop(frame->operands_stack);
 					info_t *string_utf8 = get_constant_pool_entry(frame, string_info->String.string_index);
-					char *string_string = (char *) calloc(string_utf8->Utf8.length + 1, sizeof(char));
+					print_utf8(string_utf8);
+					/*char *string_string = (char *) calloc(string_utf8->Utf8.length + 1, sizeof(char));
 					memcpy(string_string, string_utf8->Utf8.bytes, string_utf8->Utf8.length);
 					printf("%s\n", string_string);
 					free(string_string);
-					string_string = NULL;
+					string_string = NULL;*/
 				}else{
 					printf("%s@%p\n", ponto_e_virgula, (void *) cpop(frame->operands_stack));
 				}
@@ -1980,7 +1995,11 @@ void NEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u1 tag = (*pc + 1)[0]; ++*pc;
 	array_t *array = new_array();
 	array_of(array, tag, pop_integer(frame));
-	cpush(frame->operands_stack, array);
+
+	objectref_t *ref = new_objectref();
+	reference_of(ref, REF_Array, array);
+
+	cpush(frame->operands_stack, ref);
 }
 void NOP_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	return;
@@ -2113,4 +2132,97 @@ void TABLESWITCH_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 		*pc += *offset - 1;
 	}
 }
-void WIDE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){}
+void WIDE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
+	/* WIDE IINC */
+	++*pc;
+	u2 lv_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
+	switch((*pc)[0]){
+	case 0x84:;
+		{
+		u2 cvalue_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
+		int16_t cvalue;
+		memcpy(&cvalue, &cvalue_bytes, 2);
+		*((int32_t *) cat(frame->local_variables, lv_index)) += cvalue;
+		}
+		break;
+	case 0x15:; /* ILOAD */
+		{
+		u4 *ivalue = (u4 *) cat(frame->local_variables, lv_index);
+		integer i;
+		memcpy(&i, ivalue, 4);
+		push_integer(frame, i);
+		}
+		break;
+	case 0x17:; /* FLOAD */
+		{
+		u4 *fvalue = (u4 *) cat(frame->local_variables, lv_index);
+		float f;
+		memcpy(&f, fvalue, 4);
+		push_float(frame, f);
+		}
+		break;
+	case 0x19:; /* ALOAD */
+		{
+		cpush(frame->operands_stack, cat(frame->local_variables, lv_index));
+		}
+		break;
+	case 0x16:; /* LLOAD */
+		{
+		u4 *lvalue_high = (u4 *) cat(frame->local_variables, lv_index++);
+		u4 *lvalue_low = (u4 *) cat(frame->local_variables, lv_index);
+		long lvalue = high_low_to_long(lvalue_low, lvalue_high);
+		push_long(frame, lvalue);
+		}
+		break;
+	case 0x18:; /* DLOAD */
+		{
+		u4 *dvalue_high = (u4 *) cat(frame->local_variables, lv_index++);
+		u4 *dvalue_low = (u4 *) cat(frame->local_variables, lv_index);
+		double d = high_low_to_double(dvalue_low, dvalue_high);
+		push_double(frame, d);
+		}
+		break;
+	case 0x36:; /* ISTORE */
+		{
+		int *ivalue = (int *) cpop(frame->operands_stack);
+		cinsert(frame->local_variables, lv_index, ivalue);
+		}
+		break;
+	case 0x38:; /* FSTORE */
+		{
+		float *fvalue = (float *) cpop(frame->operands_stack);
+		cinsert(frame->local_variables, lv_index, fvalue);
+		}
+		break;
+	case 0x3a:; /* ASTORE */
+		{
+		cinsert(frame->local_variables, lv_index, cpop(frame->operands_stack));
+		}
+		break;
+	case 0x39:; /* DSTORE */
+		{
+		u4 *dvalue_low = (u4 *) cpop(frame->operands_stack);
+		u4 *dvalue_high = (u4 *) cpop(frame->operands_stack);
+		cinsert(frame->local_variables, lv_index++, dvalue_high);
+		cinsert(frame->local_variables, lv_index, dvalue_low);
+		}
+		break;
+	case 0x37:; /* LSTORE */
+		{
+		u4 *lvalue_low = (u4 *) cpop(frame->operands_stack);
+		u4 *lvalue_high = (u4 *) cpop(frame->operands_stack);
+		cinsert(frame->local_variables, lv_index++, lvalue_high);
+		cinsert(frame->local_variables, lv_index, lvalue_low);
+		}
+		break;
+	case 0xa9:; /* RET */
+		{
+		u1 *returnAddress = (u1 *) cat(frame->local_variables, lv_index);
+		*pc = returnAddress - 1;
+		}
+		break;
+	default:
+		fprintf(stderr, "Deu erro aí, hein\n");
+		exit(ERR_INDEX);
+	}
+}

@@ -45,24 +45,24 @@ Resumo: 100
 2.(X) arrays.length
 3.(X) arrays multidimensionais
 4.(X) arrays de referencia
-5.(X) doubles - dastore, daload
-6.(X) floats - fastore, faload
-7.(X) longs - lastore, laload
-8.(X) inteiros - falta iastore, iaload
+5.(X) doubles
+6.(X) floats
+7.(X) longs
+8.(X) inteiros
 9.(X) shorts
-10.(X) strings -certo no viewer falta passar pro interpretador
+10.(X) strings
 11.(X) desvios com cat 1
 12.(X) operacoes logicas com cat 1  
-13.() operacoes de deslocamento com cat 1
+13.(X) operacoes de deslocamento com cat 1
 14.(X) operacoes aritmeticas de cat 2
-15.() operacoes de deslocamento de longs
+15.(X) operacoes de deslocamento de longs
 16.(X) system.out.println (int, float, string e booleano)
 17.(X) conversao de e para cat 2
-18.() iteracao
+18.(X) iteracao
 19.(X) switches
-20.() fields
-21.() interfaces
-22.() recursao
+20.(X) fields
+21.(X) interfaces
+22.(X) recursao
 23.(X) metodos estaticos
 24.(X) metodos nao estaticos
 25.(X) objetos
