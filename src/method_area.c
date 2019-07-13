@@ -19,8 +19,15 @@ void destroy_method_area(method_area_t *ma){
 extern char *PATH;
 void load_class(method_area_t *marea, char *pathtoclass){
 	/* PATH + pathtoclass + .class*/
-	char *fullpath = (char *) calloc(strlen(PATH) + strlen(pathtoclass) + 7, sizeof(char));
-	strcat(fullpath, PATH);
+	printf("olha %s\n", pathtoclass);
+	char *fullpath = NULL;
+	if(strcmp(pathtoclass, "java/lang/Object")){
+		fullpath = (char *) calloc(strlen(PATH) + strlen(pathtoclass) + 7, sizeof(char));
+		strcat(fullpath, PATH);
+	}else{
+		fullpath = (char *) calloc(strlen(pathtoclass) + 9, sizeof(char));
+		strcat(fullpath, "./");
+	}
 	strcat(fullpath, pathtoclass);
 	strcat(fullpath, ".class");
 	FILE *classfile = fopen(fullpath, "rb");

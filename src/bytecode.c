@@ -1037,8 +1037,8 @@ void IF_ICMPNE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 }
 void IFEQ_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1];
-	int32_t *ivalue = (int32_t *) cpop(frame->operands_stack);
-	if(0 == *ivalue){
+	integer ivalue = pop_integer(frame);
+	if(0 == ivalue){
 		int16_t offset;
 		memcpy(&offset, &offset_bytes, 2);
 		*pc += offset - 1;
@@ -1048,8 +1048,8 @@ void IFEQ_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 }
 void IFGE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1];
-	int32_t *ivalue = (int32_t *) cpop(frame->operands_stack);
-	if(0 >= *ivalue){
+	integer ivalue = pop_integer(frame);
+	if(ivalue >= 0){
 		int16_t offset;
 		memcpy(&offset, &offset_bytes, 2);
 		*pc += offset - 1;
@@ -1059,8 +1059,8 @@ void IFGE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 }
 void IFGT_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1];
-	int32_t *ivalue = (int32_t *) cpop(frame->operands_stack);
-	if(0 > *ivalue){
+	integer ivalue = pop_integer(frame);
+	if(ivalue > 0){
 		int16_t offset;
 		memcpy(&offset, &offset_bytes, 2);
 		*pc += offset - 1;
@@ -1070,9 +1070,9 @@ void IFGT_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 }
 void IFLE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1];
-	int32_t *ivalue = (int32_t *) cpop(frame->operands_stack);
+	integer ivalue = pop_integer(frame); 
 
-	if(0 <= *ivalue){
+	if(ivalue <= 0){
 		int16_t offset;
 		memcpy(&offset, &offset_bytes, 2);
 		*pc += offset - 1;
@@ -1082,8 +1082,8 @@ void IFLE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 }
 void IFLT_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1];
-	int32_t *ivalue = (int32_t *) cpop(frame->operands_stack);
-	if(0 < *ivalue){
+	integer ivalue = pop_integer(frame);
+	if(ivalue < 0){
 		int16_t offset;
 		memcpy(&offset, &offset_bytes, 2);
 		*pc += offset - 1;
@@ -1093,8 +1093,9 @@ void IFLT_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 }
 void IFNE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u2 offset_bytes = (*pc + 1)[0] << 8 | (*pc + 1)[1];
-	int32_t *ivalue = (int32_t *) cpop(frame->operands_stack);
-	if(0 != *ivalue){
+	integer ivalue = pop_integer(frame);
+
+	if(0 != ivalue){
 		int16_t offset;
 		memcpy(&offset, &offset_bytes, 2);
 		*pc += offset - 1;
@@ -1442,8 +1443,12 @@ void INVOKEVIRTUAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 				}
 		}
 	}else{
-		if(!is_loaded(jvm->marea, method_name))
-			load_class(jvm->marea, method_name);
+		info_t *method_class_utf8 = get_constant_pool_entry(frame, get_constant_pool_entry(frame, methodref->Methodref.class_index)->Class.name_index);
+		char *method_class_name = (char *) calloc(method_class_utf8->Utf8.length + 1, sizeof(char));
+		memcpy(method_class_name, method_class_utf8->Utf8.bytes, method_class_utf8->Utf8.length);
+		if(!is_loaded(jvm->marea, method_class_name))
+			load_class(jvm->marea, method_class_name);
+		free(method_class_name);
 
 		info_t *method_descriptor_utf8 = \
 			get_constant_pool_entry(
