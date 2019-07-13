@@ -824,7 +824,7 @@ void GETSTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	info_t *class_info = get_constant_pool_entry(frame, get_constant_pool_entry(frame, value->Fieldref.class_index)->Class.name_index);
 	char *classname = (char *) calloc(class_info->Utf8.length + 1, sizeof(char));
 	memcpy(classname, class_info->Utf8.bytes, class_info->Utf8.length);
-	if(!is_loaded(jvm->marea, classname)){
+	if(strcmp(classname, "java/lang/System") && !is_loaded(jvm->marea, classname)){
 		char *classfilename = (char *) calloc(strlen(classname) + 7 /* '.class\0' */, sizeof(char));
 		strcat(classfilename, classname);
 		load_class(jvm->marea, classfilename);
@@ -1319,32 +1319,44 @@ void INVOKESPECIAL_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 }
 void INVOKESTATIC_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u2 cp_index = (*pc + 1)[0] << 8 | (*pc + 1)[1]; *pc += 2;
+
+	/* ------- Pega o nome da classe onde está o método --------- */
 	info_t *method_ref = get_constant_pool_entry(frame, cp_index);
 	info_t *method_class_ref = get_constant_pool_entry(frame, method_ref->Methodref.class_index);
 	info_t *method_class_name_utf8 = get_constant_pool_entry(frame, method_class_ref->Class.name_index);
 	char *method_class_name = (char *) calloc(method_class_name_utf8->Utf8.length + 1, sizeof(char));
 	memcpy(method_class_name, method_class_name_utf8->Utf8.bytes, method_class_name_utf8->Utf8.length);
+	/* ---------------------------------------------------------- */
+
+	/* ------- Carrega a classe se não estiver carregada -------- */
 	if(!is_loaded(jvm->marea, method_class_name)){
 		char *method_class_name_classfile = (char *) calloc(strlen(method_class_name) + 7, sizeof(char));
 		strcpy(method_class_name_classfile, method_class_name);
 		load_class(jvm->marea, method_class_name_classfile);
 		free(method_class_name_classfile);
 	}
+	/* ---------------------------------------------------------- */
 
 	/* cria nova frame e se tiver argumentos coloca no vetor de variáveis locais */
-	frame_t *method_frame = new_frame();
 	ClassFile *method_class = get_class_by_name(jvm->marea, method_class_name);
-	if(!method_class)
+	if(!method_class){
+		fprintf(stderr, "No such class (%s)\n", method_class_name);
 		exit(ERR_UNKTYPE);
-	method_frame->constant_pool = method_class->constant_pool;
+	}
+
+	frame_t *method_frame = new_frame();
 	cpush(jvm->frame_stack, method_frame);
+
+	method_frame->constant_pool = method_class->constant_pool;
 
 	info_t *method_name_and_type = get_constant_pool_entry(frame, method_ref->Methodref.name_and_type_index);
 	info_t *method_name_utf8 = get_constant_pool_entry(frame, method_name_and_type->NameAndType.name_index);
 	char *method_name = (char *) calloc(method_name_utf8->Utf8.length + 1, sizeof(char));
 	memcpy(method_name, method_name_utf8->Utf8.bytes, method_name_utf8->Utf8.length);
+
 	Method method = get_method_by_name(method_class, method_name); 
 	free(method_name);
+
 	method_frame->pc = method.code;
 
 	info_t *method_type_utf8 = get_constant_pool_entry(frame, method_name_and_type->NameAndType.descriptor_index);
