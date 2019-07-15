@@ -1,9 +1,0 @@
-<map id="/home/henrique/Documentos/JVM/src/frame.c" name="/home/henrique/Documentos/JVM/src/frame.c">
-<area shape="rect" id="node2" href="$frame_8h.html" title="File contain the definition of a frame struct. " alt="" coords="100,95,223,121"/>
-<area shape="rect" id="node3" href="$clist_8h.html" title="File contain the definition of a list struct. " alt="" coords="102,169,159,196"/>
-<area shape="rect" id="node5" href="$cstack_8h.html" title="File contain the struct of the stack. " alt="" coords="5,169,77,196"/>
-<area shape="rect" id="node6" href="$classfile_8h.html" title="File contain the definition of a classfile struct. " alt="" coords="201,169,282,196"/>
-<area shape="rect" id="node4" href="$celement_8h.html" title="File contain the definition of an stack or list element. " alt="" coords="61,244,147,271"/>
-<area shape="rect" id="node7" href="$types_8h.html" title="File contain the definition of the jvm types. " alt="" coords="202,319,267,345"/>
-<area shape="rect" id="node9" href="$info_8h.html" title="File contain the definition of the constant pool structs. " alt="" coords="241,244,295,271"/>
-</map>

@@ -6,4 +6,3 @@ INVOKEINTERFACE_handler
 MONITORENTER_handler
 MONITOREXIT_handler
 PUTSTATIC_handler
-WIDE_handler
