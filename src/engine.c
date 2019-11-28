@@ -121,7 +121,8 @@ void push_byte(frame_t *frame, byte bvalue){
 }
 
 array_t * pop_array(frame_t *frame){
-	return (array_t *) ((objectref_t *) cpop(frame->operands_stack))->object;
+	objectref_t *o = cpop(frame->operands_stack);
+	return (array_t *) o->object;
 }
 
 double pop_double(frame_t *frame){

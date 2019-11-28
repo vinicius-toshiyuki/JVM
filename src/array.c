@@ -38,10 +38,22 @@ void * at(array_t *array, int index){
 }
 
 void put(array_t *array, int index, void *value){
-    if(index > array->length || index < 0 || array->length == array->max_length)
+    if(index > array->length || index < 0 || array->length == array->max_length){
+				printf("Olha qaqui\n");
         return;
+		}
     cinsert(array->items, index, value);
     array->length = array->items->size;
+}
+
+void overwrite(array_t *array, int index, void *value){
+	if(index > array->length || index < 0 || array->length == array->max_length)
+		return;
+	if(array->length > index){
+		get(array, index);
+	}
+	cinsert(array->items, index, value);
+	array->length = array->items->size;
 }
 
 void * get(array_t *array, int index){

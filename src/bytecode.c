@@ -222,7 +222,9 @@ extern int VERBOSE;
 void AALOAD_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	integer index = pop_integer(frame);
 	array_t *array = pop_array(frame);
-	cpush(frame->operands_stack, at(array, index));
+	objectref_t *ref = new_objectref();
+	reference_of(ref, REF_Array, at(array, index));
+	cpush(frame->operands_stack, ref);
 }
 void AASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	objectref_t *ref = (objectref_t *) cpop(frame->operands_stack);
@@ -895,7 +897,7 @@ void IASTORE_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	array_t *array = pop_array(frame);
 	integer *value = (integer *) calloc(1, sizeof(integer));
 	*value = ivalue;
-	put(array, index, value);
+	overwrite(array, index, value);
 }
 void ICONST_M1_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 	u4 *ivalue = (u4 *) calloc(1, sizeof(u4));
@@ -1867,34 +1869,44 @@ void MULTIANEWARRAY_handler(u1 **pc, u1 *bp, frame_t *frame, jvm_t *jvm){
 
 	/* COM UM PASSO DE FÉ, DIZEMOS QUE ESTÁ CERTO */
 	/* Ao final de tudo ARRAY é pra ter o MULTIARRAY*/
-	array_t *array = new_array();
 	array_t *arrays = new_array();
 	array_of(arrays, ARR_RefArray, 1);
+
+	/* Array inicial (primeira dimensão) */
+	array_t *array = new_array();
 	put(arrays, 0, array);
 	for(i = 0; i < dimensions; i++){
-		integer k;
 		integer count = pop_integer(&count_frame);
+
+		/* Arrays que vão estar em arrays na próxima iteração */
 		array_t *next_arrays = new_array();
-		array_of(next_arrays, ARR_RefArray, count);
+		array_of(next_arrays, ARR_RefArray, count * arrays->length);
+
+		/* TODO: devia fazer um iterator */
+		integer k;
 		for(k = 0; k < arrays->length; k++){
-			/* TODO: devia fazer um iterator */
-			array_t *narray = at(arrays, k);
-			array_of(narray, ARR_RefArray, count);
-			integer j;
-			for(j = 0; j < count; j++){
-				array_t *nnarray = new_array();
-				put(narray, 0, nnarray);
-				put(next_arrays, 0, nnarray);
-				if(i + 1 == dimensions){
-					array_of(nnarray, ARR_RefClass, pop_integer(&count_frame));
-					array_of_class(nnarray, class_name);
+			array_t *el_array = at(arrays, k);
+
+			if(i + 1 != dimensions){
+				array_of(el_array, ARR_RefArray, count);
+			
+				integer j;
+				for(j = 0; j < count; j++){
+					array_t *n_array = new_array();
+
+					put(el_array, 0, n_array);
+					put(next_arrays, 0, n_array);
 				}
+			}else{
+				array_of(el_array, ARR_RefClass, count);
+				array_of_class(el_array, class_name);
 			}
 		}
-		destroy_array(arrays);
+
+		free(arrays);
 		arrays = next_arrays;
 	}
-	destroy_array(arrays);
+	free(arrays);
 
 	free(class_name);
 

@@ -77,6 +77,11 @@ void * at(array_t *array, int index);
 void put(array_t *array, int index, void *value);
 
 /**
+ * If possible, overwrites value in array at index.
+ */
+void overwrite(array_t *array, int index, void *value);
+
+/**
  *  Removes and get element in array at index, if possible.
  */
 void * get(array_t *array, int index);
